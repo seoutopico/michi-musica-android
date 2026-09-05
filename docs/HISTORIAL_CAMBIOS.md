@@ -1,5 +1,16 @@
 # Historial de cambios
 
+## 2026-09-05 — Michi Música 1.10.1: borrar canciones
+
+- Menú de tres puntos en las filas de Biblioteca, también dentro de una lista importada. Duración en la línea secundaria para reservar espacio al menú.
+- Borrar canción pide confirmación con título, archivo y alcance. Cancelar conserva el audio; la operación muestra progreso y errores con reintento. Solo elimina el archivo de audio seleccionado directamente dentro de la carpeta SAF autorizada. No modifica los Markdown ni borra letras asociadas.
+- Tras éxito, retira todas las referencias de la cola, actualiza biblioteca/listas y descarta la reanudación del audio eliminado. Si es la pista actual, pausa antes de retirarla; no inicia otra automáticamente.
+- `test lint assembleDebug assembleRelease --offline`, JDK 21: BUILD SUCCESSFUL. 43 pruebas debug y 43 release sin fallos; lint app 0 errores/16 advertencias. Firma release verificada con apksigner.
+- Instalada debug 1.10.1 (código 19) en Pixel 7 conservando datos. Prueba con WAV silencioso creado expresamente: Cancelar conserva el archivo; confirmar lo elimina y vuelve de 111 a 110 canciones. Segunda prueba con audio de tres minutos en reproducción: borrado confirmado, siguiente pista pausada en 0:00 y archivo ausente. Solo se borraron los archivos de prueba; se conservan las 110 canciones originales. Pendientes proveedores con errores/permisos y casos ampliados de cola: MMA-035.
+- APK oficial `Michi-Musica-1.10.1-arm64.apk`, SHA-256 `2d68ef2beea05a17302bae668c0d4cd843a5d0ce7d126378bb5b017f996fb7fa`.
+- Aina plantea separar podcasts de YouTube de la música normal. Propuesta registrada en `BORRADO_Y_PODCASTS.md`: Música/Podcasts dentro de Biblioteca, destino al guardar, clasificación de audios existentes, colas separadas y posición por episodio. No implementada en esta versión.
+
+
 ## 2026-09-05 — Aclaración de las funciones de YouTube en README
 
 - Sustituida la frase ambigua «Ver no descarga un MP3» por dos funciones explícitas: Ver vídeo reproduce dentro de la app y Guardar MP3 descarga el audio a la carpeta de música para escucharlo sin conexión. Cambio documental; la descarga sigue disponible y no cambia la APK.

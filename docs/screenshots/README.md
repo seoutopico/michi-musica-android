@@ -1,6 +1,6 @@
 # Capturas públicas
 
-Tomadas en Android, Pixel 7, Michi Música 1.10.0, el 5 de septiembre de 2026.
+Tomadas en Android, Pixel 7, Michi Música 1.10.0 (Biblioteca actualizada a 1.10.1), el 5 de septiembre de 2026.
 
 Aina-Lluna pidió expresamente sustituir las primeras capturas ficticias por su biblioteca real para mostrar las carátulas. Se publican únicamente estas imágenes seleccionadas y revisadas, sin audios, documentos de listas, rutas privadas ni notificaciones personales.
 

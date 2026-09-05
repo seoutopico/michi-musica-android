@@ -60,7 +60,13 @@ Rutas relativas a `app/src/main/java/com/ainalluna/michimusica/`:
 
 Previews en `app/src/debug/java/com/ainalluna/michimusica/ui/`: abrir por nombre con Ctrl+Shift+N en Android Studio, variante debug, Split, Build & Refresh. Usan componentes reales con datos ficticios; no sustituyen la prueba de permisos, red, audio o archivos. Arquitectura ampliada en [ARQUITECTURA.md](ARQUITECTURA.md).
 
+## Trabajo posterior: borrado y podcasts
+
+Aina pide borrar canciones y plantea separar podcasts de YouTube de su música. Borrado implementado en 1.10.1 (código 19), instalado en Pixel y validado con archivos de prueba; la separación de podcasts es una propuesta pendiente, no una función disponible. Especificación y decisiones en [Borrado y podcasts](BORRADO_Y_PODCASTS.md). No borrar audios reales durante pruebas; usar archivos creados para la validación.
+
 ## Última entrega y punto exacto de reanudación
+
+Actualización de borrado: **1.10.1**, [release](https://github.com/seoutopico/michi-musica-android/releases/tag/v1.10.1). 43 pruebas por variante, lint sin errores y firma release verificada. El Pixel conserva la firma debug para mantener sus datos. Podcasts sigue siendo una propuesta.
 
 **1.10.0, código 18**, publicada: [repositorio público](https://github.com/seoutopico/michi-musica-android) y [APK firmadas de la release](https://github.com/seoutopico/michi-musica-android/releases/tag/v1.10.0), nuevo icono adaptativo y módulo `iconpack` para Niagara. Aina autoriza crear el repositorio público, distribuir la APK, explicar el uso de IA y facilitar contribuciones. Leer README, CONTRIBUTING, PRIVACY, SECURITY y THIRD_PARTY antes de publicar o cambiar servicios externos. CI aún no está activado: plantilla y explicación en `docs/ci/`; no hay una ejecución remota aprobada. Los informes privados de vulnerabilidades de GitHub sí están habilitados.
 

@@ -26,6 +26,7 @@ Capturas de Android con la biblioteca y carátulas reales de Aina-Lluna, publica
 ## Qué puedes hacer
 
 - **Biblioteca local:** elegir una carpeta de Android y reproducir MP3, WAV, OGG, M4A, AAC, FLAC y OPUS; buscar por título, artista, álbum o archivo.
+- **Borrar canciones:** menú de tres puntos de cada pista → Borrar canción, con confirmación antes de eliminar el archivo de la carpeta.
 - **Escucha continua:** reproducción en segundo plano, controles del sistema, pausa, anterior, siguiente, progreso, Azar sin repeticiones dentro de una ronda y repetir una canción.
 - **Retomar:** última canción y posición guardadas; abrir la app no inicia música automáticamente. El mini reproductor mantiene su lugar sobre la navegación.
 - **Ver vídeos de YouTube:** busca o pega un enlace y pulsa **Ver vídeo** para reproducirlo dentro de la app, con controles y pantalla completa. Algunos vídeos pueden restringir su inserción y ofrecer apertura en YouTube.
@@ -41,7 +42,7 @@ Los audios locales permanecen en el dispositivo. Buscar vídeos, verlos, descarg
 
 **Requisitos:** Android 8.0 o posterior y dispositivo **ARM64**. La APK actual no cubre móviles de 32 bits ni emuladores x86. Las comprobaciones nativas se realizan en Pixel 7.
 
-1. Abre [Releases](https://github.com/seoutopico/michi-musica-android/releases/latest) y descarga `Michi-Musica-1.10.0-arm64.apk`.
+1. Abre [Releases](https://github.com/seoutopico/michi-musica-android/releases/latest) y descarga `Michi-Musica-1.10.1-arm64.apk`.
 2. Abre la APK en Android. Si lo solicita, permite a ese navegador o gestor de archivos instalar aplicaciones desde esa fuente. Puedes retirar ese permiso después.
 3. Abre Michi Música y elige tu carpeta de música mediante el selector de Android.
 4. Opcional: instala `Michi-Iconos-1.0.0.apk` y sigue la [guía de Niagara](docs/NIAGARA.md).

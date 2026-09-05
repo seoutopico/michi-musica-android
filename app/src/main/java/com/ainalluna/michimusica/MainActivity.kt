@@ -52,6 +52,9 @@ import androidx.media3.session.SessionToken
 import com.ainalluna.michimusica.library.MarkdownPlaylist
 import com.ainalluna.michimusica.library.MusicFolderReader
 import com.ainalluna.michimusica.library.Song
+import com.ainalluna.michimusica.library.deleteSongFile
+import com.ainalluna.michimusica.library.removedSongIndices
+import com.ainalluna.michimusica.ui.SongDeletionDialog
 import com.ainalluna.michimusica.lyrics.LyricsScreen
 import com.ainalluna.michimusica.playback.PlaybackService
 import com.ainalluna.michimusica.playback.canAdvanceTrack
@@ -76,6 +79,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.launch
 import java.text.Normalizer
 
 private const val PREFS = "michi_preferences"
@@ -138,6 +143,10 @@ private fun MichiApp() {
     var libraryLoaded by remember { mutableStateOf(false) }
     var notice by remember { mutableStateOf<LibraryNotice?>(null) }
     var controller by remember { mutableStateOf<MediaController?>(null) }
+    val deletionScope = rememberCoroutineScope()
+    var songToDelete by remember { mutableStateOf<Song?>(null) }
+    var deletingSong by remember { mutableStateOf(false) }
+    var deletionError by remember { mutableStateOf<String?>(null) }
 
     val folderPicker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
         if (uri != null) runCatching {
@@ -296,6 +305,7 @@ private fun MichiApp() {
             songs, library, savedPlaylists, controller, folderUri, playlistUri, skin, playlistName, resume,
             loading = loading, listsLoading = listsLoading, notice = notice, artworkRevision = folderRevision, restoreRevision = restoreRevision,
             onDismissNotice = { notice = null },
+            onDeleteSong = { songToDelete = it; deletionError = null },
             onChooseFolder = { folderPicker.launch(folderUri) },
             onChoosePlaylist = { playlistPicker.launch(arrayOf("text/markdown", "text/plain")) },
             onAllMusic = {
@@ -322,6 +332,43 @@ private fun MichiApp() {
                 skinName = if (it == MichiSkin.ROSE) "rose" else "midnight"; preferences.edit { putString(PREF_SKIN, skinName) }
             },
         )
+        songToDelete?.let { target ->
+            SongDeletionDialog(target, deletingSong, deletionError,
+                onDismiss = { if (!deletingSong) { songToDelete = null; deletionError = null } },
+                onConfirm = {
+                    val source = folderUri
+                    if (!deletingSong && source != null) {
+                        deletingSong = true; deletionError = null
+                        deletionScope.launch {
+                            // Once confirmed, reconcile the queue/preferences even if the screen is disposed.
+                            withContext(NonCancellable) {
+                                runCatching {
+                                    require(library.any { it.id == target.id && it.uri == target.uri }) { "La canción ya no está en esta biblioteca." }
+                                    withContext(Dispatchers.IO) { deleteSongFile(context, source, target.uri) }
+                                }.onSuccess {
+                                    runCatching { controller?.let { player ->
+                                        if (player.currentMediaItem?.mediaId == target.id) player.pause()
+                                        removedSongIndices(List(player.mediaItemCount) { player.getMediaItemAt(it).mediaId }, target.id)
+                                            .forEach { player.removeMediaItem(it) }
+                                    } }.onFailure { notice = LibraryNotice("El archivo se ha borrado, pero no pude actualizar el reproductor. Vuelve a abrir Michi.") }
+                                    if (pendingResume?.songId == target.id) pendingResume = null
+                                    if (preferences.getString(PREF_LAST_SONG, null) == target.id) preferences.edit {
+                                        remove(PREF_LAST_SONG); remove(PREF_LAST_POSITION); remove(PREF_LAST_PLAYLIST)
+                                    }
+                                    library.removeAll { it.id == target.id }; songs.removeAll { it.id == target.id }
+                                    playlistRevision++
+                                    songToDelete = null
+                                }.onFailure {
+                                    deletionError = if (it is SecurityException) "Android ha retirado el permiso. Vuelve a elegir la carpeta en Ajustes."
+                                        else it.message ?: "No se pudo borrar la canción. Inténtalo de nuevo."
+                                }
+                                deletingSong = false
+                            }
+                        }
+                    }
+                },
+            )
+        }
     }
 }
 
@@ -332,6 +379,7 @@ private fun MichiRoot(
     onSelectPlaylist: (Uri) -> Unit, onResume: (ResumeListening, Boolean, Boolean) -> Unit,
     onDownloaded: (String) -> Unit, onSkinChange: (MichiSkin) -> Unit,
     loading: Boolean, listsLoading: Boolean, notice: LibraryNotice?, artworkRevision: Int, restoreRevision: Int, onDismissNotice: () -> Unit,
+    onDeleteSong: (Song) -> Unit,
 ) {
     var destination by rememberSaveable { mutableStateOf(Destination.MUSIC) }
     var nowPlaying by rememberSaveable { mutableStateOf(false) }
@@ -394,7 +442,7 @@ private fun MichiRoot(
                 nowPlaying && visibleSong != null -> NowPlayingScreen(visibleSong, if (song != null) state else state.copy(position = visiblePosition, duration = visibleSong.durationMs), if (song != null) player else null, { nowPlaying = false }, { lyricsOpen = true }, sourceName = playlistName, artworkRevision = artworkRevision)
                 else -> when (destination) {
                     Destination.MUSIC -> LibraryScreen(songs, state, player, skin, playlistName, resume, { state = state.copy(engaged = true) }, onChooseFolder, onRefresh, onSkinChange,
-                        loading, notice, artworkRevision, onAllMusic, onDismissNotice)
+                        loading, notice, artworkRevision, onAllMusic, onDismissNotice, onDeleteSong)
                     Destination.SEARCH -> YouTubeScreen(searchController, onChooseFolder)
                     Destination.PLAYLISTS -> PlaylistsScreen(
                         library.size, savedPlaylists, playlistUri,
@@ -444,6 +492,7 @@ private fun LibraryScreen(
     onSkinChange: (MichiSkin) -> Unit,
     loading: Boolean = false, notice: LibraryNotice? = null, artworkRevision: Int = 0,
     onAllMusic: () -> Unit = {}, onDismissNotice: () -> Unit = {},
+    onDeleteSong: ((Song) -> Unit)? = null,
 ) {
     var settings by remember { mutableStateOf(false) }
     LibraryHome(
@@ -464,6 +513,7 @@ private fun LibraryScreen(
         },
         onSettings = { settings = true }, onChooseFolder = onChooseFolder,
         onAllMusic = onAllMusic, onDismissNotice = onDismissNotice,
+        onDelete = onDeleteSong,
     )
     if (settings) AlertDialog({ settings = false }, title = { Text("Michi Música") }, text = { Column {
         Text("Apariencia", style = MaterialTheme.typography.titleMedium)

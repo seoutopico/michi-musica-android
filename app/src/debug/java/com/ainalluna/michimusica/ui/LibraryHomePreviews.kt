@@ -26,6 +26,7 @@ fun LibraryHomePreviewContent(skin: MichiSkin = MichiSkin.MIDNIGHT, hasSelection
     var playing by remember { mutableStateOf(false) }
     var notice by remember { mutableStateOf(initialNotice) }
     var position by remember { mutableLongStateOf(84_000L) }
+    var deleteTarget by remember { mutableStateOf<Song?>(null) }
     MichiTheme(skin) {
         Scaffold(bottomBar = {
             Column(Modifier.fillMaxWidth()) {
@@ -41,9 +42,10 @@ fun LibraryHomePreviewContent(skin: MichiSkin = MichiSkin.MIDNIGHT, hasSelection
                 LibraryHome(homeSamples, selected?.id, playing, true, false, notice, null, 0,
                     onSelect = { selected = it; playing = true; position = 0 },
                     onShuffle = { selected = homeSamples.last(); playing = true; position = 0 },
-                    onSettings = {}, onChooseFolder = {}, onAllMusic = {}, onDismissNotice = { notice = null })
+                    onSettings = {}, onChooseFolder = {}, onAllMusic = {}, onDismissNotice = { notice = null }, onDelete = { deleteTarget = it })
             }
         }
+        deleteTarget?.let { SongDeletionDialog(it, false, null, { deleteTarget = null }, { deleteTarget = null }) }
     }
 }
 

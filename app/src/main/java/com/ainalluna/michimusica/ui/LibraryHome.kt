@@ -48,6 +48,7 @@ fun LibraryHome(
     loading: Boolean, notice: LibraryNotice?, sourceName: String?, artworkRevision: Int,
     onSelect: (Song) -> Unit, onShuffle: () -> Unit, onSettings: () -> Unit,
     onChooseFolder: () -> Unit, onAllMusic: () -> Unit, onDismissNotice: () -> Unit,
+    onDelete: ((Song) -> Unit)? = null,
 ) {
     var query by rememberSaveable { mutableStateOf("") }
     val wanted = searchable(query)
@@ -117,14 +118,15 @@ fun LibraryHome(
         }
         items(filtered, key = Song::id) { song ->
             HomeSongRow(song, song.id == selectedSongId, playing && song.id == selectedSongId, ready && !loading,
-                artworkRevision) { focus.clearFocus(); onSelect(song) }
+                artworkRevision, onDelete = onDelete?.let { action -> { focus.clearFocus(); action(song) } }) { focus.clearFocus(); onSelect(song) }
         }
     }
 }
 
 @Composable
-private fun HomeSongRow(song: Song, selected: Boolean, playing: Boolean, enabled: Boolean, artworkRevision: Int, onSelect: () -> Unit) {
+private fun HomeSongRow(song: Song, selected: Boolean, playing: Boolean, enabled: Boolean, artworkRevision: Int, onDelete: (() -> Unit)?, onSelect: () -> Unit) {
     val colors = MaterialTheme.colorScheme
+    var menuOpen by remember(song.id) { mutableStateOf(false) }
     Box(Modifier.fillMaxWidth().padding(vertical = 2.dp).clip(RoundedCornerShape(12.dp))
         .background(if (selected) Brush.horizontalGradient(listOf(colors.primaryContainer.copy(alpha = .6f), colors.surfaceContainerHigh.copy(alpha = .5f))) else Brush.linearGradient(listOf(Color.Transparent, Color.Transparent)))
         .clickable(enabled = enabled, role = Role.Button, onClickLabel = "Reproducir ${song.title}", onClick = onSelect)
@@ -134,11 +136,21 @@ private fun HomeSongRow(song: Song, selected: Boolean, playing: Boolean, enabled
             SongArtwork(song, Modifier.size(72.dp), artworkRevision)
             Column(Modifier.weight(1f).padding(start = 14.dp, end = 8.dp)) {
                 Text(song.title, fontSize = 16.sp, lineHeight = 22.sp, fontWeight = FontWeight.Medium, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                Text(song.artist.ifBlank { song.filename }, Modifier.padding(top = 5.dp), fontSize = 14.sp, lineHeight = 20.sp,
+                Row(Modifier.padding(top = 5.dp), verticalAlignment = Alignment.CenterVertically) {
+                Text(song.artist.ifBlank { song.filename }, Modifier.weight(1f), fontSize = 14.sp, lineHeight = 20.sp,
                     color = colors.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                Text(if (song.durationMs > 0) formatTime(song.durationMs) else "—", Modifier.padding(start = 8.dp), fontSize = 13.sp, color = colors.onSurfaceVariant)
+                }
             }
             if (playing) PlayingBars(Modifier.size(16.dp))
-            Text(if (song.durationMs > 0) formatTime(song.durationMs) else "—", Modifier.padding(start = 8.dp), fontSize = 13.sp, color = colors.onSurfaceVariant)
+            if (onDelete != null) Box {
+                IconButton({ menuOpen = true }, enabled = enabled) {
+                    HomeIcon(R.drawable.ic_lyrics_more_vert, "Opciones de ${song.title}", tint = colors.onSurfaceVariant)
+                }
+                DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
+                    DropdownMenuItem(text = { Text("Borrar canción", color = colors.error) }, onClick = { menuOpen = false; onDelete() })
+                }
+            }
         }
     }
 }

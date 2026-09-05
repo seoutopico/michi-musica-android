@@ -25,6 +25,9 @@
 
 | MMA-033 | P2 | Activar CI en GitHub | Copiar `docs/ci/android.yml` a `.github/workflows/android.yml` con una conexión autorizada para workflows y verificar su primera ejecución. La conexión inicial no tiene ese alcance. |
 
+| MMA-035 | P2 | Ampliar validación de borrado | En Pixel: Cancelar conserva archivo; borrar audio de prueba en reproducción lo elimina y deja siguiente pista pausada; 110 canciones originales conservadas. Pendientes errores/permisos de proveedores, no actual mientras suena otra, última pista y listas repetidas en dispositivo. Cola con duplicados/vacía cubierta por pruebas unitarias. |
+| MMA-036 | P2 | Separar Música y Podcasts | Propuesta en `BORRADO_Y_PODCASTS.md`: dos secciones, destino al guardar MP3, clasificación de audios existentes, colas separadas y posición por episodio. Todavía sin implementar. |
+
 ## Hecho
 
 | ID | Fecha | Trabajo | Verificación |
