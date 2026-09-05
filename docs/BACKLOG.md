@@ -29,6 +29,7 @@
 
 | ID | Fecha | Trabajo | Verificación |
 | --- | --- | --- | --- |
+| MMA-034 | 2026-09-05 | Publicar comunidad y revisar seguridad | Repositorio público y release v1.10.0 con APK firmadas, capturas reales autorizadas, IA explícita, GPL, privacidad, contribución y fuentes. 40 pruebas por variante, lint sin errores; límites de revisión documentados y CI pendiente en MMA-033. |
 | MMA-032 | 2026-09-05 | Icono adaptativo y paquete Niagara | Ambas APK compiladas y firmadas; paquete sin permisos instalado, tres variantes reconocidas por Niagara y Medianoche aplicada a Michi. |
 | MMA-021 | 2026-09-05 | Aprobar la nueva dirección visual de apertura | Aina aprueba `docs/mockups/reinicio/01-apertura-medianoche.png` y pide crear la portada. Las propuestas previas quedan como historial. |
 | MMA-019 | 2026-09-04 | Recordar varias playlists Markdown | Colección persistente de URI autorizadas, resumen, selección activa y vuelta a toda la música implementados; `test lint assembleDebug` aprobado en 1.3.0. |

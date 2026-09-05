@@ -2,6 +2,8 @@
 
 ## 2026-09-05 — Michi Música 1.10.0: identidad y publicación comunitaria
 
+- Publicados [repositorio público](https://github.com/seoutopico/michi-musica-android) y [release v1.10.0](https://github.com/seoutopico/michi-musica-android/releases/tag/v1.10.0): APK firmadas, sumas SHA-256, certificado público y archivo upstream. GitHub confirma reporte privado de vulnerabilidades habilitado.
+
 - Petición de Aina: adaptar el icono al diseño aprobado, crear variantes para Niagara, abrir el código y distribuir una APK instalable, documentar todas las funciones y el desarrollo con IA, y revisar la seguridad.
 - Icono adaptativo Medianoche con capa monocroma. SVG/PNG editables y generador en el repositorio. Nuevo módulo Michi Iconos 1.0.0 con tres variantes y sin permisos.
 - Corregida lectura sin límite de letras/Markdown, sustitución destructiva de MP3 al descargar, temporales compartidos y acceso indiscriminado a la sesión. Copias de app desactivadas y HTTP explícitamente deshabilitado. Revisión y riesgos restantes en `REVISION_SEGURIDAD.md`.

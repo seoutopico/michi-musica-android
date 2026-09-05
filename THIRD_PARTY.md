@@ -1,6 +1,6 @@
 # Licencias y componentes externos
 
-El código propio de Michi Música y Michi Iconos se publica bajo **GPL-3.0**, en [LICENSE](LICENSE). Los componentes externos conservan sus licencias y atribuciones. No se incluyen canciones, vídeos, letras de terceros ni sus carátulas en el código fuente propio.
+El código propio de Michi Música y Michi Iconos se publica bajo **GPL-3.0**, en [LICENSE](LICENSE). Los componentes externos conservan sus licencias y atribuciones. No se distribuyen archivos de canciones ni vídeos. Las capturas contienen carátulas de la biblioteca autorizada, como se explica al final de este documento; esas imágenes conservan los derechos de sus respectivos titulares.
 
 | Componente | Uso | Licencia / fuente |
 | --- | --- | --- |

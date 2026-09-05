@@ -62,7 +62,7 @@ Previews en `app/src/debug/java/com/ainalluna/michimusica/ui/`: abrir por nombre
 
 ## Última entrega y punto exacto de reanudación
 
-**1.10.0, código 18**: publicación comunitaria en [GitHub](https://github.com/seoutopico/michi-musica-android), nuevo icono adaptativo y módulo `iconpack` para Niagara. Aina autoriza crear el repositorio público, distribuir la APK, explicar el uso de IA y facilitar contribuciones. Leer README, CONTRIBUTING, PRIVACY, SECURITY y THIRD_PARTY antes de publicar o cambiar servicios externos.
+**1.10.0, código 18**, publicada: [repositorio público](https://github.com/seoutopico/michi-musica-android) y [APK firmadas de la release](https://github.com/seoutopico/michi-musica-android/releases/tag/v1.10.0), nuevo icono adaptativo y módulo `iconpack` para Niagara. Aina autoriza crear el repositorio público, distribuir la APK, explicar el uso de IA y facilitar contribuciones. Leer README, CONTRIBUTING, PRIVACY, SECURITY y THIRD_PARTY antes de publicar o cambiar servicios externos. CI aún no está activado: plantilla y explicación en `docs/ci/`; no hay una ejecución remota aprobada. Los informes privados de vulnerabilidades de GitHub sí están habilitados.
 
 La 1.9.1 corrigió el vídeo que se oía sin verse: el iframe tenía altura cero. `YouTubeEmbed.kt` fija dimensiones numéricas del viewport y responde a cambios de tamaño. Instalada 1.9.1 y confirmada imagen dentro de Buscar. Pantalla completa y regreso se observaron durante el diagnóstico con la corrección aplicada en vivo; no equivalen a una regresión completa sobre la APK final. Ver MMA-029.
 
