@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="412" height="860" viewBox="0 0 412 860">
+  <title>Michi — alternativa B: entrada a la colección</title>
+  <desc>Maqueta vectorial de Biblioteca con datos ficticios. Portada de colección con ilustración de marca, acceso a canciones, Azar y reproductor inferior pausado. No es una captura Android.</desc>
+  <defs>
+    <g id="search" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="10" cy="10" r="6.5"/><path d="m15 15 6 6"/></g>
+    <g id="music" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M14 3v14m0-14 6 2"/><ellipse cx="10" cy="18" rx="4" ry="3" fill="currentColor" stroke="none"/></g>
+    <g id="list" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 5h12M9 12h12M9 19h12"/><path d="M3 5h.2M3 12h.2M3 19h.2" stroke-width="3"/></g>
+  </defs>
+  <rect width="412" height="860" fill="#fcfaf8"/>
+  <g font-family="Arial, sans-serif" fill="#282329">
+    <text x="28" y="24" font-size="13" font-weight="700">9:41</text>
+    <g stroke="#282329" stroke-width="1.6" fill="none"><path d="M344 22v-3m4 3v-6m4 6v-9"/><rect x="368" y="13" width="17" height="9" rx="2"/><path d="M388 16v3"/></g>
+    <text x="28" y="82" font-size="30" font-weight="700" letter-spacing="-.7">Biblioteca</text>
+    <g fill="#282329"><circle cx="368" cy="66" r="1.8"/><circle cx="368" cy="72" r="1.8"/><circle cx="368" cy="78" r="1.8"/></g>
+    <g transform="translate(28 123)">
+      <rect width="356" height="216" fill="#e7cfd0"/>
+      <path d="M0 155C125 222 199-22 356 54V216H0Z" fill="#c4848f"/>
+      <circle cx="221" cy="104" r="94" fill="#3c2733"/>
+      <g fill="none" stroke="#5a3a47" stroke-width="1"><circle cx="221" cy="104" r="49"/><circle cx="221" cy="104" r="54"/><circle cx="221" cy="104" r="59"/><circle cx="221" cy="104" r="64"/><circle cx="221" cy="104" r="70"/><circle cx="221" cy="104" r="75"/><circle cx="221" cy="104" r="80"/></g>
+      <circle cx="221" cy="104" r="33" fill="#f4e5de"/>
+      <path d="m202 109 2-23 10 9q7-3 14 0l10-9 2 23" fill="none" stroke="#a33c60" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <g fill="#a33c60"><circle cx="213" cy="107" r="1.6"/><circle cx="229" cy="107" r="1.6"/></g>
+      <path d="M34 35v65m9-65v35" stroke="#f4e5de" stroke-width="2"/>
+    </g>
+    <text x="28" y="382" font-size="11" font-weight="700" letter-spacing="1.6" fill="#a33c60">TU COLECCIÓN</text>
+    <text x="28" y="428" font-family="Georgia, serif" font-size="38">Toda tu música.</text>
+    <text x="28" y="458" font-size="15" fill="#71686d">7 canciones en este dispositivo</text>
+    <rect x="28" y="485" width="356" height="56" rx="8" fill="#282329"/>
+    <text x="48" y="519" fill="#fff" font-size="16" font-weight="600">Ver canciones</text>
+    <path d="M349 513h15m-6-6 7 6-7 6" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    <g transform="translate(123 563)" fill="none" stroke="#a33c60" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 4h3c5 0 7 14 12 14h4m-4-4 4 4-4 4M1 18h3c2 0 4-3 5-6m4-6 3-2h4m-4-4 4 4-4 4"/></g>
+    <text x="154" y="582" font-size="15" fill="#a33c60">Escuchar al azar</text>
+    <rect y="698" width="412" height="82" fill="#f3e9eb"/>
+    <path d="M0 699h412" stroke="#e6dfe0" stroke-width="2"/><path d="M0 699h140" stroke="#a33c60" stroke-width="2"/>
+    <text x="28" y="731" font-size="15" font-weight="600">La luz de septiembre</text>
+    <text x="28" y="752" font-size="13" fill="#71686d">En pausa · 1:24</text>
+    <circle cx="328" cy="739" r="24" fill="#a33c60"/><path d="m323 730 13 9-13 9Z" fill="#fff"/>
+    <path d="m372 732 7 7-7 7m10-14v14" fill="none" stroke="#282329" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <use href="#music" x="57" y="789" color="#a33c60"/><use href="#search" x="194" y="789" color="#71686d"/><use href="#list" x="332" y="789" color="#71686d"/>
+    <text x="69" y="830" text-anchor="middle" fill="#a33c60" font-size="12" font-weight="700">Biblioteca</text>
+    <text x="206" y="830" text-anchor="middle" fill="#71686d" font-size="12">Buscar</text>
+    <text x="344" y="830" text-anchor="middle" fill="#71686d" font-size="12">Listas</text>
+    <rect x="158" y="849" width="96" height="3" rx="1.5"/>
+  </g>
+</svg>

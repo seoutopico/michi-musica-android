@@ -1,0 +1,13 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application android:label="Michi Iconos" android:icon="@drawable/michi_midnight"
+        android:allowBackup="false" android:supportsRtl="true" android:theme="@android:style/Theme.Material.NoActionBar">
+        <activity android:name=".IconActivity" android:exported="true">
+            <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>
+            <intent-filter><action android:name="org.adw.launcher.THEMES"/><category android:name="android.intent.category.DEFAULT"/></intent-filter>
+            <intent-filter><action android:name="com.novalauncher.THEME"/><category android:name="android.intent.category.DEFAULT"/></intent-filter>
+            <intent-filter><action android:name="org.adw.launcher.icons.ACTION_PICK_ICON"/><category android:name="android.intent.category.DEFAULT"/></intent-filter>
+            <intent-filter><action android:name="android.intent.action.GET_CONTENT"/><category android:name="android.intent.category.DEFAULT"/><category android:name="android.intent.category.OPENABLE"/><data android:mimeType="image/*"/></intent-filter>
+            <intent-filter><action android:name="android.intent.action.PICK"/><category android:name="android.intent.category.DEFAULT"/><data android:mimeType="image/*"/></intent-filter>
+        </activity>
+    </application>
+</manifest>

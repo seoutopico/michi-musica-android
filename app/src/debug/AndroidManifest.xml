@@ -1,0 +1,6 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application>
+        <!-- Debug only. Production components with fictitious data for reproducible public screenshots. -->
+        <activity android:name=".ui.ShowcaseActivity" android:exported="true"/>
+    </application>
+</manifest>

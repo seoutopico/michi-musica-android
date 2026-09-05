@@ -1,0 +1,23 @@
+Use case: ui-mockup.
+Create a brand-new, exceptionally polished high-fidelity Android music app opening screen as a single flat front-facing screen image. Portrait approximately 1:2 aspect ratio, edge-to-edge UI, no device frame, no background outside the screen, no design annotations. This is a visual exploration for an app called Michi, a private local-music player. Design it independently, without referencing any previous conversation images.
+
+Art direction: sophisticated Midnight music-library interface. Inky blue-black and deep plum surfaces, soft luminous dusty-rose accents, beautifully nuanced tonal depth. Crisp high-contrast warm-white typography. Contemporary Apple-level fit and finish, with native Android usability. Confident professional typography, immaculate 24dp-equivalent consistent lateral safe margins, generous but purposeful spacing, clear visual hierarchy. Depth comes from gently layered surfaces, subtle translucency in persistent controls, and rich album artwork, not heavy drop shadows or a repetitive stack of cards. Elegant photographic and abstract album covers make the music the visual focus. Covers are fictional sample content.
+
+Product function: the user already has local songs, opens the app and can immediately choose one. A previous song is paused and can resume. Show songs directly on this screen. No welcome screen, no extra entry button, no huge decorative hero, no subscription or social features, no recommendation claims, no metadata editor.
+
+Compose the entire screen with artistic judgement rather than a generic Material component template:
+- Native understated Android status bar, safe area.
+- Refined small feline brand mark associated with the word “michi”. Clear main heading “Biblioteca”. A recognizable standard gear icon for settings, not an ambiguous homemade glyph.
+- A clearly identifiable local search affordance with standard magnifying glass and exact text “Buscar en tu música”.
+- A compact collection heading “Canciones”, secondary “7 canciones”, and an understated but clear standard shuffle icon with “Azar”.
+- The main body is a cohesive scrollable collection of songs, beautifully spaced, unboxed rows with square album artwork, clear song title, artist in quieter text and duration aligned consistently. Show at least five complete entries. Use exact example titles and artists:
+“Luz de septiembre” / “Brisa” / “4:08”
+“Bajo la lluvia” / “Elena y los días” / “4:16”
+“Al otro lado del sol” / “Clara del Mar” / “3:42”
+“Un lugar tranquilo” / “Brisa” / “3:51”
+“Volver despacio” / “Norte” / “4:22”
+Use varied original evocative covers: sunlit coastal photography, nocturnal rain, soft red abstract artwork, misty landscape, delicate blue monochrome photography. Do not fabricate real artist brands. First song is selected in a subtle readable way.
+- Near the bottom, a premium compact persistent player, visually distinct from content, with understated translucent plum surface, thin progress indication, small artwork matching the first song, title “Luz de septiembre”, secondary “En pausa · 1:24”, a large clear standard filled triangle Play icon and familiar Next-track icon. The text must not run into controls. Touch areas generous, icons crisp conventional and legible. Player stays anchored immediately ABOVE bottom navigation, NOT at top.
+- Stable bottom navigation with three equally spaced standard familiar icons and labels: “Biblioteca”, “Buscar”, “Listas”. Biblioteca selected with restrained rose accent. Include Android bottom gesture safe area. No overlapping controls, no cut-off text.
+
+Output a meticulously crafted realistic app screen that could be handed to a UI designer for implementation. It should feel like a premium music product, not a wireframe, infographic, flat spreadsheet, code-generated placeholder or generic rounded-card dashboard. All Spanish text spelled correctly, readable. No external commentary or watermark.

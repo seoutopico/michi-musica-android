@@ -1,0 +1,22 @@
+name: Error
+description: Describe un fallo reproducible
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Versión de Michi y Android
+      placeholder: "Michi 1.10.0, Android 16, Pixel 7"
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Pasos, resultado esperado y resultado observado
+      description: No adjuntes música, claves ni datos personales. Para vulnerabilidades usa SECURITY.md.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Capturas o registros relevantes
+      description: Revisa y elimina datos personales antes de compartirlos.

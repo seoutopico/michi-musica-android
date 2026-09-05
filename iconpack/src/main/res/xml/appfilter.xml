@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item component="ComponentInfo{com.ainalluna.michimusica/com.ainalluna.michimusica.MainActivity}" drawable="michi_midnight"/>
+</resources>

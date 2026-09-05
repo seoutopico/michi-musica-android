@@ -1,0 +1,18 @@
+// Secret path supplied at runtime. A clone builds unsigned release APKs without secrets.
+def propertiesPath = System.getenv('MICHI_SIGNING_PROPERTIES')
+if (propertiesPath) {
+    def propertiesFile = file(propertiesPath)
+    def secrets = new Properties()
+    propertiesFile.withInputStream { secrets.load(it) }
+    android {
+        signingConfigs {
+            privateRelease {
+                storeFile = new File(propertiesFile.parentFile, secrets.getProperty('storeFile'))
+                storePassword = secrets.getProperty('storePassword')
+                keyAlias = secrets.getProperty('keyAlias')
+                keyPassword = secrets.getProperty('keyPassword')
+            }
+        }
+        buildTypes.release.signingConfig = signingConfigs.privateRelease
+    }
+}
