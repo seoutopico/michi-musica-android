@@ -25,12 +25,15 @@ Capturas de Android con la biblioteca y carátulas reales de Aina-Lluna, publica
 
 ## Qué puedes hacer
 
+La rama actual incorpora Música/Podcasts en **1.11.0**, instalada para validación y con publicación todavía en borrador. La última descarga estable pública es **1.10.1**, que ya permite borrar canciones y aún no incluye esta separación.
+
 - **Biblioteca local:** elegir una carpeta de Android y reproducir MP3, WAV, OGG, M4A, AAC, FLAC y OPUS; buscar por título, artista, álbum o archivo.
+- **Podcasts separados:** selector Música / Podcasts en Biblioteca, clasificación desde las opciones de cada audio y posición guardada por episodio. Los podcasts no entran en las listas ni en Azar de Música.
 - **Borrar canciones:** menú de tres puntos de cada pista → Borrar canción, con confirmación antes de eliminar el archivo de la carpeta.
 - **Escucha continua:** reproducción en segundo plano, controles del sistema, pausa, anterior, siguiente, progreso, Azar sin repeticiones dentro de una ronda y repetir una canción.
 - **Retomar:** última canción y posición guardadas; abrir la app no inicia música automáticamente. El mini reproductor mantiene su lugar sobre la navegación.
 - **Ver vídeos de YouTube:** busca o pega un enlace y pulsa **Ver vídeo** para reproducirlo dentro de la app, con controles y pantalla completa. Algunos vídeos pueden restringir su inserción y ofrecer apertura en YouTube.
-- **Descargar música en MP3:** pulsa **Guardar MP3** en el resultado elegido para descargar el audio a tu carpeta de música y escucharlo después sin conexión. No sobrescribe un archivo existente: utiliza un nombre disponible. Conserva únicamente contenido que tengas derecho a descargar.
+- **Descargar música en MP3:** pulsa **Guardar MP3** en el resultado elegido y elige **Música** o **Podcasts** para descargar el audio a tu carpeta y escucharlo después sin conexión. No sobrescribe un archivo existente: utiliza un nombre disponible. Conserva únicamente contenido que tengas derecho a descargar.
 - **Listas Markdown:** importar y recordar selecciones que referencian tu música, sin duplicar audios.
 - **Letras:** buscar en LRCLIB, revisar antes de guardar, leer sin conexión, seguir el verso sincronizado y tocarlo para ir a ese momento.
 - **Rosa y Medianoche:** dos apariencias, marca felina, filas abiertas y separación clara entre contenido y menú.

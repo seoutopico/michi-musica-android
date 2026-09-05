@@ -1,5 +1,17 @@
 # Historial de cambios
 
+## 2026-09-05 — Michi Música 1.11.0: Música y Podcasts
+
+- Aina aprueba la propuesta de separar podcasts. Selector Música/Podcasts en Biblioteca, sin añadir destinos inferiores ni cambiar el lugar del mini reproductor. Filas de episodios con estado Sin empezar/Continuar/Escuchado.
+- Guardar MP3 pide Música o Podcasts y recuerda la última elección confirmada. Clasificación de la URI exacta creada, sin mover archivos ni editar sus etiquetas. Opciones Marcar como podcast / Marcar como música en los audios existentes.
+- Las listas resuelven todos los archivos y después omiten podcasts sin contarlos como ausentes. Música, su búsqueda y Azar quedan separados de los episodios. Navegar entre secciones o listas no reemplaza la cola activa; comenzar un episodio crea su cola y desactiva Azar/Repetir.
+- Posición por episodio en preferencias locales, guardada desde PlaybackService cada cinco segundos, al pausar y cambiar de audio. Siguiente/Anterior y avance automático recuperan posiciones. Episodios finalizados comienzan desde cero al volver a seleccionarlos. Borrar un audio limpia su clasificación/progreso.
+- Si se reclasifica el audio actual, continúa con una cola de un solo audio para no mezclar categorías. La clasificación se conserva al actualizar y volver a la misma URI; desinstalar o borrar datos la elimina. Se mantiene lectura directa de carpeta, sin recursión. Especificación en `BORRADO_Y_PODCASTS.md`.
+- Pruebas: 49 debug y 49 release sin fallos. Seis nuevas pruebas del catálogo cubren persistencia independiente, reclasificación reversible, borrado aislado, destino de descarga y límites de reanudación.
+- `test lint assembleDebug assembleRelease --offline`, JDK 21: BUILD SUCCESSFUL en 6m 26s tras declarar el opt-in de `PositionInfo.mediaItem` exigido por lint. App: 0 errores/16 advertencias; iconpack: 0 errores/3 advertencias. Firma release v2 RSA 3072 verificada, mismo certificado oficial.
+- Instalada debug 1.11.0 (código 20) final en Pixel conservando datos. La jerarquía nativa muestra Biblioteca con Música/Podcasts, las 110 canciones originales más dos WAV de prueba y mini reproductor pausado. El dispositivo se bloqueó antes de reclasificar o probar reproducción: esos recorridos NO están validados aún. Se retiraron únicamente los dos WAV propios y se restauró el ajuste de pantalla original. No se borraron audios del usuario.
+- APK firmada preparada `Michi-Musica-1.11.0-arm64.apk`, SHA-256 `681a8d164752c2572426d61f4bb87295e6ea7c25eccdf13b335b489f195525a6`. Publicación preparada como borrador hasta completar la comprobación nativa; última release pública estable: 1.10.1.
+
 ## 2026-09-05 — Michi Música 1.10.1: borrar canciones
 
 - Menú de tres puntos en las filas de Biblioteca, también dentro de una lista importada. Duración en la línea secundaria para reservar espacio al menú.

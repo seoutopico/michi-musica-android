@@ -12,11 +12,11 @@ Tras éxito se retiran todas sus referencias de la cola y la biblioteca y se eli
 
 Fuentes de implementación: [DocumentsContract](https://developer.android.com/reference/android/provider/DocumentsContract) y [modificar colas Media3](https://developer.android.com/media/media3/exoplayer/playlists). Pruebas y resultados efectivos: historial y backlog.
 
-## Podcasts — propuesta, todavía sin implementar
+## Podcasts — aprobados por Aina, implementación 1.11.0
 
 Aina escucha podcasts de YouTube y no quiere encontrarlos en la música normal. Una playlist llamada Podcasts no basta: los episodios seguirían apareciendo en la biblioteca completa y en Azar.
 
-Propuesta de producto:
+Comportamiento:
 
 1. Conservar Biblioteca · Buscar · Listas en la navegación inferior. Dentro de Biblioteca, un selector sencillo **Música / Podcasts**. La app abre en Música; cambiar de sección no inicia ni interrumpe por sí solo la reproducción.
 2. En Guardar MP3, elegir **Guardar en Música** o **Guardar en Podcasts**. Mantener la última elección visible; no deducir la categoría por duración, título o canal.
@@ -24,4 +24,14 @@ Propuesta de producto:
 4. Música, su búsqueda, sus listas y Azar excluyen los podcasts. Podcasts construye su propia cola al iniciar un episodio. El mini reproductor mantiene la escucha en curso aunque se consulte la otra sección.
 5. Guardar la posición de cada episodio para continuar donde se dejó. Más adelante, valorar velocidad y saltos de 15 segundos como controles propios de podcasts.
 
-Antes de implementar: concretar restauración de la clasificación si se cambia de carpeta o se reinstala, comportamiento de listas importadas que mezclen ambos tipos y estados de episodios nuevos/en curso/finalizados. Los audios todavía sin clasificar permanecen en Música para no ocultar contenido existente. La propuesta no añade suscripciones RSS ni guarda vídeos en esta entrega.
+La clasificación y las posiciones viven en las preferencias privadas de Michi, identificadas por la URI del audio. Se conservan al actualizar la APK y al cambiar de carpeta y volver a la misma URI. Borrar los datos de la app o desinstalar elimina este catálogo; los archivos de audio permanecen. Renombrar o mover un archivo puede cambiar su URI y requerir clasificarlo otra vez. No se usa copia automática de Android. Los audios sin clasificar permanecen en Música.
+
+Las listas Markdown se resuelven contra todos los archivos y después se omiten los podcasts, sin contarlos como archivos ausentes. Una lista que solo contenga podcasts no aparece en la colección de música. No se modifica el Markdown. Se conserva el límite existente: lectura de audios directamente dentro de la carpeta elegida, sin recorrer subcarpetas.
+
+Los episodios muestran Sin empezar, Continuar con el tiempo guardado o Escuchado al alcanzar su duración. Tocar un episodio finalizado lo inicia desde cero. La posición se guarda cada cinco segundos en el servicio, al pausar y al cambiar de audio; una terminación abrupta del proceso puede perder los últimos segundos. Siguiente/Anterior del sistema y el avance automático también recuperan la posición de cada episodio.
+
+Al iniciar un episodio se crea una cola de podcasts en el orden de Biblioteca y se desactivan Azar y Repetir. Cambiar la sección o consultar una lista no sustituye la cola en curso. Si se reclasifica el audio que está sonando, continúa y su cola se reduce a ese audio para evitar saltar después a la categoría anterior. Reclasificar otro audio lo retira de la cola actual si estaba incluido.
+
+Guardar MP3 abre un diálogo con Música y Podcasts y recuerda la última elección confirmada. La clasificación se asigna a la URI exacta creada por Android, inmediatamente después de copiar el archivo, incluso si el proveedor cambia el nombre. No hay inferencia por título, duración o canal. Esta entrega no añade suscripciones RSS, velocidad de reproducción ni guardado de vídeos.
+
+Validación y límites efectivos: `HISTORIAL_CAMBIOS.md` y MMA-036/037 del backlog.

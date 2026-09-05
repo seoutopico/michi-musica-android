@@ -51,6 +51,9 @@ import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.ainalluna.michimusica.library.MarkdownPlaylist
 import com.ainalluna.michimusica.library.MusicFolderReader
+import com.ainalluna.michimusica.library.AudioCatalog
+import com.ainalluna.michimusica.library.AudioSection
+import com.ainalluna.michimusica.library.episodeResumePosition
 import com.ainalluna.michimusica.library.Song
 import com.ainalluna.michimusica.library.deleteSongFile
 import com.ainalluna.michimusica.library.removedSongIndices
@@ -126,6 +129,16 @@ private fun MichiApp() {
             else SystemBarStyle.light(android.graphics.Color.TRANSPARENT, android.graphics.Color.TRANSPARENT)
         (context as? ComponentActivity)?.enableEdgeToEdge(statusBarStyle = style, navigationBarStyle = style)
     }
+    val catalog = remember { AudioCatalog(context) }
+    var podcastIds by remember { mutableStateOf(catalog.podcastIds()) }
+    var section by rememberSaveable { mutableStateOf(AudioSection.MUSIC) }
+    DisposableEffect(catalog) {
+        val listener = android.content.SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+            if (key == "podcasts") podcastIds = catalog.podcastIds()
+        }
+        catalog.preferences.registerOnSharedPreferenceChangeListener(listener)
+        onDispose { catalog.preferences.unregisterOnSharedPreferenceChangeListener(listener) }
+    }
     val library = remember { mutableStateListOf<Song>() }
     val songs = remember { mutableStateListOf<Song>() }
     var folderUri by remember { mutableStateOf(preferences.getString(PREF_FOLDER, null)?.toUri()) }
@@ -138,8 +151,7 @@ private fun MichiApp() {
     var pendingResume by remember { mutableStateOf<PendingRestore?>(null) }
     var restoreRevision by remember { mutableIntStateOf(0) }
     var loadedSourceUri by remember { mutableStateOf<Uri?>(null) }
-    var controllerQueueRevision by remember { mutableIntStateOf(0) }
-    var loading by remember { mutableStateOf(false) }
+        var loading by remember { mutableStateOf(false) }
     var libraryLoaded by remember { mutableStateOf(false) }
     var notice by remember { mutableStateOf<LibraryNotice?>(null) }
     var controller by remember { mutableStateOf<MediaController?>(null) }
@@ -173,14 +185,6 @@ private fun MichiApp() {
         onDispose { controller = null; MediaController.releaseFuture(future) }
     }
 
-    DisposableEffect(controller) {
-        val listener = object : Player.Listener {
-            override fun onTimelineChanged(timeline: Timeline, reason: Int) { controllerQueueRevision++ }
-        }
-        controller?.addListener(listener)
-        onDispose { controller?.removeListener(listener) }
-    }
-
     LaunchedEffect(folderUri, folderRevision) {
         val uri = folderUri ?: return@LaunchedEffect
         loading = true
@@ -191,7 +195,7 @@ private fun MichiApp() {
                 playlistUri = null; playlistName = null; pendingResume = null
                 preferences.edit { remove(PREF_PLAYLIST) }
             }
-            if (playlistUri == null) { songs.clear(); songs.addAll(found); loadedSourceUri = null }
+            if (playlistUri == null) { songs.clear(); songs.addAll(found.filter { (it.id in podcastIds) == (section == AudioSection.PODCASTS) }); loadedSourceUri = null }
             libraryLoaded = true
             val previousId = preferences.getString(PREF_LAST_SONG, null)
             if (previousId != null && found.none { it.id == previousId }) {
@@ -205,22 +209,27 @@ private fun MichiApp() {
         loading = false
     }
 
-    LaunchedEffect(library.toList(), playlistUri, playlistRevision) {
+    LaunchedEffect(library.toList(), playlistUri, playlistRevision, section, podcastIds) {
+        if (section == AudioSection.PODCASTS || playlistUri == null) {
+            songs.clear(); songs.addAll(library.filter { (it.id in podcastIds) == (section == AudioSection.PODCASTS) })
+            loadedSourceUri = if (section == AudioSection.PODCASTS) null else playlistUri
+            return@LaunchedEffect
+        }
         val uri = playlistUri ?: return@LaunchedEffect
         if (library.isEmpty()) return@LaunchedEffect
         runCatching {
             val text = context.contentResolver.openInputStream(uri)?.bufferedReader()?.use { it.readBoundedText(1_000_000) } ?: error("No se pudo abrir")
-            require(text.length <= 300_000); MarkdownPlaylist.resolve(text, library)
+            require(text.length <= 300_000); MarkdownPlaylist.resolve(text, library).let { it.copy(songs = it.songs.filterNot { song -> song.id in podcastIds }) }
         }.onSuccess { result ->
             if (result.entries.isEmpty() || result.songs.isEmpty()) {
-                songs.clear(); songs.addAll(library); playlistUri = null; playlistName = null; preferences.edit { remove(PREF_PLAYLIST) }
+                songs.clear(); songs.addAll(library.filterNot { it.id in podcastIds }); playlistUri = null; playlistName = null; preferences.edit { remove(PREF_PLAYLIST) }
                 loadedSourceUri = null
                 pendingResume = pendingResume?.copy(sourceUri = null)
                 notice = LibraryNotice("La lista no contiene canciones disponibles. Se muestra toda tu música.")
             } else {
                 val restoring = pendingResume
                 if (restoring != null && result.songs.none { it.id == restoring.songId }) {
-                    songs.clear(); songs.addAll(library); playlistUri = null; playlistName = null; loadedSourceUri = null
+                    songs.clear(); songs.addAll(library.filterNot { it.id in podcastIds }); playlistUri = null; playlistName = null; loadedSourceUri = null
                     preferences.edit { remove(PREF_PLAYLIST) }
                     pendingResume = restoring.copy(sourceUri = null)
                     notice = LibraryNotice("La canción ya no está en esa lista. Puedes retomarla desde Biblioteca.")
@@ -229,14 +238,14 @@ private fun MichiApp() {
                 }
             }
         }.onFailure {
-            songs.clear(); songs.addAll(library); playlistUri = null; playlistName = null; preferences.edit { remove(PREF_PLAYLIST) }
+            songs.clear(); songs.addAll(library.filterNot { it.id in podcastIds }); playlistUri = null; playlistName = null; preferences.edit { remove(PREF_PLAYLIST) }
             loadedSourceUri = null
             pendingResume = pendingResume?.copy(sourceUri = null)
             notice = LibraryNotice("No pude abrir esa lista. Se muestra toda tu música.")
         }
     }
 
-    LaunchedEffect(library.toList(), playlistRevision) {
+    LaunchedEffect(library.toList(), playlistRevision, podcastIds) {
         if (library.isEmpty()) { savedPlaylists.clear(); listsLoading = false; return@LaunchedEffect }
         listsLoading = true
         val snapshot = library.toList()
@@ -247,7 +256,7 @@ private fun MichiApp() {
             runCatching {
                 val uri = raw.toUri()
                 val text = context.contentResolver.openInputStream(uri)?.bufferedReader()?.use { it.readBoundedText(1_000_000) } ?: return@runCatching null
-                val result = MarkdownPlaylist.resolve(text.take(300_000), snapshot)
+                val result = MarkdownPlaylist.resolve(text.take(300_000), snapshot).let { it.copy(songs = it.songs.filterNot { song -> song.id in podcastIds }) }
                 if (result.songs.isEmpty()) return@runCatching null
                 SavedPlaylist(
                     uri = uri,
@@ -262,41 +271,39 @@ private fun MichiApp() {
         } finally { listsLoading = false }
     }
 
-    LaunchedEffect(controller, songs.toList(), loading, libraryLoaded, loadedSourceUri, playlistUri) {
-        if (!canSynchronizeLibrary(libraryLoaded, loading, loadedSourceUri == playlistUri)) return@LaunchedEffect
+    // Browsing never replaces the service queue. Only explicit playback does.
+    LaunchedEffect(controller, library.toList(), loading, libraryLoaded) {
         val player = controller ?: return@LaunchedEffect
-        val ids = songs.map(Song::id)
-        val current = List(player.mediaItemCount) { player.getMediaItemAt(it).mediaId }
-        if (!playlistNeedsUpdate(current, ids)) return@LaunchedEffect
-        val retained = ids.indexOf(player.currentMediaItem?.mediaId)
-        val position = if (retained >= 0) player.currentPosition.coerceAtLeast(0) else 0
-        val play = player.playWhenReady
-        if (songs.isEmpty()) player.clearMediaItems() else {
-            player.setMediaItems(songs.map(Song::asMediaItem), retained.coerceAtLeast(0), position); player.prepare(); player.playWhenReady = play
+        if (!libraryLoaded || loading) return@LaunchedEffect
+        val available = library.map(Song::id).toSet()
+        for (index in player.mediaItemCount - 1 downTo 0) {
+            if (player.getMediaItemAt(index).mediaId !in available) {
+                if (index == player.currentMediaItemIndex) player.pause()
+                player.removeMediaItem(index)
+            }
         }
     }
-
-
-    LaunchedEffect(controller, songs.toList(), pendingResume, loadedSourceUri, controllerQueueRevision) {
+    LaunchedEffect(controller, pendingResume, loadedSourceUri, songs.toList(), section) {
         val request = pendingResume ?: return@LaunchedEffect
         val player = controller ?: return@LaunchedEffect
-        if (!restoreQueueReady(request.sourceUri == loadedSourceUri, songs.map(Song::id), List(player.mediaItemCount) { player.getMediaItemAt(it).mediaId })) return@LaunchedEffect
+        if (request.sourceUri != loadedSourceUri) return@LaunchedEffect
         val index = songs.indexOfFirst { it.id == request.songId }
-        if (index >= 0) {
-            player.seekTo(index, request.positionMs.coerceAtLeast(0))
-            if (request.advance) player.advanceTrack()
-            player.playWhenReady = request.play
-            restoreRevision++
-            pendingResume = null
-        }
+        if (index < 0) return@LaunchedEffect
+        player.setMediaItems(songs.map { it.asMediaItem(if (section == AudioSection.PODCASTS) "Podcasts" else playlistName ?: "Música", request.sourceUri) }, index, request.positionMs)
+        if (section == AudioSection.PODCASTS) { player.shuffleModeEnabled = false; player.repeatMode = Player.REPEAT_MODE_OFF }
+        player.prepare()
+        if (request.advance) player.advanceTrack()
+        player.playWhenReady = request.play
+        restoreRevision++
+        pendingResume = null
     }
 
-    val resume = remember(library.toList(), preferences.getString(PREF_LAST_SONG, null), preferences.getLong(PREF_LAST_POSITION, 0L)) {
+    val resume = remember(library.toList(), podcastIds, preferences.getString(PREF_LAST_SONG, null), preferences.getLong(PREF_LAST_POSITION, 0L)) {
         val songId = preferences.getString(PREF_LAST_SONG, null)
         val position = preferences.getLong(PREF_LAST_POSITION, 0L)
         val song = library.firstOrNull { it.id == songId }
         if (song != null) {
-            ResumeListening(song, resumePosition(position, song.durationMs), preferences.getString(PREF_LAST_PLAYLIST, null)?.toUri())
+            ResumeListening(song, resumePosition(if (song.id in podcastIds) catalog.position(song.id) else position, song.durationMs), if (song.id in podcastIds) null else preferences.getString(PREF_LAST_PLAYLIST, null)?.toUri())
         } else null
     }
 
@@ -305,23 +312,40 @@ private fun MichiApp() {
             songs, library, savedPlaylists, controller, folderUri, playlistUri, skin, playlistName, resume,
             loading = loading, listsLoading = listsLoading, notice = notice, artworkRevision = folderRevision, restoreRevision = restoreRevision,
             onDismissNotice = { notice = null },
+            section = section, onSection = { section = it }, podcastIds = podcastIds,
+            onClassify = { target ->
+                val next = if (target.id in podcastIds) AudioSection.MUSIC else AudioSection.PODCASTS
+                // Moving the current audio keeps it playing, but removes the old category's queue.
+                controller?.let { player ->
+                    if (player.currentMediaItem?.mediaId == target.id) {
+                        if (player.mediaItemCount > player.currentMediaItemIndex + 1) player.removeMediaItems(player.currentMediaItemIndex + 1, player.mediaItemCount)
+                        if (player.currentMediaItemIndex > 0) player.removeMediaItems(0, player.currentMediaItemIndex)
+                        player.shuffleModeEnabled = false
+                    } else removedSongIndices(List(player.mediaItemCount) { player.getMediaItemAt(it).mediaId }, target.id).forEach { player.removeMediaItem(it) }
+                }
+                catalog.classify(target.id, next)
+                if (next == AudioSection.PODCASTS && controller?.currentMediaItem?.mediaId == target.id) catalog.savePosition(target.id, controller!!.currentPosition)
+            },
             onDeleteSong = { songToDelete = it; deletionError = null },
             onChooseFolder = { folderPicker.launch(folderUri) },
             onChoosePlaylist = { playlistPicker.launch(arrayOf("text/markdown", "text/plain")) },
             onAllMusic = {
+                section = AudioSection.MUSIC
                 playlistUri = null; playlistName = null; preferences.edit { remove(PREF_PLAYLIST) }
                 loadedSourceUri = null
-                songs.clear(); songs.addAll(library)
+                songs.clear(); songs.addAll(library.filterNot { it.id in podcastIds })
             },
             onSelectPlaylist = { uri ->
+                section = AudioSection.MUSIC
                 playlistUri = uri; playlistRevision++; preferences.edit { putString(PREF_PLAYLIST, uri.toString()) }
             },
             onResume = { saved, play, advance ->
+                section = if (saved.song.id in podcastIds) AudioSection.PODCASTS else AudioSection.MUSIC
                 pendingResume = PendingRestore(saved.song.id, saved.positionMs, play, advance, saved.sourceUri)
                 if (saved.sourceUri == null) {
                     playlistUri = null; playlistName = null; preferences.edit { remove(PREF_PLAYLIST) }
                     loadedSourceUri = null
-                    songs.clear(); songs.addAll(library)
+                    songs.clear(); songs.addAll(library.filterNot { it.id in podcastIds })
                 } else {
                     playlistUri = saved.sourceUri; playlistRevision++; preferences.edit { putString(PREF_PLAYLIST, saved.sourceUri.toString()) }
                 }
@@ -333,7 +357,7 @@ private fun MichiApp() {
             },
         )
         songToDelete?.let { target ->
-            SongDeletionDialog(target, deletingSong, deletionError,
+            SongDeletionDialog(target, deletingSong, deletionError, podcast = target.id in podcastIds,
                 onDismiss = { if (!deletingSong) { songToDelete = null; deletionError = null } },
                 onConfirm = {
                     val source = folderUri
@@ -355,6 +379,7 @@ private fun MichiApp() {
                                     if (preferences.getString(PREF_LAST_SONG, null) == target.id) preferences.edit {
                                         remove(PREF_LAST_SONG); remove(PREF_LAST_POSITION); remove(PREF_LAST_PLAYLIST)
                                     }
+                                    catalog.forget(target.id)
                                     library.removeAll { it.id == target.id }; songs.removeAll { it.id == target.id }
                                     playlistRevision++
                                     songToDelete = null
@@ -380,6 +405,7 @@ private fun MichiRoot(
     onDownloaded: (String) -> Unit, onSkinChange: (MichiSkin) -> Unit,
     loading: Boolean, listsLoading: Boolean, notice: LibraryNotice?, artworkRevision: Int, restoreRevision: Int, onDismissNotice: () -> Unit,
     onDeleteSong: (Song) -> Unit,
+    section: AudioSection, onSection: (AudioSection) -> Unit, podcastIds: Set<String>, onClassify: (Song) -> Unit,
 ) {
     var destination by rememberSaveable { mutableStateOf(Destination.MUSIC) }
     var nowPlaying by rememberSaveable { mutableStateOf(false) }
@@ -409,7 +435,8 @@ private fun MichiRoot(
             preferences.edit {
                 putString(PREF_LAST_SONG, song.id)
                 putLong(PREF_LAST_POSITION, player.currentPosition.coerceAtLeast(0))
-                if (playlistUri == null) remove(PREF_LAST_PLAYLIST) else putString(PREF_LAST_PLAYLIST, playlistUri.toString())
+                val source = player.currentMediaItem?.mediaMetadata?.extras?.getString("playlist_uri")
+                if (source == null) remove(PREF_LAST_PLAYLIST) else putString(PREF_LAST_PLAYLIST, source)
             }
         }
     }
@@ -422,7 +449,7 @@ private fun MichiRoot(
             Column(Modifier.fillMaxWidth()) {
                 if (visibleSong != null && (!nowPlaying || lyricsOpen) && notice?.needsFolder != true) HomeMiniPlayer(
                     visibleSong, song != null && state.playing, visiblePosition, if (song != null && state.duration > 0) state.duration else visibleSong.durationMs,
-                    ready = player != null && !loading, nextEnabled = if (song != null) player?.canAdvanceTrack() == true else songs.indexOfFirst { it.id == visibleSong.id }.let { it >= 0 && songs.size > 1 && (state.shuffle || it < songs.lastIndex) },
+                    ready = player != null && !loading, nextEnabled = if (song != null) player?.canAdvanceTrack() == true else library.filter { (it.id in podcastIds) == (visibleSong.id in podcastIds) }.let { queue -> queue.indexOfFirst { it.id == visibleSong.id }.let { it >= 0 && queue.size > 1 && (state.shuffle || it < queue.lastIndex) } },
                     artworkRevision = artworkRevision,
                     onToggle = { if (song == null && resume != null) onResume(resume, true, false) else if (player?.isPlaying == true) player.pause() else player?.play() },
                     onNext = { if (song == null && resume != null) onResume(resume, false, true) else player?.advanceTrack() },
@@ -439,13 +466,13 @@ private fun MichiRoot(
         Box(Modifier.fillMaxSize().padding(padding)) {
             when {
                 lyricsOpen && song != null -> LyricsScreen(song, folderUri, state.position, onBack = { lyricsOpen = false }, onSeek = { player?.seekTo(it) }, onChooseFolder = onChooseFolder)
-                nowPlaying && visibleSong != null -> NowPlayingScreen(visibleSong, if (song != null) state else state.copy(position = visiblePosition, duration = visibleSong.durationMs), if (song != null) player else null, { nowPlaying = false }, { lyricsOpen = true }, sourceName = playlistName, artworkRevision = artworkRevision)
+                nowPlaying && visibleSong != null -> NowPlayingScreen(visibleSong, if (song != null) state else state.copy(position = visiblePosition, duration = visibleSong.durationMs), if (song != null) player else null, { nowPlaying = false }, { lyricsOpen = true }, sourceName = if (visibleSong.id in podcastIds) "Podcasts" else player?.currentMediaItem?.mediaMetadata?.extras?.getString("source_name") ?: "Música", artworkRevision = artworkRevision)
                 else -> when (destination) {
-                    Destination.MUSIC -> LibraryScreen(songs, state, player, skin, playlistName, resume, { state = state.copy(engaged = true) }, onChooseFolder, onRefresh, onSkinChange,
-                        loading, notice, artworkRevision, onAllMusic, onDismissNotice, onDeleteSong)
+                    Destination.MUSIC -> LibraryScreen(songs, state, player, skin, if (section == AudioSection.PODCASTS) null else playlistName, resume, { state = state.copy(engaged = true) }, onChooseFolder, onRefresh, onSkinChange,
+                        loading, notice, artworkRevision, onAllMusic, onDismissNotice, onDeleteSong, section, onSection, onClassify, playlistUri)
                     Destination.SEARCH -> YouTubeScreen(searchController, onChooseFolder)
                     Destination.PLAYLISTS -> PlaylistsScreen(
-                        library.size, savedPlaylists, playlistUri,
+                        library.count { it.id !in podcastIds }, savedPlaylists, playlistUri,
                         onAllMusic = { onAllMusic(); destination = Destination.MUSIC },
                         onChoosePlaylist = onChoosePlaylist,
                         onSelectPlaylist = { onSelectPlaylist(it); destination = Destination.MUSIC },
@@ -493,7 +520,11 @@ private fun LibraryScreen(
     loading: Boolean = false, notice: LibraryNotice? = null, artworkRevision: Int = 0,
     onAllMusic: () -> Unit = {}, onDismissNotice: () -> Unit = {},
     onDeleteSong: ((Song) -> Unit)? = null,
+    section: AudioSection = AudioSection.MUSIC, onSection: (AudioSection) -> Unit = {},
+    onClassify: (Song) -> Unit = {}, playlistUri: Uri? = null,
 ) {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val catalog = remember { AudioCatalog(context) }
     var settings by remember { mutableStateOf(false) }
     LibraryHome(
         songs = songs,
@@ -502,10 +533,19 @@ private fun LibraryScreen(
         loading = loading, notice = notice, sourceName = playlistName, artworkRevision = artworkRevision,
         onSelect = { song ->
             val index = songs.indexOfFirst { it.id == song.id }
-            if (index >= 0 && player != null) { onEngage(); player.seekToDefaultPosition(index); player.play() }
+            if (index >= 0 && player != null) {
+                onEngage()
+                val podcast = section == AudioSection.PODCASTS
+                val position = if (podcast) episodeResumePosition(if (player.currentMediaItem?.mediaId == song.id) player.currentPosition else catalog.position(song.id), song.durationMs) else 0L
+                if (podcast) { player.shuffleModeEnabled = false; player.repeatMode = Player.REPEAT_MODE_OFF }
+                player.setMediaItems(songs.map { it.asMediaItem(if (podcast) "Podcasts" else playlistName ?: "Música", if (podcast) null else playlistUri) }, index, position)
+                player.prepare(); player.play()
+            }
         },
         onShuffle = {
             if (songs.isNotEmpty() && player != null) {
+                player.setMediaItems(songs.map { it.asMediaItem(playlistName ?: "Música", playlistUri) })
+                player.prepare()
                 player.shuffleModeEnabled = true
                 val index = player.currentTimeline.getFirstWindowIndex(true)
                 if (index >= 0) { onEngage(); player.seekToDefaultPosition(index); player.play() }
@@ -513,7 +553,8 @@ private fun LibraryScreen(
         },
         onSettings = { settings = true }, onChooseFolder = onChooseFolder,
         onAllMusic = onAllMusic, onDismissNotice = onDismissNotice,
-        onDelete = onDeleteSong,
+        onDelete = onDeleteSong, section = section, onSection = onSection, onClassify = onClassify,
+        episodePosition = { catalog.position(it.id) },
     )
     if (settings) AlertDialog({ settings = false }, title = { Text("Michi Música") }, text = { Column {
         Text("Apariencia", style = MaterialTheme.typography.titleMedium)
@@ -577,7 +618,9 @@ internal fun resumePosition(positionMs: Long, durationMs: Long): Long = when {
 internal fun restoreQueueReady(sourceMatches: Boolean, requestedIds: List<String>, playerIds: List<String>): Boolean =
     sourceMatches && requestedIds.isNotEmpty() && requestedIds == playerIds
 internal fun canSynchronizeLibrary(loaded: Boolean, loading: Boolean, sourceMatches: Boolean): Boolean = loaded && !loading && sourceMatches
-private fun Song.asMediaItem() = MediaItem.Builder().setMediaId(id).setUri(uri).setMediaMetadata(MediaMetadata.Builder().setTitle(title).setArtist(artist).setAlbumTitle(album).build()).build()
+private fun Song.asMediaItem(sourceName: String = "Música", playlistUri: Uri? = null) = MediaItem.Builder().setMediaId(id).setUri(uri)
+    .setMediaMetadata(MediaMetadata.Builder().setTitle(title).setArtist(artist).setAlbumTitle(album)
+        .setExtras(Bundle().apply { putLong("duration_ms", durationMs); putString("source_name", sourceName); putString("playlist_uri", playlistUri?.toString()) }).build()).build()
 internal fun formatTime(milliseconds: Long): String { val seconds = milliseconds.coerceAtLeast(0)/1000; return "%d:%02d".format(seconds/60, seconds%60) }
 internal fun searchable(value: String): String = Normalizer.normalize(value, Normalizer.Form.NFD).replace(Regex("\\p{M}+"), "").lowercase().trim()
 

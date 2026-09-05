@@ -11,10 +11,10 @@ import androidx.compose.ui.unit.dp
 import com.ainalluna.michimusica.library.Song
 
 @Composable
-internal fun SongDeletionDialog(song: Song, busy: Boolean, error: String?, onDismiss: () -> Unit, onConfirm: () -> Unit) {
+internal fun SongDeletionDialog(song: Song, busy: Boolean, error: String?, onDismiss: () -> Unit, onConfirm: () -> Unit, podcast: Boolean = false) {
     AlertDialog(
         onDismissRequest = { if (!busy) onDismiss() },
-        title = { Text("¿Borrar esta canción?") },
+        title = { Text(if (podcast) "¿Borrar este episodio?" else "¿Borrar esta canción?") },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Text(song.title, style = MaterialTheme.typography.titleMedium)
@@ -28,7 +28,7 @@ internal fun SongDeletionDialog(song: Song, busy: Boolean, error: String?, onDis
         },
         confirmButton = {
             TextButton(onConfirm, enabled = !busy, colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)) {
-                Text(if (error == null) "Borrar canción" else "Reintentar")
+                Text(if (error != null) "Reintentar" else if (podcast) "Borrar episodio" else "Borrar canción")
             }
         },
         dismissButton = { TextButton(onDismiss, enabled = !busy) { Text("Cancelar") } },

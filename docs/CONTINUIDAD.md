@@ -52,6 +52,7 @@ Rutas relativas a `app/src/main/java/com/ainalluna/michimusica/`:
 | Carátulas locales | `ui/SongArtwork.kt` |
 | Colección de listas y reproductor completo | `ui/ListsHome.kt`, `ui/PlayerHome.kt` |
 | Reproducción de fondo y avance manual | `playback/PlaybackService.kt`, `playback/NextTrack.kt` |
+| Clasificación local y posición por episodio | `library/AudioCatalog.kt`; guardado de fondo en `playback/PlaybackService.kt` |
 | Lectura de biblioteca e importación Markdown | `library/MusicFolderReader.kt`, `library/MarkdownPlaylist.kt` |
 | Buscar y sus operaciones | `youtube/SearchContent.kt`, `youtube/YouTubeDialog.kt`, servicios de `youtube/` |
 | Vídeo integrado, identidad y pantalla completa | `youtube/YouTubeVideoPlayer.kt`, `youtube/YouTubeEmbed.kt`; orientación/tamaño en `AndroidManifest.xml` |
@@ -62,11 +63,19 @@ Previews en `app/src/debug/java/com/ainalluna/michimusica/ui/`: abrir por nombre
 
 ## Trabajo posterior: borrado y podcasts
 
-Aina pide borrar canciones y plantea separar podcasts de YouTube de su música. Borrado implementado en 1.10.1 (código 19), instalado en Pixel y validado con archivos de prueba; la separación de podcasts es una propuesta pendiente, no una función disponible. Especificación y decisiones en [Borrado y podcasts](BORRADO_Y_PODCASTS.md). No borrar audios reales durante pruebas; usar archivos creados para la validación.
+Aina pide borrar canciones y plantea separar podcasts de YouTube de su música. Borrado implementado en 1.10.1 (código 19), instalado en Pixel y validado con archivos de prueba; Aina aprueba después la separación de podcasts, implementada en 1.11.0 (código 20). Música/Podcasts comparte Biblioteca y mantiene las colas separadas, con clasificación local y posición por episodio. Especificación y decisiones en [Borrado y podcasts](BORRADO_Y_PODCASTS.md). No borrar audios reales durante pruebas; usar archivos creados para la validación.
+
+## Podcasts 1.11: reglas de continuidad
+
+La sección consultada y la cola de reproducción son independientes. No reintroducir sincronización automática de `songs` hacia Media3 al navegar. La cola se crea al tocar un audio, Azar o Continuar; el servicio conserva su cola mientras se consultan otras secciones/listas. `AudioCatalog` usa URI como clave, sin mover audios ni modificar etiquetas. Las listas se resuelven antes de filtrar podcasts para no marcarlos falsamente como archivos ausentes. Posiciones periódicas y transiciones se guardan en el servicio; la actividad no es su único propietario. Leer `BORRADO_Y_PODCASTS.md` para los estados y límites de persistencia.
 
 ## Última entrega y punto exacto de reanudación
 
-Actualización de borrado: **1.10.1**, [release](https://github.com/seoutopico/michi-musica-android/releases/tag/v1.10.1). 43 pruebas por variante, lint sin errores y firma release verificada. El Pixel conserva la firma debug para mantener sus datos. Podcasts sigue siendo una propuesta.
+**1.11.0, código 20:** código implementado, 49 pruebas por variante y lint sin errores, APK oficial firmada y debug final instalada conservando datos. Publicación 1.11.0 preparada en borrador; 1.10.1 sigue siendo la última estable pública. El Pixel volvió a bloquearse durante la revisión: solo se observó Biblioteca con el selector y el mini en pausa. Falta probar reclasificación reversible, colas al navegar, posición independiente de dos episodios, reinicio y destino de descarga. No dar estas comprobaciones por hechas.
+
+Al recibir «listo» o desbloqueo, crear otra vez dos audios de prueba (los `Michi prueba podcast A/B 621b.wav` ya se retiraron; las copias locales están en `tmp/device-review/`), comprobar los recorridos anteriores y limpiar solo esos archivos. El ajuste `stay_on_while_plugged_in` se restauró a su valor original. Si hace falta mantener pantalla encendida, considerar que ADB indica alimentación AC, no USB: guardar/restaurar valor y usar `svc power stayon true` temporalmente. No sortear el bloqueo seguro. Actualizar capturas/documentación y publicar el borrador tras las comprobaciones.
+
+Actualización de borrado: **1.10.1**, [release](https://github.com/seoutopico/michi-musica-android/releases/tag/v1.10.1). 43 pruebas por variante, lint sin errores y firma release verificada. El Pixel conserva la firma debug para mantener sus datos. Esta entrega queda sucedida por Podcasts 1.11.0; consultar la entrada más reciente del historial para validación y publicación.
 
 **1.10.0, código 18**, publicada: [repositorio público](https://github.com/seoutopico/michi-musica-android) y [APK firmadas de la release](https://github.com/seoutopico/michi-musica-android/releases/tag/v1.10.0), nuevo icono adaptativo y módulo `iconpack` para Niagara. Aina autoriza crear el repositorio público, distribuir la APK, explicar el uso de IA y facilitar contribuciones. Leer README, CONTRIBUTING, PRIVACY, SECURITY y THIRD_PARTY antes de publicar o cambiar servicios externos. CI aún no está activado: plantilla y explicación en `docs/ci/`; no hay una ejecución remota aprobada. Los informes privados de vulnerabilidades de GitHub sí están habilitados.
 

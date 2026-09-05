@@ -2,6 +2,8 @@ package com.ainalluna.michimusica.youtube
 
 import android.content.Context
 import android.net.Uri
+import com.ainalluna.michimusica.library.AudioCatalog
+import com.ainalluna.michimusica.library.AudioSection
 import androidx.documentfile.provider.DocumentFile
 import com.yausername.ffmpeg.FFmpeg
 import com.yausername.youtubedl_android.YoutubeDL
@@ -25,6 +27,7 @@ object YouTubeDownloader {
         context: Context,
         folderUri: Uri,
         videoId: String,
+        section: AudioSection = AudioSection.MUSIC,
         onProgress: (Int) -> Unit,
     ): String = withContext(Dispatchers.IO) {
         require(Regex("^[A-Za-z0-9_-]{11}$").matches(videoId)) { "El vídeo seleccionado no es válido." }
@@ -62,6 +65,7 @@ object YouTubeDownloader {
             target.delete() // Only the new, incomplete document created by this operation.
             throw failure
         }
+        AudioCatalog(context).classify(target.uri.toString(), section)
         target.name ?: safeName
         } finally { work.deleteRecursively() } // Private UUID directory owned by this operation.
     }

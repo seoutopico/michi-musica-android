@@ -22,3 +22,7 @@ Michi Música no tiene servidor propio, cuentas, analítica ni publicidad propia
 El vídeo utiliza el reproductor oficial de YouTube. WebView puede mantener caché y almacenamiento web, sujetos a las políticas de Google. Ver un vídeo no añade un MP3 a tu carpeta. No se solicitan credenciales de Google en Michi.
 
 Michi Iconos es una APK independiente sin permisos de red ni acceso a tus archivos; contiene tres imágenes y un selector para launchers.
+
+## Clasificación y progreso de podcasts
+
+Música/Podcasts, la última categoría elegida al guardar y la posición de cada episodio se conservan únicamente en las preferencias privadas de la app. No se suben ni se escriben en las etiquetas del audio. Una actualización conserva estos datos; desinstalar o borrar datos de Michi los elimina. Mover o renombrar archivos puede requerir reclasificarlos porque Android puede cambiar su URI.

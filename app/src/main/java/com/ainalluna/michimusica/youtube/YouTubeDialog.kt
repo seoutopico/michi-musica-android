@@ -3,6 +3,15 @@ package com.ainalluna.michimusica.youtube
 import android.content.Context
 import android.net.Uri
 import androidx.compose.runtime.*
+import androidx.compose.material3.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.unit.dp
+import com.ainalluna.michimusica.library.AudioCatalog
+import com.ainalluna.michimusica.library.AudioSection
 import androidx.compose.ui.platform.LocalContext
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
@@ -16,6 +25,7 @@ data class SearchUiState(
     val previewId: String? = null, val previewPlaying: Boolean = false,
     val video: YouTubeResult? = null, val videoPosition: Double = 0.0, val videoAutoplay: Boolean = false,
     val downloadingId: String? = null, val progress: Int = 0,
+    val pendingDownload: YouTubeResult? = null,
     val savedIds: Set<String> = emptySet(), val rowError: Pair<String, String>? = null,
 ) {
     val busy: Boolean get() = searching || downloadingId != null
@@ -25,6 +35,8 @@ data class SearchUiState(
 class YouTubeSearchController(private val context: Context, private val scope: CoroutineScope) {
     var ui by mutableStateOf(SearchUiState())
         private set
+    private val catalog = AudioCatalog(context)
+    var downloadSection by mutableStateOf(catalog.lastDownloadSection)
     var folderUri: Uri? = null
     var onPreviewStarted: () -> Unit = {}
     var onDownloaded: (String) -> Unit = {}
@@ -69,14 +81,24 @@ class YouTubeSearchController(private val context: Context, private val scope: C
         onPreviewStarted()
         ui = ui.copy(video = result, previewId = result.id, videoAutoplay = true, rowError = null)
     }
-    fun download(result: YouTubeResult) {
+    fun requestDownload(result: YouTubeResult) {
+        if (!ui.busy && result.id !in ui.savedIds) ui = ui.copy(pendingDownload = result)
+    }
+    fun cancelDownloadChoice() { ui = ui.copy(pendingDownload = null) }
+    fun confirmDownload() {
+        val result = ui.pendingDownload ?: return
+        ui = ui.copy(pendingDownload = null)
+        catalog.lastDownloadSection = downloadSection
+        download(result, downloadSection)
+    }
+    private fun download(result: YouTubeResult, section: AudioSection) {
         val destination = folderUri ?: return
         if (ui.busy || result.id in ui.savedIds) return
         closeVideo()
         ui = ui.copy(downloadingId = result.id, progress = 0, rowError = null)
         scope.launch {
             try {
-                val filename = YouTubeDownloader.downloadMp3(context, destination, result.id) { next ->
+                val filename = YouTubeDownloader.downloadMp3(context, destination, result.id, section) { next ->
                     scope.launch { ui = ui.copy(progress = next) }
                 }
                 ui = ui.copy(savedIds = ui.savedIds + result.id)
@@ -104,8 +126,28 @@ fun rememberYouTubeSearchController(folderUri: Uri?, onPreviewStarted: () -> Uni
 
 @Composable
 fun YouTubeScreen(controller: YouTubeSearchController, onChooseFolder: () -> Unit) {
+    controller.ui.pendingDownload?.let { result ->
+        AlertDialog(onDismissRequest = controller::cancelDownloadChoice,
+            title = { Text("Guardar audio") },
+            text = { Column {
+                Text(result.title)
+                Spacer(Modifier.height(12.dp))
+                AudioSection.entries.forEach { section ->
+                    Row(Modifier.fillMaxWidth().selectable(controller.downloadSection == section, role = Role.RadioButton,
+                        onClick = { controller.downloadSection = section }).padding(vertical = 6.dp), verticalAlignment = Alignment.CenterVertically) {
+                        RadioButton(controller.downloadSection == section, onClick = null)
+                        Column(Modifier.padding(start = 12.dp)) {
+                            Text(section.label)
+                            Text(if (section == AudioSection.PODCASTS) "Separado de tu música. Guarda tu posición." else "En tu biblioteca de canciones y Azar.", style = MaterialTheme.typography.bodySmall)
+                        }
+                    }
+                }
+            } },
+            confirmButton = { TextButton(controller::confirmDownload) { Text("Guardar en ${controller.downloadSection.label}") } },
+            dismissButton = { TextButton(controller::cancelDownloadChoice) { Text("Cancelar") } })
+    }
     SearchContent(controller.ui, controller.folderUri != null, controller::editQuery, controller::search,
-        controller::preview, controller::download, onChooseFolder,
+        controller::preview, controller::requestDownload, onChooseFolder,
         videoPlayer = controller.ui.video?.let { result ->
             { YouTubeVideoPlayer(result, controller.ui.videoPosition, controller.ui.videoAutoplay,
                 onPlaying = { controller.videoPlaying(result.id, it) },

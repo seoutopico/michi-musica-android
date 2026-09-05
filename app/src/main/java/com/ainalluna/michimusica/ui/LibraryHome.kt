@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ainalluna.michimusica.R
 import com.ainalluna.michimusica.formatTime
+import com.ainalluna.michimusica.library.AudioSection
 import com.ainalluna.michimusica.library.Song
 import com.ainalluna.michimusica.searchable
 
@@ -49,8 +50,16 @@ fun LibraryHome(
     onSelect: (Song) -> Unit, onShuffle: () -> Unit, onSettings: () -> Unit,
     onChooseFolder: () -> Unit, onAllMusic: () -> Unit, onDismissNotice: () -> Unit,
     onDelete: ((Song) -> Unit)? = null,
+    section: AudioSection = AudioSection.MUSIC, onSection: (AudioSection) -> Unit = {},
+    onClassify: ((Song) -> Unit)? = null, episodePosition: (Song) -> Long = { 0L },
 ) {
-    var query by rememberSaveable { mutableStateOf("") }
+    var query by rememberSaveable(section) { mutableStateOf("") }
+    val positions by produceState(emptyMap<String, Long>(), songs.toList(), section) {
+        if (section == AudioSection.PODCASTS) while (true) {
+            value = songs.associate { it.id to episodePosition(it) }
+            kotlinx.coroutines.delay(5_000)
+        }
+    }
     val wanted = searchable(query)
     val filtered by remember(songs, wanted) { derivedStateOf { songs.filter { wanted.isBlank() || searchable("${it.title} ${it.artist} ${it.album} ${it.filename}").contains(wanted) } } }
     val colors = MaterialTheme.colorScheme
@@ -67,9 +76,23 @@ fun LibraryHome(
             Text("Biblioteca", Modifier.padding(start = 8.dp, top = 12.dp, bottom = 20.dp).semantics { heading() },
                 fontFamily = FontFamily.Serif, fontSize = 36.sp, lineHeight = 44.sp, fontWeight = FontWeight.Bold)
         }
+        item(key = "sections") {
+            Row(Modifier.fillMaxWidth().padding(horizontal = 8.dp).selectableGroup()) {
+                AudioSection.entries.forEach { item ->
+                    Column(Modifier.weight(1f).selectable(section == item, role = Role.Tab, onClick = { focus.clearFocus(); onSection(item) })) {
+                        Text(item.label, Modifier.padding(vertical = 14.dp).align(Alignment.CenterHorizontally),
+                            color = if (section == item) colors.primary else colors.onSurfaceVariant, fontSize = 17.sp,
+                            fontWeight = if (section == item) FontWeight.SemiBold else FontWeight.Normal)
+                        HorizontalDivider(thickness = if (section == item) 2.dp else 1.dp,
+                            color = if (section == item) colors.primary else colors.outline.copy(alpha = .4f))
+                    }
+                }
+            }
+            Spacer(Modifier.height(20.dp))
+        }
         item(key = "filter") {
             TextField(query, { query = it }, Modifier.fillMaxWidth().padding(horizontal = 8.dp),
-                placeholder = { Text("Buscar en tu música", maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                placeholder = { Text(if (section == AudioSection.PODCASTS) "Buscar en tus podcasts" else "Buscar en tu música", maxLines = 1, overflow = TextOverflow.Ellipsis) },
                 leadingIcon = { HomeIcon(R.drawable.ic_home_search, null) },
                 trailingIcon = if (query.isNotEmpty()) { { IconButton({ query = "" }) { HomeIcon(R.drawable.ic_home_close, "Borrar búsqueda") } } } else null,
                 singleLine = true, shape = RoundedCornerShape(16.dp),
@@ -82,11 +105,11 @@ fun LibraryHome(
         item(key = "heading") {
             Row(Modifier.fillMaxWidth().padding(start = 8.dp, top = 18.dp, bottom = 12.dp), verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
-                    Text("Canciones", Modifier.semantics { heading() }, fontSize = 20.sp, fontWeight = FontWeight.Medium)
-                    Text(if (wanted.isBlank()) "${songs.size} ${if (songs.size == 1) "canción" else "canciones"}" else "${filtered.size} de ${songs.size}",
+                    Text(if (section == AudioSection.PODCASTS) "Episodios" else "Canciones", Modifier.semantics { heading() }, fontSize = 20.sp, fontWeight = FontWeight.Medium)
+                    Text(if (wanted.isBlank()) "${songs.size} ${if (section == AudioSection.PODCASTS) { if (songs.size == 1) "episodio" else "episodios" } else if (songs.size == 1) "canción" else "canciones"}" else "${filtered.size} de ${songs.size}",
                         Modifier.padding(top = 3.dp), color = colors.onSurfaceVariant, fontSize = 14.sp)
                 }
-                TextButton({ focus.clearFocus(); onShuffle() }, enabled = ready && songs.isNotEmpty() && !loading) {
+                if (section == AudioSection.MUSIC) TextButton({ focus.clearFocus(); onShuffle() }, enabled = ready && songs.isNotEmpty() && !loading) {
                     HomeIcon(R.drawable.ic_home_shuffle, null, tint = if (ready) colors.primary else colors.onSurfaceVariant)
                     Text("Azar", Modifier.padding(start = 8.dp), fontSize = 16.sp)
                 }
@@ -107,24 +130,25 @@ fun LibraryHome(
         }
         if (loading) item(key = "loading") {
             LinearProgressIndicator(Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 12.dp))
-            Text("Leyendo tu música…", Modifier.padding(8.dp).semantics { liveRegion = LiveRegionMode.Polite }, color = colors.onSurfaceVariant)
+            Text("Leyendo tu biblioteca…", Modifier.padding(8.dp).semantics { liveRegion = LiveRegionMode.Polite }, color = colors.onSurfaceVariant)
         }
         if (!loading && filtered.isEmpty() && notice?.needsFolder != true) item(key = "empty") {
             Column(Modifier.padding(horizontal = 8.dp, vertical = 24.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                Text(if (songs.isEmpty()) "Tu biblioteca está vacía" else "No hay coincidencias", style = MaterialTheme.typography.titleLarge)
-                Text(if (songs.isEmpty()) "Elige una carpeta que contenga música." else "Prueba con otro título, artista o álbum.", color = colors.onSurfaceVariant)
-                TextButton(if (songs.isEmpty()) onChooseFolder else { { query = "" } }) { Text(if (songs.isEmpty()) "Elegir carpeta" else "Borrar búsqueda") }
+                Text(if (songs.isEmpty()) { if (section == AudioSection.PODCASTS) "Tus podcasts, aquí" else "Tu biblioteca está vacía" } else "No hay coincidencias", style = MaterialTheme.typography.titleLarge)
+                Text(if (songs.isEmpty()) { if (section == AudioSection.PODCASTS) "Guarda un audio desde Buscar eligiendo Podcasts, o usa Marcar como podcast en las opciones de una canción." else "Elige una carpeta que contenga música." } else "Prueba con otro título, artista o álbum.", color = colors.onSurfaceVariant)
+                if (section == AudioSection.MUSIC || songs.isNotEmpty()) TextButton(if (songs.isEmpty()) onChooseFolder else { { query = "" } }) { Text(if (songs.isEmpty()) "Elegir carpeta" else "Borrar búsqueda") }
             }
         }
         items(filtered, key = Song::id) { song ->
             HomeSongRow(song, song.id == selectedSongId, playing && song.id == selectedSongId, ready && !loading,
-                artworkRevision, onDelete = onDelete?.let { action -> { focus.clearFocus(); action(song) } }) { focus.clearFocus(); onSelect(song) }
+                artworkRevision, podcast = section == AudioSection.PODCASTS, position = positions[song.id] ?: 0L,
+                onClassify = onClassify?.let { action -> { action(song) } }, onDelete = onDelete?.let { action -> { focus.clearFocus(); action(song) } }) { focus.clearFocus(); onSelect(song) }
         }
     }
 }
 
 @Composable
-private fun HomeSongRow(song: Song, selected: Boolean, playing: Boolean, enabled: Boolean, artworkRevision: Int, onDelete: (() -> Unit)?, onSelect: () -> Unit) {
+private fun HomeSongRow(song: Song, selected: Boolean, playing: Boolean, enabled: Boolean, artworkRevision: Int, onDelete: (() -> Unit)?, podcast: Boolean, position: Long, onClassify: (() -> Unit)?, onSelect: () -> Unit) {
     val colors = MaterialTheme.colorScheme
     var menuOpen by remember(song.id) { mutableStateOf(false) }
     Box(Modifier.fillMaxWidth().padding(vertical = 2.dp).clip(RoundedCornerShape(12.dp))
@@ -141,14 +165,20 @@ private fun HomeSongRow(song: Song, selected: Boolean, playing: Boolean, enabled
                     color = colors.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 Text(if (song.durationMs > 0) formatTime(song.durationMs) else "—", Modifier.padding(start = 8.dp), fontSize = 13.sp, color = colors.onSurfaceVariant)
                 }
+                if (podcast) Text(when {
+                    song.durationMs > 0 && position >= song.durationMs -> "Escuchado"
+                    position > 0 -> "Continuar · ${formatTime(position)}"
+                    else -> "Sin empezar"
+                }, color = colors.primary, fontSize = 12.sp, modifier = Modifier.padding(top = 4.dp))
             }
             if (playing) PlayingBars(Modifier.size(16.dp))
-            if (onDelete != null) Box {
+            if (onDelete != null || onClassify != null) Box {
                 IconButton({ menuOpen = true }, enabled = enabled) {
                     HomeIcon(R.drawable.ic_lyrics_more_vert, "Opciones de ${song.title}", tint = colors.onSurfaceVariant)
                 }
                 DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
-                    DropdownMenuItem(text = { Text("Borrar canción", color = colors.error) }, onClick = { menuOpen = false; onDelete() })
+                    if (onClassify != null) DropdownMenuItem(text = { Text(if (podcast) "Marcar como música" else "Marcar como podcast") }, onClick = { menuOpen = false; onClassify() })
+                    if (onDelete != null) DropdownMenuItem(text = { Text(if (podcast) "Borrar episodio" else "Borrar canción", color = colors.error) }, onClick = { menuOpen = false; onDelete() })
                 }
             }
         }
