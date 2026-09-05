@@ -28,8 +28,8 @@ Capturas de Android con la biblioteca y carátulas reales de Aina-Lluna, publica
 - **Biblioteca local:** elegir una carpeta de Android y reproducir MP3, WAV, OGG, M4A, AAC, FLAC y OPUS; buscar por título, artista, álbum o archivo.
 - **Escucha continua:** reproducción en segundo plano, controles del sistema, pausa, anterior, siguiente, progreso, Azar sin repeticiones dentro de una ronda y repetir una canción.
 - **Retomar:** última canción y posición guardadas; abrir la app no inicia música automáticamente. El mini reproductor mantiene su lugar sobre la navegación.
-- **YouTube dentro de Buscar:** buscar o pegar un enlace, ver el vídeo con controles y pantalla completa. Ver no descarga un MP3. Algunos vídeos pueden restringir su inserción y ofrecer apertura en YouTube.
-- **Guardar MP3:** acción independiente sobre el resultado elegido. No sobrescribe un archivo existente: utiliza un nombre disponible. Conserva únicamente contenido que tengas derecho a descargar.
+- **Ver vídeos de YouTube:** busca o pega un enlace y pulsa **Ver vídeo** para reproducirlo dentro de la app, con controles y pantalla completa. Algunos vídeos pueden restringir su inserción y ofrecer apertura en YouTube.
+- **Descargar música en MP3:** pulsa **Guardar MP3** en el resultado elegido para descargar el audio a tu carpeta de música y escucharlo después sin conexión. No sobrescribe un archivo existente: utiliza un nombre disponible. Conserva únicamente contenido que tengas derecho a descargar.
 - **Listas Markdown:** importar y recordar selecciones que referencian tu música, sin duplicar audios.
 - **Letras:** buscar en LRCLIB, revisar antes de guardar, leer sin conexión, seguir el verso sincronizado y tocarlo para ir a ese momento.
 - **Rosa y Medianoche:** dos apariencias, marca felina, filas abiertas y separación clara entre contenido y menú.

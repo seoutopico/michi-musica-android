@@ -1,5 +1,9 @@
 # Historial de cambios
 
+## 2026-09-05 — Aclaración de las funciones de YouTube en README
+
+- Sustituida la frase ambigua «Ver no descarga un MP3» por dos funciones explícitas: Ver vídeo reproduce dentro de la app y Guardar MP3 descarga el audio a la carpeta de música para escucharlo sin conexión. Cambio documental; la descarga sigue disponible y no cambia la APK.
+
 ## 2026-09-05 — Michi Música 1.10.0: identidad y publicación comunitaria
 
 - Publicados [repositorio público](https://github.com/seoutopico/michi-musica-android) y [release v1.10.0](https://github.com/seoutopico/michi-musica-android/releases/tag/v1.10.0): APK firmadas, sumas SHA-256, certificado público y archivo upstream. GitHub confirma reporte privado de vulnerabilidades habilitado.
