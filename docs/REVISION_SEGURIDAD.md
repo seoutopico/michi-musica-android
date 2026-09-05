@@ -1,4 +1,4 @@
-# Revisión de seguridad — publicación 1.10
+# Revisión de seguridad — publicaciones 1.10 y 1.11
 
 Fecha: 2026-09-05. Revisión estática asistida por IA, pruebas unitarias, lint y comprobaciones de APK. No se presenta como pentest ni auditoría independiente de terceros.
 
@@ -34,3 +34,16 @@ Fecha: 2026-09-05. Revisión estática asistida por IA, pruebas unitarias, lint 
 ## Cómo repetir la revisión
 
 Ejecutar `./gradlew test lint assembleDebug assembleRelease` con JDK 21 y SDK 36. Consultar los informes en `app/build/reports/` y `iconpack/build/reports/`. Verificar las APK con `apksigner verify --verbose --print-certs`, revisar manifiestos y comprobar que la release no contiene `ShowcaseActivity` ni está marcada como depurable. La firma requiere configuración privada solo para la APK oficial; sin ella, release se genera sin firmar.
+
+## Ampliación 1.11.0 — podcasts y borrado
+
+Revisada el 2026-09-05 sobre el código `adf7797` y la APK firmada 1.11.0 preparada en borrador. La publicación estable pública sigue siendo 1.10.1. Esta ampliación es una revisión estática y de artefacto, no una auditoría independiente.
+
+- **Borrado:** confirmación explícita con nombre de archivo y alcance; el proveedor elimina solo un audio compatible cuya URI coincide con un hijo directo de la carpeta autorizada. No acepta rutas arbitrarias ni borra directorios o letras. Tras éxito se limpia el catálogo y la cola. Las pruebas nativas de cancelación/borrado de archivos propios se hicieron en 1.10.1; falta ampliar errores y proveedores.
+- **Podcasts:** clasificación y posiciones en SharedPreferences con `MODE_PRIVATE`; no modifica etiquetas, mueve archivos ni añade envíos de estos datos a servicios externos. La actualización conserva el catálogo; borrar datos o desinstalar lo elimina. La categoría de una descarga se asigna a la URI exacta creada por SAF. Las modificaciones de categorías se sincronizan entre instancias del catálogo.
+- **APK final 1.11.0:** `apksigner verify --verbose` correcto, firma v2. Manifiesto binario revisado con `aapt`: sin `debuggable` habilitado ni `ShowcaseActivity`, `allowBackup=false` y `usesCleartextTraffic=false`. Sin permisos generales de almacenamiento, micrófono, cámara o ubicación. Incluye permisos de servicio multimedia, Internet, estado de red y wake lock de sus componentes.
+- **Sesión de reproducción:** conserva la comprobación de mismo UID o controlador de confianza antes de exponer MediaSession. Los nuevos cambios no añaden componentes exportados al manifiesto principal.
+- **Validación existente de esta APK:** 49 pruebas por variante aprobadas, lint de app sin errores y con 16 advertencias. Son pruebas funcionales/estáticas; no equivalen a pruebas de intrusión ni a cobertura completa de seguridad. La prueba nativa de clasificación, colas y reanudación de podcasts sigue pendiente por bloqueo del Pixel.
+- **GitHub:** confirmado código en `main`, borrador 1.11.0 con artefactos y reportes privados de vulnerabilidades habilitados. CI sigue pendiente de activación; no se atribuyen comprobaciones automáticas remotas.
+
+Permanecen los límites anteriores, especialmente el actualizador NIGHTLY de yt-dlp sin verificación de firma independiente y la falta de auditoría exhaustiva de vulnerabilidades de dependencias y binarios nativos. No se declara la aplicación libre de vulnerabilidades.
