@@ -50,3 +50,8 @@
 | MMA-008 | 2026-09-04 | Sincronizar la cola de reproducción al cambiar o recargar la carpeta | Pruebas unitarias de cambio, igualdad y reordenación; `clean test lint assembleDebug` aprobado. APK 1.0.1 copiada al Pixel y verificada por hash; validación funcional manual pendiente en `MMA-002`. |
 | MMA-007 | 2026-09-03 | Completar la validación del MVP y generar la primera APK | `clean test lint assembleDebug` aprobado sin red; APK y manifiesto inspeccionados. Instalación real pendiente en `MMA-002`. |
 | MMA-001 | 2026-09-03 | Crear el código fuente del MVP Android nativo de Michi Música. | Estructura y pruebas unitarias creadas; compilación validada posteriormente en `MMA-007`. |
+
+## Seguimiento tras 1.11.1
+
+- Niagara: Play/Pausa/Anterior/Siguiente comprobados sobre sesión activa y pausada. Pendiente ampliar a Bluetooth y reanudación del sistema después de destruir el servicio/reiniciar Android; no equiparar estos escenarios con una sesión activa.
+- Caché de biblioteca: ampliar proveedores SAF (remotos, permisos revocados y proveedores sin fecha/tamaño). Sin marcas fiables se releen las etiquetas; «Releer música» fuerza también los archivos aparentemente iguales. No se añade exploración recursiva de subcarpetas.

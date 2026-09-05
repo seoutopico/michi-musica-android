@@ -51,3 +51,9 @@ Permanecen los límites anteriores, especialmente el actualizador NIGHTLY de yt-
 ## Comprobación nativa y artefacto final 1.11.0
 
 Después de la revisión preliminar se autorizó el Pixel. Android rechazó la lectura directa desde shell del catálogo privado existente. Se probaron cancelación/borrado de audios propios y descargas reales a ambas categorías; una segunda descarga conservó el SHA-256 de la primera. Los archivos originales conservan nombres, tamaños y fechas; las pruebas y sus referencias privadas se limpiaron. Detectada y corregida la pérdida aparente de posición al borrar el episodio actual; confirmada recuperación en pausa en el dispositivo. APK final: 51 pruebas por variante, lint sin errores y firma verificada; hash y detalles en el historial. Esto sustituye el bloqueo nativo indicado en la revisión preliminar, sin convertirla en auditoría independiente ni cerrar los riesgos del actualizador/dependencias.
+
+## Corrección 1.11.1 — identidad de Niagara y caché
+
+La reproducción desde Niagara fallaba por filtrado de visibilidad de paquetes. Se añade una consulta limitada a servicios de escucha de notificaciones; no se añade `QUERY_ALL_PACKAGES`, se mantienen los controles de confianza de Media3 y `onGetSession`. Verificada respuesta a Play/Pausa/Anterior/Siguiente desde la tarjeta real del launcher.
+
+El catálogo se guarda en `filesDir/library-snapshot.bin`, privado, sin audio y excluido de copias por `allowBackup=false`. La caché queda asociada a la URI de carpeta; se comprueba el permiso persistente antes de hidratarla. Formato versionado con límite de entradas y rechazo de datos truncados; escritura atómica. La caché no concede permisos de acceso ni sustituye la validación de borrado SAF. Los límites de auditoría y dependencias anteriores permanecen.

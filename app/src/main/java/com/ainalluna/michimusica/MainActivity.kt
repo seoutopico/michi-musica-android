@@ -47,6 +47,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
 import androidx.media3.common.Timeline
+import androidx.lifecycle.lifecycleScope
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.ainalluna.michimusica.library.MarkdownPlaylist
@@ -114,12 +115,34 @@ private data class PendingRestore(val songId: String, val positionMs: Long, val 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent { MichiApp() }
+        // Configure insets before the window's first draw, including asynchronous cache hydration.
+        enableEdgeToEdge()
+        var initialContentReady = false
+        val content = findViewById<android.view.View>(android.R.id.content)
+        content.viewTreeObserver.addOnPreDrawListener(object : android.view.ViewTreeObserver.OnPreDrawListener {
+            override fun onPreDraw(): Boolean {
+                if (!initialContentReady) return false
+                content.viewTreeObserver.removeOnPreDrawListener(this)
+                return true
+            }
+        })
+        lifecycleScope.launch {
+            val initial = withContext(Dispatchers.IO) {
+                val folder = getSharedPreferences(PREFS, MODE_PRIVATE).getString(PREF_FOLDER, null)?.toUri()
+                val cached = if (folder != null && contentResolver.persistedUriPermissions.any { it.uri == folder && it.isReadPermission })
+                    MusicFolderReader.cached(applicationContext, folder) else null
+                InitialLibrary(folder, cached)
+            }
+            setContent { MichiApp(initial) }
+            initialContentReady = true
+        }
     }
 }
 
+private data class InitialLibrary(val folder: Uri?, val songs: List<Song>?)
+
 @Composable
-private fun MichiApp() {
+private fun MichiApp(initial: InitialLibrary) {
     val context = androidx.compose.ui.platform.LocalContext.current
     val preferences = remember { context.getSharedPreferences(PREFS, Context.MODE_PRIVATE) }
     var skinName by rememberSaveable { mutableStateOf(preferences.getString(PREF_SKIN, "midnight") ?: "midnight") }
@@ -139,8 +162,10 @@ private fun MichiApp() {
         catalog.preferences.registerOnSharedPreferenceChangeListener(listener)
         onDispose { catalog.preferences.unregisterOnSharedPreferenceChangeListener(listener) }
     }
-    val library = remember { mutableStateListOf<Song>() }
-    val songs = remember { mutableStateListOf<Song>() }
+    val library = remember { mutableStateListOf<Song>().apply { addAll(initial.songs.orEmpty()) } }
+    val songs = remember { mutableStateListOf<Song>().apply {
+        addAll(initial.songs.orEmpty().filter { (it.id in podcastIds) == (section == AudioSection.PODCASTS) })
+    } }
     var folderUri by remember { mutableStateOf(preferences.getString(PREF_FOLDER, null)?.toUri()) }
     var playlistUri by remember { mutableStateOf(preferences.getString(PREF_PLAYLIST, null)?.toUri()) }
     var folderRevision by remember { mutableIntStateOf(0) }
@@ -151,8 +176,10 @@ private fun MichiApp() {
     var pendingResume by remember { mutableStateOf<PendingRestore?>(null) }
     var restoreRevision by remember { mutableIntStateOf(0) }
     var loadedSourceUri by remember { mutableStateOf<Uri?>(null) }
-        var loading by remember { mutableStateOf(false) }
+    var loading by remember { mutableStateOf(initial.folder != null && initial.songs == null) }
     var libraryLoaded by remember { mutableStateOf(false) }
+    var loadedFolder by remember { mutableStateOf(initial.folder) }
+    var forceFolderRead by remember { mutableStateOf(false) }
     var notice by remember { mutableStateOf<LibraryNotice?>(null) }
     var controller by remember { mutableStateOf<MediaController?>(null) }
     val deletionScope = rememberCoroutineScope()
@@ -187,9 +214,18 @@ private fun MichiApp() {
 
     LaunchedEffect(folderUri, folderRevision) {
         val uri = folderUri ?: return@LaunchedEffect
-        loading = true
+        libraryLoaded = false
+        if (loadedFolder != uri) { library.clear(); songs.clear(); loadedFolder = uri }
         notice = null
-        runCatching { withContext(Dispatchers.IO) { MusicFolderReader.read(context, uri) } }.onSuccess { found ->
+        val cached = withContext(Dispatchers.IO) {
+            if (context.contentResolver.persistedUriPermissions.any { it.uri == uri && it.isReadPermission })
+                MusicFolderReader.cached(context, uri) else null
+        }
+        if (cached != null) { library.clear(); library.addAll(cached) }
+        loading = library.isEmpty()
+        val force = forceFolderRead
+        forceFolderRead = false
+        runCatching { withContext(Dispatchers.IO) { MusicFolderReader.read(context, uri, force) } }.onSuccess { found ->
             library.clear(); library.addAll(found)
             if (found.isEmpty()) {
                 playlistUri = null; playlistName = null; pendingResume = null
@@ -350,7 +386,7 @@ private fun MichiApp() {
                     playlistUri = saved.sourceUri; playlistRevision++; preferences.edit { putString(PREF_PLAYLIST, saved.sourceUri.toString()) }
                 }
             },
-            onRefresh = { folderRevision++ },
+            onRefresh = { forceFolderRead = true; folderRevision++ },
             onDownloaded = { folderRevision++ },
             onSkinChange = {
                 skinName = if (it == MichiSkin.ROSE) "rose" else "midnight"; preferences.edit { putString(PREF_SKIN, skinName) }
@@ -368,7 +404,10 @@ private fun MichiApp() {
                             withContext(NonCancellable) {
                                 runCatching {
                                     require(library.any { it.id == target.id && it.uri == target.uri }) { "La canción ya no está en esta biblioteca." }
-                                    withContext(Dispatchers.IO) { deleteSongFile(context, source, target.uri) }
+                                    withContext(Dispatchers.IO) {
+                                        deleteSongFile(context, source, target.uri)
+                                        MusicFolderReader.forget(context, source, target.id)
+                                    }
                                 }.onSuccess {
                                     runCatching { controller?.let { player ->
                                         if (player.currentMediaItem?.mediaId == target.id) player.pause()

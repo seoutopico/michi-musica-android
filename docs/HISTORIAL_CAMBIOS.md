@@ -1,5 +1,19 @@
 # Historial de cambios
 
+## 2026-09-05 — 1.11.1: controles de Niagara y biblioteca conservada
+
+- Reproducido el rechazo de Play de la tarjeta de Niagara: Android filtraba `bitpit.launcher` por visibilidad de paquetes y Media3 registraba «Package … doesn’t exist» / `COMMAND_PLAY_PAUSE not being available`. Se declara visibilidad de servicios `NotificationListenerService`, según la [guía de Android](https://developer.android.com/training/package-visibility/declaring). Se mantiene la comprobación de controladores de confianza; sin permiso para consultar todas las aplicaciones.
+- Comprobados mediante toques reales en Niagara: Play, Pausa, Siguiente y Anterior, conservando la pausa al cambiar de pista. No confundir estas pruebas con enviar teclas multimedia mediante ADB.
+- Arranque con insets configurados antes de dibujar y espera del primer fotograma hasta hidratar la caché, siguiendo la [recomendación de Android para datos locales de inicio](https://developer.android.com/develop/ui/views/launch/splash-screen). Se evita enseñar una ventana vacía durante esa lectura breve.
+- Catálogo privado persistente y en memoria, asociado a la carpeta SAF. Se hidrata antes de componer Biblioteca para evitar el parpadeo de biblioteca vacía. Consulta única de hijos de la carpeta y reutilización de etiquetas por URI, nombre, fecha y tamaño; lectura completa solo de audios nuevos/modificados o con datos de cambio desconocidos. «Releer música» fuerza una lectura de etiquetas existentes. No se editan metadatos ni se sube audio.
+- Validación nativa incremental: WAV propio añadido detectado (110 → 111 canciones), cambio de duración de 0:02 a 0:03 detectado al reabrir y borrado mediante el diálogo de Michi.
+- Borrar retira también la entrada de caché. La cola activa solo se reconcilia tras una lectura completa válida, nunca contra una caché provisional o una lectura fallida. Caché versionada, escritura atómica y recuperación por relectura si falta o está dañada. Cuatro pruebas nuevas de persistencia Unicode, biblioteca vacía, invalidación y rechazo de caché truncada/incompatible.
+
+- APK debug 1.11.1 (21) instalada con `install -r`. Apertura fría final medida por Android: 1.205 ms y 1.214 ms, con catálogo de 110 canciones disponible en la primera vista; carátulas siguen cargándose de forma asíncrona. No es un benchmark general para otros móviles/proveedores.
+- Inventario original de audio idéntico tras limpiar el WAV; carpeta, listas y apariencia comparadas y conservadas. Caché privada de 31.990 bytes, sin fixture; lectura directa desde shell denegada. Configuración de pantalla restaurada. 55 pruebas debug y 55 release sin fallos; lint sin errores.
+
+- Compilación final `test lint assembleDebug assembleRelease --offline`: BUILD SUCCESSFUL en 2m 47s. Firma oficial verificada; APK SHA-256 `7c4f799993848c6097fa95a8ea67b4258a70aefcf4848a3965123a5070dc5c6e`. Lint: app 0 errores/16 advertencias; iconpack 0 errores/3 advertencias.
+
 ## 2026-09-05 — Validación final de 1.11.0 en Pixel y corrección de reanudación al borrar
 
 - Pixel autorizado y desbloqueado: Música/Podcasts y clasificación reversible probadas con dos WAV propios. A conserva 0:52 y B 1:49 usando Anterior/Siguiente; B conserva 2:17 tras cerrar el proceso y abrir de nuevo, sin autoplay. Navegar por Música, Listas y una lista de 17 canciones mantiene la cola de podcasts. Azar de Música crea su propia cola y Siguiente cambia de pista estando en pausa.

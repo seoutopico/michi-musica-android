@@ -29,6 +29,12 @@ La intención es una app cuidada, cómoda y musical, con el cuidado visual que A
 - **Apertura:** mostrar la última escucha disponible en pausa y con su posición; abrir no inicia música. Preparar una cola tampoco inventa una canción seleccionada. Respetar la reproducción que siga activa en el servicio.
 - **Alcance:** Aina canceló la actualización/edición de metadatos. Leer etiquetas y carátulas existentes sigue permitido; no retomar su edición sin una nueva petición. Las letras son archivos asociados, no cambios del audio.
 
+## Corrección 1.11.1: Niagara y apertura
+
+La tarjeta de Niagara necesitaba visibilidad del servicio de escucha de notificaciones para que Media3 verificase su identidad. Conservar `<queries>` del manifiesto y el filtro de controladores de confianza; no resolverlo aceptando cualquier controlador. Play/Pausa/Anterior/Siguiente se probaron tocando Niagara.
+
+`MusicFolderReader` usa `LibrarySnapshot` privado, versionado y atómico. `MainActivity` carga la caché en IO antes de la primera composición; luego comprueba cambios en la carpeta. No mostrar biblioteca vacía mientras se hidrata, ni borrar elementos de la cola hasta terminar una lectura válida. Releer fuerza etiquetas; borrado invalida su entrada. Mantener el diseño y las colas independientes. Consultar la última entrada del historial para compilación, instalación y publicación.
+
 ## Pantallas y aprobaciones
 
 | Pantalla | Estado al cierre | Especificación y preview debug |
