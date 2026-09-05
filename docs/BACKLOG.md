@@ -26,13 +26,13 @@
 | MMA-033 | P2 | Activar CI en GitHub | Copiar `docs/ci/android.yml` a `.github/workflows/android.yml` con una conexión autorizada para workflows y verificar su primera ejecución. La conexión inicial no tiene ese alcance. |
 
 | MMA-035 | P2 | Ampliar validación de borrado | En Pixel: Cancelar conserva archivo; borrar audio de prueba en reproducción lo elimina y deja siguiente pista pausada; 110 canciones originales conservadas. Pendientes errores/permisos de proveedores, no actual mientras suena otra, última pista y listas repetidas en dispositivo. Cola con duplicados/vacía cubierta por pruebas unitarias. |
-| MMA-037 | P2 | Ampliar validación de podcasts | 1.11.0 instalada, 49 pruebas por variante y lint sin errores. El Pixel se bloqueó: faltan reclasificación, continuidad al navegar y reanudación de dos episodios en dispositivo. Release en borrador. Comprobar descargas completas con ambos destinos y errores de proveedor, listas mixtas, controladores Bluetooth, final automático de episodio y persistencia tras terminación del proceso. No hay importación recursiva ni recuperación del catálogo tras desinstalar. |
+| MMA-037 | P2 | Ampliar validación de podcasts | 1.11.0 final: clasificación reversible, navegación sin cambiar cola, reanudación por episodio/reinicio, segundo plano, avance automático, finalizado y descargas a ambos destinos comprobados en Pixel. Corregida y probada reanudación al borrar. 51 pruebas por variante. Pendientes listas Markdown mixtas en dispositivo, errores de proveedores/red, Bluetooth y otros móviles. No hay importación recursiva ni recuperación del catálogo tras desinstalar. |
 
 ## Hecho
 
 | ID | Fecha | Trabajo | Verificación |
 | --- | --- | --- | --- |
-| MMA-036 | 2026-09-05 | Separar Música y Podcasts | Aprobado por Aina e implementado en 1.11.0: secciones, destino MP3, reclasificación, colas independientes de la navegación y posición por episodio. 49 pruebas por variante; validación nativa efectiva en el historial. |
+| MMA-036 | 2026-09-05 | Separar Música y Podcasts | Aprobado por Aina e implementado en 1.11.0: secciones, destino MP3, reclasificación, colas independientes de la navegación y posición por episodio. 51 pruebas por variante y validación nativa de clasificación, colas, progreso, borrado y descargas en el historial. |
 | MMA-034 | 2026-09-05 | Publicar comunidad y revisar seguridad | Repositorio público y release v1.10.0 con APK firmadas, capturas reales autorizadas, IA explícita, GPL, privacidad, contribución y fuentes. 40 pruebas por variante, lint sin errores; límites de revisión documentados y CI pendiente en MMA-033. |
 | MMA-032 | 2026-09-05 | Icono adaptativo y paquete Niagara | Ambas APK compiladas y firmadas; paquete sin permisos instalado, tres variantes reconocidas por Niagara y Medianoche aplicada a Michi. |
 | MMA-021 | 2026-09-05 | Aprobar la nueva dirección visual de apertura | Aina aprueba `docs/mockups/reinicio/01-apertura-medianoche.png` y pide crear la portada. Las propuestas previas quedan como historial. |

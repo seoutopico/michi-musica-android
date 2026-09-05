@@ -8,6 +8,10 @@ enum class AudioSection(val label: String) { MUSIC("Música"), PODCASTS("Podcast
 internal fun episodeResumePosition(position: Long, duration: Long): Long =
     if (position < 0 || (duration > 0 && position >= duration)) 0 else position
 
+/** A queue removal may select an unfinished episode at zero; preserve explicit seek positions. */
+internal fun episodeTransitionPosition(saved: Long, duration: Long, requested: Long): Long? =
+    episodeResumePosition(saved, duration).takeIf { requested == 0L && it > 0L }
+
 /** Local catalog only: no tags, filenames or Markdown documents are changed. */
 class AudioCatalog internal constructor(val preferences: android.content.SharedPreferences) {
     constructor(context: Context) : this(context.getSharedPreferences("audio_catalog", Context.MODE_PRIVATE))

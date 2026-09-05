@@ -71,9 +71,11 @@ La sección consultada y la cola de reproducción son independientes. No reintro
 
 ## Última entrega y punto exacto de reanudación
 
-**1.11.0, código 20:** código implementado, 49 pruebas por variante y lint sin errores, APK oficial firmada y debug final instalada conservando datos. Publicación 1.11.0 preparada en borrador; 1.10.1 sigue siendo la última estable pública. El Pixel volvió a bloquearse durante la revisión: solo se observó Biblioteca con el selector y el mini en pausa. Falta probar reclasificación reversible, colas al navegar, posición independiente de dos episodios, reinicio y destino de descarga. No dar estas comprobaciones por hechas.
+**1.11.0, código 20, validación final:** depuración autorizada y Pixel desbloqueado. Comprobados clasificación reversible, colas independientes al navegar entre Música/Podcasts/Listas, posiciones distintas de dos episodios, Anterior/Siguiente, avance automático, finalizado y reinicio del proceso sin autoplay. Descargas reales a Música y Podcasts, última elección recordada y segunda copia sin sobrescribir la primera (SHA-256 idéntico). Corregida una transición detectada al borrar el episodio actual: el siguiente conserva su posición y queda en pausa. Comprobado tanto al borrar el primero como el último de una cola de dos episodios.
 
-Al recibir «listo» o desbloqueo, crear otra vez dos audios de prueba (los `Michi prueba podcast A/B 621b.wav` ya se retiraron; las copias locales están en `tmp/device-review/`), comprobar los recorridos anteriores y limpiar solo esos archivos. El ajuste `stay_on_while_plugged_in` se restauró a su valor original. Si hace falta mantener pantalla encendida, considerar que ADB indica alimentación AC, no USB: guardar/restaurar valor y usar `svc power stayon true` temporalmente. No sortear el bloqueo seguro. Actualizar capturas/documentación y publicar el borrador tras las comprobaciones.
+`test lint assembleDebug assembleRelease --offline` final: 51 pruebas por variante, lint sin errores (16 advertencias app/3 iconpack), firma oficial verificada. Debug final instalada conservando datos. APK oficial 1.11.0 y sumas actualizadas para [la release](https://github.com/seoutopico/michi-musica-android/releases/tag/v1.11.0). No volver a subir la APK preliminar cuyo hash empieza por `681a8d`.
+
+Todos los audios creados/descargados para las pruebas se eliminaron mediante la app. Inventario original conservado (nombres, tamaños y fechas), catálogo sin referencias de prueba, carpeta/listas/apariencia y última escucha conservadas. El Pixel quedó en Música, con su podcast original pausado en 12:41; ajuste de pantalla restaurado a 0. Capturas reales revisadas: `docs/screenshots/library.png` y `podcasts.png`. No repetir estas pruebas por una indicación antigua de «Pixel bloqueado»: los pendientes ampliados vigentes están en MMA-035/037, y los límites de seguridad en `REVISION_SEGURIDAD.md`.
 
 Actualización de borrado: **1.10.1**, [release](https://github.com/seoutopico/michi-musica-android/releases/tag/v1.10.1). 43 pruebas por variante, lint sin errores y firma release verificada. El Pixel conserva la firma debug para mantener sus datos. Esta entrega queda sucedida por Podcasts 1.11.0; consultar la entrada más reciente del historial para validación y publicación.
 
@@ -110,3 +112,17 @@ $env:JAVA_HOME = Join-Path $env:USERPROFILE '.jdks/jbr-21.0.11'
 Los artefactos de `app/build/` no forman parte de una copia de fuentes habitual. Las capturas de `tmp/device-review/` son evidencias locales temporales y pueden no viajar al compartir el proyecto. Las verificaciones duraderas deben quedar descritas en el historial; si se comparten capturas, revisar que no expongan contenido personal.
 
 No guardar rutas de perfil, claves ADB ni secretos en el repositorio. Resolver rutas locales con variables de entorno. La guía ADB no debe incluir identificadores del dispositivo. Si hay que abrir una URL en Windows para Aina, usar Chrome explícitamente.
+
+## Entrega a otra persona o IA
+
+El repositorio es la fuente de continuidad; no hace falta recuperar este chat. Las aprobaciones, limitaciones y pendientes están descritos aquí y en las fichas enlazadas. La documentación orienta y permite revisar el cumplimiento; no garantiza por sí sola que otra herramienta siga las instrucciones.
+
+1. Abrir la raíz del proyecto, leer `AGENTS.md`, esta guía y la ficha de la pantalla afectada. Comprobar `git status` antes de editar y conservar trabajo existente.
+2. Identificar el problema concreto y los estados que cambia. Reutilizar `MichiTheme`, filas, mini reproductor y navegación existentes. Conservar paleta, tipografía, márgenes, jerarquía de mensajes y posición de controles documentados. Si la petición ya autoriza un cambio, aplicarlo sin pedir otra vez la misma aprobación.
+3. Implementar dentro de ese alcance y comparar el resultado con la especificación vigente y una captura anterior pertinente. Una nueva función debe mantener los recorridos de las demás pantallas. Los mockups antiguos descartados no son alternativas disponibles.
+4. Ejecutar las comprobaciones requeridas y anotar su resultado real. Distinguir diseño aprobado, prueba unitaria, preview, prueba en dispositivo, APK instalada y release publicada. Si Android impide una prueba, dejarla pendiente y describir el bloqueo concreto.
+5. Actualizar historial, backlog y esta guía cuando cambie el punto de reanudación. Guardar y subir el trabajo autorizado a Git. Conservar fuera del repositorio claves, preferencias del teléfono y audios de prueba privados; un clon puede compilar debug sin la firma oficial ni acceso al Pixel.
+
+Texto para iniciar otra sesión:
+
+> Continúa Michi Música desde este repositorio. Lee AGENTS.md, docs/CONTINUIDAD.md y la ficha de la pantalla que vayas a modificar. Conserva los diseños y recorridos aprobados y los cambios existentes; no recuperes propuestas descartadas. Retoma el apartado «Última entrega y punto exacto de reanudación», verifica el estado real y registra pruebas y pendientes sin darlos por completados por inferencia.

@@ -12,6 +12,7 @@ Tu música local, con una interfaz sencilla y cuidada. Biblioteca, vídeos de Yo
 
 <p>
   <img src="docs/screenshots/library.png" width="230" alt="Biblioteca Medianoche">
+  <img src="docs/screenshots/podcasts.png" width="230" alt="Podcasts separados con posición guardada">
   <img src="docs/screenshots/search.png" width="230" alt="Buscar vídeos en YouTube">
   <img src="docs/screenshots/lists.png" width="230" alt="Colección de listas">
 </p>
@@ -24,8 +25,6 @@ Tu música local, con una interfaz sencilla y cuidada. Biblioteca, vídeos de Yo
 Capturas de Android con la biblioteca y carátulas reales de Aina-Lluna, publicadas con su autorización. La pantalla de letras usa texto ficticio de demostración. Las imágenes ilustran la interfaz: no se distribuyen las canciones ni los archivos de la biblioteca. Las carátulas pertenecen a sus respectivos titulares; cuando un archivo no tiene imagen, la app muestra el gato.
 
 ## Qué puedes hacer
-
-La rama actual incorpora Música/Podcasts en **1.11.0**, instalada para validación y con publicación todavía en borrador. La última descarga estable pública es **1.10.1**, que ya permite borrar canciones y aún no incluye esta separación.
 
 - **Biblioteca local:** elegir una carpeta de Android y reproducir MP3, WAV, OGG, M4A, AAC, FLAC y OPUS; buscar por título, artista, álbum o archivo.
 - **Podcasts separados:** selector Música / Podcasts en Biblioteca, clasificación desde las opciones de cada audio y posición guardada por episodio. Los podcasts no entran en las listas ni en Azar de Música.
@@ -45,7 +44,7 @@ Los audios locales permanecen en el dispositivo. Buscar vídeos, verlos, descarg
 
 **Requisitos:** Android 8.0 o posterior y dispositivo **ARM64**. La APK actual no cubre móviles de 32 bits ni emuladores x86. Las comprobaciones nativas se realizan en Pixel 7.
 
-1. Abre [Releases](https://github.com/seoutopico/michi-musica-android/releases/latest) y descarga `Michi-Musica-1.10.1-arm64.apk`.
+1. Abre [Releases](https://github.com/seoutopico/michi-musica-android/releases/latest) y descarga `Michi-Musica-1.11.0-arm64.apk`.
 2. Abre la APK en Android. Si lo solicita, permite a ese navegador o gestor de archivos instalar aplicaciones desde esa fuente. Puedes retirar ese permiso después.
 3. Abre Michi Música y elige tu carpeta de música mediante el selector de Android.
 4. Opcional: instala `Michi-Iconos-1.0.0.apk` y sigue la [guía de Niagara](docs/NIAGARA.md).

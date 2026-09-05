@@ -1,5 +1,16 @@
 # Historial de cambios
 
+## 2026-09-05 — Validación final de 1.11.0 en Pixel y corrección de reanudación al borrar
+
+- Pixel autorizado y desbloqueado: Música/Podcasts y clasificación reversible probadas con dos WAV propios. A conserva 0:52 y B 1:49 usando Anterior/Siguiente; B conserva 2:17 tras cerrar el proceso y abrir de nuevo, sin autoplay. Navegar por Música, Listas y una lista de 17 canciones mantiene la cola de podcasts. Azar de Música crea su propia cola y Siguiente cambia de pista estando en pausa.
+- A termina en segundo plano, queda Escuchado y B recupera su posición; al seleccionar A finalizado empieza desde cero. Control de pausa del sistema comprobado. Cancelar borrado conserva el archivo; borrar B retira su referencia y conserva A seleccionado; borrar el actual pausa antes de cambiar de audio.
+- Hallazgo nativo corregido: al borrar el episodio actual, Media3 seleccionaba el siguiente en cero aunque tuviera progreso. `episodeTransitionPosition` recupera su posición también en transiciones REMOVE, respetando posiciones explícitas y episodios finalizados. Dos pruebas nuevas. Verificado en APK final al borrar el primer y el último episodio de colas de dos: el audio restante queda pausado en su 12:41 guardado.
+- Dos descargas MP3 reales del vídeo oficial de Blender «Caminandes 3: Llamigos» (SkVqJ1SGeL0), una a Música y otra a Podcasts; elección anterior recordada después de reinstalar debug. La segunda crea `(1)` y la primera mantiene exactamente su SHA-256. Categorías verificadas en el catálogo. Material de prueba libre: [publicación de Blender y licencia Creative Commons](https://vimeo.com/153608970); no se redistribuyen los MP3.
+- `test lint assembleDebug assembleRelease --offline`: BUILD SUCCESSFUL en 5m 29s, JDK 21. 51 pruebas debug y 51 release sin fallos; lint app 0 errores/16 advertencias, iconpack 0 errores/3 advertencias. Firma release verificada. APK final SHA-256 `bbb58b8f448446fb0a44c3b70e8dbce3299a6f7de0c81992a4d02b2b911369ae`.
+- Catálogo privado existente: lectura directa desde shell denegada por Android; no equivale a una prueba de intrusión de todos los componentes. Revisión de seguridad conserva sus límites de dependencias, actualizador, Bluetooth y proveedores.
+- Eliminados solo WAV/MP3 de prueba mediante los diálogos de la app. Comparación del inventario original: mismos nombres, tamaños y fechas; sin datos de prueba en catálogo. Carpeta, listas, apariencia y última escucha originales conservadas. Pantalla restaurada a su configuración previa. Capturas reales nuevas de Música/Podcasts revisadas; instrucciones de continuidad reforzadas para otras personas o IA.
+
+
 ## 2026-09-05 — Michi Música 1.11.0: Música y Podcasts
 
 - Aina aprueba la propuesta de separar podcasts. Selector Música/Podcasts en Biblioteca, sin añadir destinos inferiores ni cambiar el lugar del mini reproductor. Filas de episodios con estado Sin empezar/Continuar/Escuchado.

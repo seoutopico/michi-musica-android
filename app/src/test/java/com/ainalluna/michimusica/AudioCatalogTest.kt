@@ -4,11 +4,20 @@ import android.content.SharedPreferences
 import com.ainalluna.michimusica.library.AudioCatalog
 import com.ainalluna.michimusica.library.AudioSection
 import com.ainalluna.michimusica.library.episodeResumePosition
+import com.ainalluna.michimusica.library.episodeTransitionPosition
 import java.lang.reflect.Proxy
 import org.junit.Assert.*
 import org.junit.Test
 
 class AudioCatalogTest {
+    @Test fun deletingCurrentItemResumesTheNextUnfinishedEpisode() {
+        assertEquals(761_000L, episodeTransitionPosition(761_000, 1_836_000, 0))
+    }
+    @Test fun queueChangesPreserveExplicitPositionsAndRestartCompletedEpisodes() {
+        assertNull(episodeTransitionPosition(761_000, 1_836_000, 120_000))
+        assertNull(episodeTransitionPosition(1_836_000, 1_836_000, 0))
+        assertNull(episodeTransitionPosition(0, 1_836_000, 0))
+    }
     @Test fun unclassifiedAudioRemainsMusicAndChoiceDefaultsToMusic() {
         val catalog = AudioCatalog(memoryPreferences())
         assertFalse(catalog.isPodcast("existing.mp3"))

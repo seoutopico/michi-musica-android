@@ -6,6 +6,7 @@ import android.os.Looper
 import androidx.core.content.edit
 import androidx.media3.common.Player
 import com.ainalluna.michimusica.library.AudioCatalog
+import com.ainalluna.michimusica.library.episodeTransitionPosition
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.exoplayer.ExoPlayer
@@ -51,13 +52,14 @@ class PlaybackService : MediaSessionService() {
                 val oldId = oldPosition.mediaItem?.mediaId
                 val newId = newPosition.mediaItem?.mediaId
                 if (oldId != null && oldId != newId) catalog.savePosition(oldId, oldPosition.positionMs)
-                // System Next/Previous and automatic transitions also resume each episode.
+                // Also resume the item selected after deletion, without overriding explicit seeks.
                 if (oldId != newId && newId != null && catalog.isPodcast(newId) &&
-                    (reason == Player.DISCONTINUITY_REASON_AUTO_TRANSITION || reason == Player.DISCONTINUITY_REASON_SEEK)) {
-                    val saved = catalog.position(newId)
-                    handler.post {
-                        if (player.currentMediaItem?.mediaId == newId && saved > 0) {
-                            player.seekTo(com.ainalluna.michimusica.library.episodeResumePosition(saved, player.currentMediaItem?.mediaMetadata?.extras?.getLong("duration_ms") ?: 0L))
+                    (reason == Player.DISCONTINUITY_REASON_AUTO_TRANSITION || reason == Player.DISCONTINUITY_REASON_SEEK || reason == Player.DISCONTINUITY_REASON_REMOVE)) {
+                    val target = episodeTransitionPosition(catalog.position(newId),
+                        newPosition.mediaItem?.mediaMetadata?.extras?.getLong("duration_ms") ?: 0L, newPosition.positionMs)
+                    if (target != null) handler.post {
+                        if (player.currentMediaItem?.mediaId == newId) {
+                            player.seekTo(target)
                         }
                     }
                 }

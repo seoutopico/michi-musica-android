@@ -47,3 +47,7 @@ Revisada el 2026-09-05 sobre el código `adf7797` y la APK firmada 1.11.0 prepar
 - **GitHub:** confirmado código en `main`, borrador 1.11.0 con artefactos y reportes privados de vulnerabilidades habilitados. CI sigue pendiente de activación; no se atribuyen comprobaciones automáticas remotas.
 
 Permanecen los límites anteriores, especialmente el actualizador NIGHTLY de yt-dlp sin verificación de firma independiente y la falta de auditoría exhaustiva de vulnerabilidades de dependencias y binarios nativos. No se declara la aplicación libre de vulnerabilidades.
+
+## Comprobación nativa y artefacto final 1.11.0
+
+Después de la revisión preliminar se autorizó el Pixel. Android rechazó la lectura directa desde shell del catálogo privado existente. Se probaron cancelación/borrado de audios propios y descargas reales a ambas categorías; una segunda descarga conservó el SHA-256 de la primera. Los archivos originales conservan nombres, tamaños y fechas; las pruebas y sus referencias privadas se limpiaron. Detectada y corregida la pérdida aparente de posición al borrar el episodio actual; confirmada recuperación en pausa en el dispositivo. APK final: 51 pruebas por variante, lint sin errores y firma verificada; hash y detalles en el historial. Esto sustituye el bloqueo nativo indicado en la revisión preliminar, sin convertirla en auditoría independiente ni cerrar los riesgos del actualizador/dependencias.
