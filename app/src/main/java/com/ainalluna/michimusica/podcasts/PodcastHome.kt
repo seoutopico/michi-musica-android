@@ -155,9 +155,13 @@ fun LazyListScope.podcastItems(nav: PodcastNavigation, state: PodcastState, prog
                 lineHeight = 29.sp, fontWeight = FontWeight.Medium, modifier = Modifier.semantics { heading() })
             Text(if (following) "${state.shows.size} ${if (state.shows.size == 1) "podcast" else "podcasts"} · Solo contenido gratuito"
                 else if (news) "$recentCount ${if (recentCount == 1) "episodio" else "episodios"} · Últimos 3 días"
+                else if (selected != null && YouTubePodcasts.isYouTube(selected.url)) "${selected.episodes.size} publicaciones recientes · YouTube"
                 else "${selected?.episodes?.size ?: state.shows.sumOf { it.episodes.size }} episodios en el RSS público",
                 color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp, modifier = Modifier.padding(top = 5.dp))
             if (selected != null && selected.checked > 0) Text("Comprobado el ${dateLabel(selected.checked)}", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
+            if (selected != null && YouTubePodcasts.isYouTube(selected.url)) Text(
+                "YouTube comparte las publicaciones recientes del canal. Se descarga el audio del vídeo público, que puede ser un extracto del programa original.",
+                color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp, modifier = Modifier.padding(top = 8.dp))
             if (selected != null && java.net.URI(selected.url).host.endsWith("ivoox.com")) Text(
                 "Algunos programas solo ofrecen adelantos fuera de iVoox. Michi comprueba la duración y no guarda esos recortes.",
                 color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp, modifier = Modifier.padding(top = 8.dp))
@@ -177,13 +181,13 @@ fun LazyListScope.podcastItems(nav: PodcastNavigation, state: PodcastState, prog
     if (state.shows.isEmpty()) item(key = "podcast-empty") {
         Column(Modifier.padding(horizontal = 8.dp, vertical = 20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text("Sigue tus podcasts favoritos", style = MaterialTheme.typography.titleLarge)
-            Text("Añade su enlace RSS para consultar los episodios y descargar los que quieras escuchar sin conexión.", color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text("Añade su RSS o canal de YouTube para consultar los episodios y descargar su audio.", color = MaterialTheme.colorScheme.onSurfaceVariant)
             TextButton({ nav.add = true }) { Text("Añadir podcast") }
         }
     }
     val wanted = searchable(nav.query)
     if (following) {
-        val shows = state.shows.filter { searchable("${it.title} ${it.author}").contains(wanted) }.sortedBy { searchable(it.title) }
+        val shows = podcastsByLatest(state.shows, now).filter { searchable("${it.title} ${it.author}").contains(wanted) }
         if (shows.isEmpty() && state.shows.isNotEmpty()) item { EmptyFilter { nav.query = "" } }
         items(shows, key = { "show:${it.url}" }) { show ->
             Row(Modifier.fillMaxWidth().clickable(role = Role.Button, onClickLabel = "Ver episodios de ${show.title}") {
@@ -197,7 +201,7 @@ fun LazyListScope.podcastItems(nav: PodcastNavigation, state: PodcastState, prog
                         color = if (new > 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 13.sp, modifier = Modifier.padding(top = 5.dp))
                     if (show.error.isNotBlank()) Text("No se pudo actualizar", color = MaterialTheme.colorScheme.error, fontSize = 12.sp)
-                    else show.episodes.firstOrNull()?.let { Text("Último · ${dateLabel(it.published)}", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp) }
+                    else show.episodes.filter { it.published in 1..now }.maxByOrNull { it.published }?.let { Text("Último · ${dateLabel(it.published)}", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp) }
                 }
                 HomeIcon(R.drawable.ic_lists_chevron_right, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
             }
@@ -274,8 +278,8 @@ fun PodcastDialogs(nav: PodcastNavigation, controller: PodcastController, state:
     if (nav.add) AlertDialog(onDismissRequest = { if (!controller.adding) { nav.add = false; controller.clearAddError() } },
         title = { Text("Añadir podcast") }, text = {
             Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                Text("Pega el enlace RSS público del programa. Solo se incluyen episodios gratuitos; seguirlo no descarga sus audios.")
-                OutlinedTextField(url, { url = it; controller.clearAddError() }, label = { Text("Enlace RSS") },
+                Text("Pega el RSS público o el enlace del canal de YouTube. Seguirlo no descarga sus audios. Solo contenido gratuito; sin cuentas ni pagos.")
+                OutlinedTextField(url, { url = it; controller.clearAddError() }, label = { Text("RSS o canal de YouTube") },
                     modifier = Modifier.fillMaxWidth(), keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri, autoCorrectEnabled = false),
                     enabled = !controller.adding, maxLines = 4, isError = controller.addError.isNotBlank())
                 if (controller.adding) LinearProgressIndicator(Modifier.fillMaxWidth())

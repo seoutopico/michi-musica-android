@@ -2,6 +2,10 @@
 
 Actualizado: 2026-09-06. Punto de entrada para continuar sin depender del historial del chat.
 
+## Ampliación en curso: YouTube y orden de programas 1.13
+
+Aina pide que Podcasts también siga canales de YouTube, incluido `@COASTTOCOASTAMOFFICIAL/videos`, y que Tus programas se ordene por el episodio más reciente. Implementación en [Podcasts YouTube 1.13](PODCASTS_YOUTUBE_1_13.md): resolución del canal, feed Atom público y descarga de audio mediante el motor existente, sin cuentas/pagos. Se conserva el diseño y la ventana de 72 horas. `test lint assembleDebug :app:assembleValidation assembleRelease --offline` correcto: 89 pruebas por variante, lint sin errores/16 advertencias previas. Comprobación nativa pendiente de desbloquear el Pixel: ejecutar regresión RSS y `scripts/validate_youtube_podcasts.ps1`, comprobar vistas/orden y luego instalar conservando datos y publicar. No presentar 1.13 como instalada o publicada hasta terminarla. La entrega 1.12 descrita debajo sí está cerrada.
+
 ## Ampliación vigente: podcasts RSS 1.12.0
 
 Aina autoriza seguir programas, novedades y descargas manuales **sin contenido de pago**, y exige conservar el diseño. Implementación en `podcasts/`, integrada en Biblioteca/Podcasts con Siguiendo · Novedades · Descargados. Leer [Podcasts RSS 1.12](PODCASTS_RSS_1_12.md) antes de continuar. No hay cuentas, pagos ni soporte de feeds privados. Actualización periódica configurable y avisos opcionales. Aina precisa después que una novedad tiene un máximo de 3 días desde su publicación: ventana móvil de 72 horas para Novedades, contadores y avisos; el catálogo completo permanece en Siguiendo.

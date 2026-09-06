@@ -1,5 +1,12 @@
 # Historial de cambios
 
+## 2026-09-06 — Ampliación de Podcasts a canales de YouTube
+
+- Corrección del alcance señalado por Aina: Añadir podcast acepta también canales de YouTube, incluido el enlace con `/videos`, resueltos a una identidad estable sin duplicados. Consulta de publicaciones recientes mediante Atom público; las novedades mantienen 72 horas desde publicación.
+- Tus programas pasa de orden alfabético a última publicación descendente, común para RSS y YouTube; fechas futuras o ausentes no adelantan un programa.
+- Descarga de audio público como MP3 mediante el motor existente, verificación del canal/disponibilidad/duración, cancelación del proceso y guardado SAF con diario. No se usan cuentas ni se obtiene contenido exclusivo; el vídeo público puede ser un extracto editorial.
+- Código 23, versión 1.13.0 en preparación. `test lint assembleDebug :app:assembleValidation assembleRelease --offline` correcto: 89 pruebas por variante, cero fallos; lint app sin errores/16 advertencias previas. Firma oficial conservada. Validación nativa, instalación y publicación pendientes del Pixel desbloqueado; 1.12.0 sigue siendo la entrega publicada hasta completar este cierre.
+
 ## 2026-09-06 — 1.12.0 publicada
 
 - [Release estable 1.12.0](https://github.com/seoutopico/michi-musica-android/releases/tag/v1.12.0) publicada tras completar la batería nativa y actualizar el Pixel conservando datos. PR #1 integrado en `main`, commit de integración `668568d6b5c4311b885c2ad5b1aefac08a45f5f2`.

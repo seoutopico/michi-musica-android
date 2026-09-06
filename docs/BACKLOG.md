@@ -6,6 +6,7 @@
 
 | ID | Prioridad | Trabajo | Resultado esperado |
 | --- | --- | --- | --- |
+| MMA-040 | P1 | Completar canales de YouTube y orden por última publicación | Implementados resolución del canal público, feed Atom, descarga de MP3, cancelación y orden común con RSS. Pruebas unitarias correctas. Pendiente validación real en Pixel desbloqueado, instalación conservando datos y publicación. Ficha PODCASTS_YOUTUBE_1_13.md. |
 | MMA-002 | P1 | Probar en un Pixel 7 real | Confirmar selector de carpeta, formatos, segundo plano, bloqueo y Bluetooth. |
 | MMA-005 | P2 | Verificar las carátulas existentes en el Pixel | Lectura asíncrona, muestreo, caché y marcador felino implementados; comprobar archivos con y sin imagen incrustada. No incluye edición de metadatos. |
 | MMA-006 | P3 | Valorar publicación en Play Store | La publicación solicitada es GitHub con APK directa. Play Console, sus requisitos y pruebas quedan fuera de esta entrega. |

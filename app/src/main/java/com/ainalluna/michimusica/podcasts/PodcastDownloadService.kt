@@ -94,39 +94,46 @@ class PodcastDownloadService : Service() {
                 if (it.status == "cancelled") throw CancellationException()
                 it.copy(status = "downloading", error = "")
             }
-            // Recheck public availability. Feed entries marked paid/previews are never downloaded.
-            val fresh = PodcastNetwork.feed(entry.showUrl).episodes.firstOrNull { it.id == entry.episodeId }
+            fun progress(percent: Int) {
+                repository.progress.value = mapOf(entry.key to percent)
+                getSystemService(NotificationManager::class.java).notify(NOTIFICATION, notification(entry.title, percent))
+            }
+            val youtube = YouTubePodcasts.isYouTube(entry.showUrl)
+            val fresh = if (youtube) YouTubePodcastAudio.prepare(this@PodcastDownloadService, entry, temporary, ::progress)
+            else PodcastNetwork.feed(entry.showUrl).episodes.firstOrNull { it.id == entry.episodeId }
                 ?: error("Este episodio ya no figura como audio gratuito en el RSS.")
             val extension = podcastExtension(fresh.mime)
-            val connection = PodcastNetwork.open(fresh.audio)
-            try {
-                val mime = connection.contentType.orEmpty().substringBefore(';').lowercase()
-                require(mime.startsWith("audio/") || mime in listOf("application/octet-stream", "binary/octet-stream")) {
-                    "El servidor no ha devuelto un archivo de audio público."
-                }
-                val expected = connection.contentLengthLong
-                val max = 1024L * 1024 * 1024
-                require(expected <= max) { "Este episodio supera el límite de 1 GB." }
-                var bytes = 0L; var lastPercent = -2
-                connection.inputStream.use { input -> temporary.outputStream().use { output ->
-                    val buffer = ByteArray(64 * 1024)
-                    while (true) {
-                        currentCoroutineContext().ensureActive()
-                        val count = input.read(buffer)
-                        if (count < 0) break
-                        bytes += count
-                        require(bytes <= max) { "Este episodio supera el límite de 1 GB." }
-                        output.write(buffer, 0, count)
-                        val percent = if (expected > 0) ((bytes * 100 / expected).toInt().coerceIn(0, 99)) else -1
-                        if (lastPercent != percent) {
-                            lastPercent = percent
-                            repository.progress.value = mapOf(entry.key to percent)
-                            getSystemService(NotificationManager::class.java).notify(NOTIFICATION, notification(entry.title, percent))
-                        }
+            if (!youtube) {
+                val connection = PodcastNetwork.open(fresh.audio)
+                try {
+                    val mime = connection.contentType.orEmpty().substringBefore(';').lowercase()
+                    require(mime.startsWith("audio/") || mime in listOf("application/octet-stream", "binary/octet-stream")) {
+                        "El servidor no ha devuelto un archivo de audio público."
                     }
-                } }
-                require(bytes > 0 && (expected < 0 || bytes == expected)) { "El audio se recibió incompleto. Reintenta la descarga." }
-            } finally { connection.disconnect() }
+                    val expected = connection.contentLengthLong
+                    val max = 1024L * 1024 * 1024
+                    require(expected <= max) { "Este episodio supera el límite de 1 GB." }
+                    var bytes = 0L; var lastPercent = -2
+                    connection.inputStream.use { input -> temporary.outputStream().use { output ->
+                        val buffer = ByteArray(64 * 1024)
+                        while (true) {
+                            currentCoroutineContext().ensureActive()
+                            val count = input.read(buffer)
+                            if (count < 0) break
+                            bytes += count
+                            require(bytes <= max) { "Este episodio supera el límite de 1 GB." }
+                            output.write(buffer, 0, count)
+                            val percent = if (expected > 0) ((bytes * 100 / expected).toInt().coerceIn(0, 99)) else -1
+                            if (lastPercent != percent) {
+                                lastPercent = percent
+                                repository.progress.value = mapOf(entry.key to percent)
+                                getSystemService(NotificationManager::class.java).notify(NOTIFICATION, notification(entry.title, percent))
+                            }
+                        }
+                    } }
+                    require(bytes > 0 && (expected < 0 || bytes == expected)) { "El audio se recibió incompleto. Reintenta la descarga." }
+                } finally { connection.disconnect() }
+            }
             // Validate a real decodable local audio before exposing anything in the library.
             val retriever = android.media.MediaMetadataRetriever()
             try {
