@@ -33,6 +33,10 @@ class PodcastRepository private constructor(private val context: Context) {
                 } else it.copy(status = "error", error = "La descarga se interrumpió. Pulsa Reintentar.")
             } else it
         })
+        // A process kill can leave private extraction files. No transfer can exist before first load.
+        context.cacheDir.listFiles().orEmpty().filter {
+            Regex("podcast-youtube-[0-9a-f-]{36}|podcast-[0-9a-f]{64}\\.part").matches(it.name)
+        }.forEach { runCatching { it.deleteRecursively() } }
         loaded = true
     }
 
@@ -49,11 +53,11 @@ class PodcastRepository private constructor(private val context: Context) {
         load()
         val url = publicFeedUrl(raw)
         require(state.value.shows.none { it.url == url }) { "Ya sigues este podcast." }
-        val fetched = PodcastNetwork.feed(url)
-        require(fetched.episodes.isNotEmpty()) { "Este RSS no contiene episodios de audio gratuitos compatibles." }
+        val fetched = podcastSource(url)
+        require(fetched.episodes.isNotEmpty()) { "No hay episodios públicos gratuitos compatibles en este enlace." }
         update { old ->
             require(old.shows.size < 100) { "Puedes seguir hasta 100 podcasts." }
-            require(old.shows.none { it.url == url }) { "Ya sigues este podcast." }
+            require(old.shows.none { it.url == fetched.url }) { "Ya sigues este podcast." }
             old.copy(shows = old.shows + mergePodcast(null, fetched, System.currentTimeMillis()))
         }
         PodcastRefreshService.schedule(context)
@@ -67,7 +71,7 @@ class PodcastRepository private constructor(private val context: Context) {
                 for (show in state.value.shows) {
                     kotlinx.coroutines.currentCoroutineContext().ensureActivePodcast()
                     try {
-                        val fetched = PodcastNetwork.feed(show.url)
+                        val fetched = podcastSource(show.url)
                         update { old ->
                             old.copy(shows = old.shows.map {
                                 if (it.url != show.url) it else mergePodcast(it, fetched, System.currentTimeMillis()).also { merged ->

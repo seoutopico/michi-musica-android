@@ -19,6 +19,7 @@ Michi Música no tiene servidor propio, cuentas, analítica ni publicidad propia
 | Guardar MP3 | YouTube y sus servidores de medios reciben la petición del vídeo seleccionado. |
 | Actualizar el motor de descarga | GitHub y sus servidores de descarga reciben la consulta de versión y la petición de yt-dlp NIGHTLY. |
 | Seguir/actualizar un podcast RSS | El proveedor del RSS público recibe la petición del programa y la IP. La comprobación automática puede conectarse aproximadamente cada seis horas y se desactiva en Opciones de podcasts. |
+| Seguir/actualizar un canal de YouTube | YouTube recibe la dirección del canal y la IP al resolverlo y consultar sus publicaciones públicas. Comparte la actualización automática y las opciones de los podcasts RSS. Descargar un episodio solicita su vídeo y audio público a YouTube y sus servidores de medios, sin cuenta ni cookies de acceso. |
 | Ver portadas de podcasts | El servidor de imágenes indicado por el RSS recibe la petición de la portada y la IP; se conserva una caché local limitada. |
 | Descargar un episodio RSS | El servidor de audio indicado por el RSS y sus redirecciones reciben la solicitud del episodio elegido y la IP. No se envían credenciales ni se accede a contenido de pago. |
 

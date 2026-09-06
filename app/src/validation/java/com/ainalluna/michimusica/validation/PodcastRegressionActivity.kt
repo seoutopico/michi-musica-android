@@ -24,7 +24,7 @@ class PodcastRegressionActivity : Activity() {
         window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         label = TextView(this).apply { textSize = 20f; text = "Validación aislada de Podcasts"; setPadding(32, 80, 32, 32) }
         setContentView(label)
-        RegressionNetwork.install()
+        if (intent.getStringExtra("phase") != "youtube") RegressionNetwork.install()
         runPhase(intent.getStringExtra("phase") ?: "suite")
     }
     override fun onNewIntent(intent: android.content.Intent) {
@@ -37,6 +37,7 @@ class PodcastRegressionActivity : Activity() {
             try {
                 withContext(Dispatchers.IO) { repo.load() }
                 when (phase) {
+                    "youtube" -> youtube()
                     "suite" -> suite()
                     "interrupt" -> interrupt()
                     "recover" -> recover()
@@ -51,6 +52,53 @@ class PodcastRegressionActivity : Activity() {
         }
     }
     private fun pass(name: String) { report.appendText("PASS $name\n"); label.text = name }
+    private suspend fun youtube() {
+        report.writeText("")
+        repo.follow("https://www.youtube.com/@COASTTOCOASTAMOFFICIAL/videos")
+        val show = repo.state.value.shows.single()
+        check(show.url == "https://www.youtube.com/channel/UCVmlEoDSeImXV5aPz8EvP0A")
+        check(show.title == "COAST TO COAST AM OFFICIAL" && show.episodes.isNotEmpty())
+        check(show.episodes.none { it.isNew } && show.episodes.all { it.published > 0 })
+        pass("real requested YouTube handle resolved; ${show.episodes.size} public entries with publication dates")
+        check(runCatching { repo.follow(show.url) }.isFailure)
+        check(repo.state.value.shows.size == 1 && repo.refresh() == 0)
+        pass("canonical channel duplicate rejected; refresh does not invent new episodes")
+        getSharedPreferences("michi_preferences", MODE_PRIVATE).edit().putString("music_folder_uri", tree.toString()).commit()
+        val episode = show.episodes.first()
+        PodcastDownloadService.request(this, show, episode, tree)
+        withTimeout(180000) {
+            while (repo.progress.value.values.none { it >= 1 }) {
+                val receipt = repo.state.value.downloads.last()
+                check(receipt.status != "error") { receipt.error }
+                delay(100)
+            }
+        }
+        PodcastDownloadService.cancel(this, repo.state.value.downloads.last().key)
+        until("YouTube cancelled") { repo.state.value.downloads.last().status == "cancelled" }
+        delay(500); noPartial()
+        check(cacheDir.listFiles().orEmpty().none { it.name.startsWith("podcast-youtube-") })
+        pass("real YouTube download cancellation stops extraction and removes private files")
+        PodcastDownloadService.request(this, show, episode, tree)
+        withTimeout(900000) {
+            while (repo.state.value.downloads.last().status != "done") {
+                val receipt = repo.state.value.downloads.last()
+                check(receipt.status !in setOf("error", "unavailable")) { receipt.error }
+                delay(250)
+            }
+        }
+        val receipt = repo.state.value.downloads.last()
+        check(AudioCatalog(this).isPodcast(receipt.uri))
+        val metadata = android.media.MediaMetadataRetriever()
+        try {
+            metadata.setDataSource(this, receipt.uri.toUri())
+            check(metadata.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_HAS_AUDIO) == "yes")
+            val duration = metadata.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_DURATION)!!.toLong()
+            check(duration > 60000)
+            pass("real YouTube retry saved decodable MP3 through SAF; duration ${duration / 1000}s; classified Podcasts")
+        } finally { metadata.release() }
+        noPartial()
+        pass("YOUTUBE COMPLETE")
+    }
     private suspend fun until(label: String, predicate: () -> Boolean) {
         withTimeout(20000) { while (!predicate()) delay(40) }
         check(predicate()) { label }

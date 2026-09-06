@@ -1,5 +1,20 @@
 # Historial de cambios
 
+## 2026-09-06 — Cierre nativo de YouTube y orden de programas 1.13.0
+
+- Canal real de Aina: 15 entradas públicas con fecha, duplicado canónico rechazado y actualización sin novedades falsas. Cancelación real limpia temporales; reintento guarda MP3 decodificable de 60:45 por SAF y lo clasifica como Podcast. Reproducción comprobada desde Descargados.
+- La primera descarga reveló un JSON de yt-dlp de más de 9 MB, rechazado por el límite del comprobador. Corregido para pedir únicamente los metadatos necesarios tanto antes como después de extraer el audio; repetición completa correcta. Sin eliminar la verificación de identidad, disponibilidad pública o duración.
+- Toda la regresión RSS pasó en la variante aislada: cancelaciones, reintentos, fallos controlados de HTTP/SAF, cierre real del proceso, recuperación y aviso que abre Novedades sin duplicados. Validación visual Medianoche y Rosa con texto al 130 %, conservando componentes de producción.
+- Debug 1.13.0 (23) instalada con siete archivos privados idénticos byte a byte inmediatamente tras instalar. Canal solicitado añadido desde la app personal; ocho programas observados en orden descendente por publicación, Novedades con ocho entradas dentro de 72 horas y última escucha anterior en pausa conservada. No se añadieron audios de prueba a la carpeta personal. Variante aislada retirada, escala 1.0 y apagado de 60 segundos restaurados.
+- `test lint assembleDebug :app:assembleValidation assembleRelease --offline` final correcto: 89 pruebas por variante y lint sin errores/16 advertencias previas. APK oficial 56.877.486 bytes, SHA-256 `f5c970efe295e1360be731bcab5bba43650b2e04144d9ef8c32843af8c7c7151`, firma oficial conservada. Debug instalada: `5576cbfed233db8244d872d5929a64a62790dec97e50497ac5520c91090258ee`. Publicación preparada para el último paso.
+
+## 2026-09-06 — Ampliación de Podcasts a canales de YouTube
+
+- Corrección del alcance señalado por Aina: Añadir podcast acepta también canales de YouTube, incluido el enlace con `/videos`, resueltos a una identidad estable sin duplicados. Consulta de publicaciones recientes mediante Atom público; las novedades mantienen 72 horas desde publicación.
+- Tus programas pasa de orden alfabético a última publicación descendente, común para RSS y YouTube; fechas futuras o ausentes no adelantan un programa.
+- Descarga de audio público como MP3 mediante el motor existente, verificación del canal/disponibilidad/duración, cancelación del proceso y guardado SAF con diario. No se usan cuentas ni se obtiene contenido exclusivo; el vídeo público puede ser un extracto editorial.
+- Código 23, versión 1.13.0 en preparación. `test lint assembleDebug :app:assembleValidation assembleRelease --offline` correcto: 89 pruebas por variante, cero fallos; lint app sin errores/16 advertencias previas. Firma oficial conservada. Validación nativa, instalación y publicación pendientes del Pixel desbloqueado; 1.12.0 sigue siendo la entrega publicada hasta completar este cierre.
+
 ## 2026-09-06 — 1.12.0 publicada
 
 - [Release estable 1.12.0](https://github.com/seoutopico/michi-musica-android/releases/tag/v1.12.0) publicada tras completar la batería nativa y actualizar el Pixel conservando datos. PR #1 integrado en `main`, commit de integración `668568d6b5c4311b885c2ad5b1aefac08a45f5f2`.
