@@ -54,8 +54,12 @@ class PodcastDownloadService : Service() {
         if (intent?.action == "cancel") {
             val key = intent.getStringExtra("key")
             if (key == activeKey) active?.cancel()
-            scope.launch(Dispatchers.IO) {
-                if (key != null && key != activeKey) repository.downloadUpdate(key) { it.copy(status = "cancelled", error = "") }
+            scope.launch {
+                if (key != null && key != activeKey) withContext(Dispatchers.IO + NonCancellable) {
+                    repository.downloadUpdate(key) { if (it.status == "queued") it.copy(status = "cancelled", error = "") else it }
+                }
+                // The queue can advance while the receipt update is on IO.
+                if (key == activeKey) active?.cancel()
             }
         }
         if (runner?.isActive != true) runner = scope.launch {
@@ -86,7 +90,10 @@ class PodcastDownloadService : Service() {
         var created: DocumentFile? = null
         var completed = false
         try {
-            repository.downloadUpdate(entry.key) { it.copy(status = "downloading", error = "") }
+            repository.downloadUpdate(entry.key) {
+                if (it.status == "cancelled") throw CancellationException()
+                it.copy(status = "downloading", error = "")
+            }
             // Recheck public availability. Feed entries marked paid/previews are never downloaded.
             val fresh = PodcastNetwork.feed(entry.showUrl).episodes.firstOrNull { it.id == entry.episodeId }
                 ?: error("Este episodio ya no figura como audio gratuito en el RSS.")
@@ -159,7 +166,8 @@ class PodcastDownloadService : Service() {
                 completed = true
             }
         } catch (failure: Exception) {
-            withContext(NonCancellable) {
+            // Cancellation after the atomic commit must not erase a completed download.
+            if (!completed) withContext(NonCancellable) {
                 val cleaned = created?.let { runCatching { it.delete() }.getOrDefault(false) } ?: true
                 repository.downloadUpdate(entry.key) {
                     it.copy(status = when (failure) { is CancellationException -> "cancelled"; is PodcastPreviewException -> "unavailable"; else -> "error" },

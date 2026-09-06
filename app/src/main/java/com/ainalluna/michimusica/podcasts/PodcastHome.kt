@@ -37,6 +37,10 @@ import com.ainalluna.michimusica.searchable
 import com.ainalluna.michimusica.ui.HomeIcon
 import java.text.DateFormat
 import java.util.Date
+import kotlinx.coroutines.delay
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
 
 enum class PodcastTab(val label: String) { FOLLOWING("Siguiendo"), NEWS("Novedades"), DOWNLOADED("Descargados") }
 
@@ -97,6 +101,22 @@ fun PodcastHeader(nav: PodcastNavigation, state: PodcastState, refreshing: Boole
 
 private fun dateLabel(time: Long): String = if (time > 0) DateFormat.getDateInstance(DateFormat.MEDIUM).format(Date(time)) else "Fecha no indicada"
 
+@Composable
+fun rememberPodcastTime(state: PodcastState): Long {
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    return produceState(System.currentTimeMillis(), state, lifecycle) {
+        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            while (true) {
+                val now = System.currentTimeMillis()
+                value = now
+                val nextExpiry = state.shows.flatMap { it.episodes }.filter { it.isRecent(now) }
+                    .minOfOrNull { PODCAST_NEWS_WINDOW_MS - (now - it.published) + 1 } ?: 60000L
+                delay(nextExpiry.coerceIn(1, 60000))
+            }
+        }
+    }.value
+}
+
 fun LazyListScope.podcastTransfers(state: PodcastState, progress: Map<String, Int>, folder: Uri,
                                   onRetry: (PodcastDownload) -> Unit, onCancel: (String) -> Unit) {
     val transfers = state.downloads.filter { it.folder == folder.toString() && it.status in listOf("queued", "downloading", "error") }
@@ -120,9 +140,12 @@ fun LazyListScope.podcastTransfers(state: PodcastState, progress: Map<String, In
 }
 
 fun LazyListScope.podcastItems(nav: PodcastNavigation, state: PodcastState, progress: Map<String, Int>, folder: Uri,
-                              onDownload: (PodcastShow, PodcastEpisode) -> Unit, onCancel: (String) -> Unit, onSeen: (String?) -> Unit) {
+                              onDownload: (PodcastShow, PodcastEpisode) -> Unit, onCancel: (String) -> Unit, onSeen: (String?) -> Unit,
+                              now: Long = System.currentTimeMillis()) {
     val selected = state.shows.firstOrNull { it.url == nav.showUrl }
     val following = nav.tab == PodcastTab.FOLLOWING && selected == null
+    val news = nav.tab == PodcastTab.NEWS && selected == null
+    val recentCount = state.shows.sumOf { show -> show.episodes.count { it.isRecent(now) } }
     item(key = "podcast-title") {
         Column(Modifier.padding(horizontal = 8.dp, vertical = 8.dp)) {
             if (selected != null) TextButton({ nav.showUrl = null; nav.query = "" }, contentPadding = PaddingValues(end = 12.dp)) {
@@ -131,6 +154,7 @@ fun LazyListScope.podcastItems(nav: PodcastNavigation, state: PodcastState, prog
             Text(selected?.title ?: if (following) "Tus programas" else "Últimos episodios", fontSize = 22.sp,
                 lineHeight = 29.sp, fontWeight = FontWeight.Medium, modifier = Modifier.semantics { heading() })
             Text(if (following) "${state.shows.size} ${if (state.shows.size == 1) "podcast" else "podcasts"} · Solo contenido gratuito"
+                else if (news) "$recentCount ${if (recentCount == 1) "episodio" else "episodios"} · Últimos 3 días"
                 else "${selected?.episodes?.size ?: state.shows.sumOf { it.episodes.size }} episodios en el RSS público",
                 color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp, modifier = Modifier.padding(top = 5.dp))
             if (selected != null && selected.checked > 0) Text("Comprobado el ${dateLabel(selected.checked)}", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
@@ -139,7 +163,7 @@ fun LazyListScope.podcastItems(nav: PodcastNavigation, state: PodcastState, prog
                 color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp, modifier = Modifier.padding(top = 8.dp))
             if (selected?.error?.isNotBlank() == true) Text(selected.error, color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(top = 8.dp))
             if (selected != null) TextButton({ nav.remove = selected }) { Text("Dejar de seguir") }
-            if (!following && (selected?.episodes ?: state.shows.flatMap { it.episodes }).any { it.isNew })
+            if (!following && (selected?.episodes ?: state.shows.flatMap { it.episodes }).any { it.isUnseenRecent(now) })
                 TextButton({ onSeen(selected?.url) }) { Text("Marcar novedades como vistas") }
             if (state.shows.isNotEmpty()) TextField(nav.query, { nav.query = it }, Modifier.fillMaxWidth().padding(top = 12.dp),
                 placeholder = { Text(if (following) "Buscar programa" else "Buscar episodio") }, singleLine = true,
@@ -168,7 +192,7 @@ fun LazyListScope.podcastItems(nav: PodcastNavigation, state: PodcastState, prog
                 PodcastArtwork(show.image, Modifier.size(72.dp))
                 Column(Modifier.weight(1f).padding(start = 14.dp, end = 8.dp)) {
                     Text(show.title, fontSize = 16.sp, lineHeight = 22.sp, maxLines = 2, overflow = TextOverflow.Ellipsis, fontWeight = FontWeight.Medium)
-                    val new = show.episodes.count { it.isNew }
+                    val new = show.episodes.count { it.isUnseenRecent(now) }
                     Text(if (new > 0) "$new ${if (new == 1) "episodio nuevo" else "episodios nuevos"}" else "${show.episodes.size} episodios",
                         color = if (new > 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 13.sp, modifier = Modifier.padding(top = 5.dp))
@@ -181,11 +205,17 @@ fun LazyListScope.podcastItems(nav: PodcastNavigation, state: PodcastState, prog
         }
     } else {
         val entries = (selected?.let { listOf(it) } ?: state.shows).flatMap { s -> s.episodes.map { s to it } }
+            .filter { (_, e) -> !news || e.isRecent(now) }
             .filter { (s, e) -> searchable("${s.title} ${e.title}").contains(wanted) }.sortedByDescending { it.second.published }
-        if (entries.isEmpty() && state.shows.isNotEmpty()) item { EmptyFilter { nav.query = "" } }
+        if (entries.isEmpty() && state.shows.isNotEmpty()) item {
+            if (news && wanted.isBlank()) Column(Modifier.padding(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text("No hay episodios publicados en los últimos 3 días.")
+                Text("Puedes consultar los anteriores en Siguiendo.", color = MaterialTheme.colorScheme.onSurfaceVariant)
+            } else EmptyFilter { nav.query = "" }
+        }
         items(entries, key = { "episode:${it.first.url}:${it.second.id}" }) { (show, episode) ->
             val download = state.downloads.firstOrNull { it.showUrl == show.url && it.episodeId == episode.id && it.folder == folder.toString() }
-            PodcastEpisodeRow(show, episode, download, download?.let { progress[it.key] },
+            PodcastEpisodeRow(show, episode.copy(isNew = episode.isUnseenRecent(now)), download, download?.let { progress[it.key] },
                 onDetails = { nav.detail = show to episode },
                 onDownload = { onDownload(show, episode) }, onCancel = { download?.let { onCancel(it.key) } },
                 onDownloaded = { nav.tab = PodcastTab.DOWNLOADED; nav.showUrl = null; nav.query = "" })

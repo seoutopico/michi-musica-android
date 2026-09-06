@@ -6,7 +6,7 @@
 
 | ID | Prioridad | Trabajo | Resultado esperado |
 | --- | --- | --- | --- |
-| MMA-039 | P1 | Pruebas adicionales de Podcasts RSS 1.12 | Instalada y recorridos principales probados en Pixel: RSS real, descarga SAF completa, rechazo de recorte, persistencia, segundo plano y temas/texto grande. Pendientes cancelación/reintento/interrupción de transferencia, permiso SAF/espacio, aviso ante publicación futura, Doze/reinicio del teléfono y pantalla bloqueada. Ficha PODCASTS_RSS_1_12.md distingue evidencias y límites. |
+| MMA-039 | P1 | Cerrar Podcasts RSS 1.12 | Recorridos principales probados en Pixel. Últimos cambios: ventana de 72 horas y cancelación tardía; 82 pruebas por variante y APK oficial firmada. Pixel desconectado: ejecutar `scripts/validate_podcasts.ps1` (arnés aislado compilado, sin ejecución aún), instalar debug final y revisar Novedades. La batería cubre cancelación/reintento/interrupción, fallos SAF y aviso controlado; Doze y pantalla bloqueada se distinguen de esos casos. No publicar como cierre nativo completado mientras falte esa ejecución. |
 | MMA-002 | P1 | Probar en un Pixel 7 real | Confirmar selector de carpeta, formatos, segundo plano, bloqueo y Bluetooth. |
 | MMA-005 | P2 | Verificar las carátulas existentes en el Pixel | Lectura asíncrona, muestreo, caché y marcador felino implementados; comprobar archivos con y sin imagen incrustada. No incluye edición de metadatos. |
 | MMA-006 | P3 | Valorar publicación en Play Store | La publicación solicitada es GitHub con APK directa. Play Console, sus requisitos y pruebas quedan fuera de esta entrega. |
@@ -33,6 +33,7 @@
 
 | ID | Fecha | Trabajo | Verificación |
 | --- | --- | --- | --- |
+| MMA-040 | 2026-09-06 | Añadir capturas de Podcasts RSS a GitHub | Tres PNG reales de Pixel 1.12.0 revisados y enlazados en README y ficha: Siguiendo Medianoche, Siguiendo Rosa y episodios/descargas Rosa al 130 %. Copias idénticas a los originales seleccionados, referencias comprobadas; sin cambios de app. |
 | MMA-038 | 2026-09-06 | Implementar seguimiento RSS público y descargas manuales | Código 1.12.0: programas, novedades, actualización/avisos y descarga con filtros de pago/recortes. 80 pruebas por variante y lint sin errores. Datos reales de iVoox: 209 entradas admitidas, 41 excluidas y recorte detectado. APK debug instalada en Pixel; recorridos principales y diseño verificados con datos reales. Pruebas adicionales en MMA-039. |
 | MMA-036 | 2026-09-05 | Separar Música y Podcasts | Aprobado por Aina e implementado en 1.11.0: secciones, destino MP3, reclasificación, colas independientes de la navegación y posición por episodio. 51 pruebas por variante y validación nativa de clasificación, colas, progreso, borrado y descargas en el historial. |
 | MMA-034 | 2026-09-05 | Publicar comunidad y revisar seguridad | Repositorio público y release v1.10.0 con APK firmadas, capturas reales autorizadas, IA explícita, GPL, privacidad, contribución y fuentes. 40 pruebas por variante, lint sin errores; límites de revisión documentados y CI pendiente en MMA-033. |

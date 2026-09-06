@@ -582,6 +582,7 @@ private fun LibraryScreen(
     var settings by remember { mutableStateOf(false) }
     val podcastNav = rememberPodcastNavigation()
     val podcastState = podcastController?.repository?.state?.collectAsState()?.value ?: PodcastState()
+    val podcastNow = rememberPodcastTime(podcastState)
     val refreshing = podcastController?.repository?.refreshing?.collectAsState()?.value ?: false
     val downloadProgress = podcastController?.repository?.progress?.collectAsState()?.value.orEmpty()
     if (section == AudioSection.PODCASTS && podcastController != null && podcastFolder != null)
@@ -618,7 +619,7 @@ private fun LibraryScreen(
         podcastHeader = podcastController?.let { pc -> { PodcastHeader(podcastNav, podcastState, refreshing, pc.ready, pc.error, pc::refresh, pc::dismissError) } },
         podcastContent = if (podcastController != null && podcastFolder != null && podcastNav.tab != PodcastTab.DOWNLOADED) {
             { podcastItems(podcastNav, podcastState, downloadProgress, podcastFolder,
-                { show, episode -> podcastController.download(show, episode, podcastFolder) }, podcastController::cancel, podcastController::seen) }
+                { show, episode -> podcastController.download(show, episode, podcastFolder) }, podcastController::cancel, podcastController::seen, now = podcastNow) }
         } else null,
         podcastDownloads = if (podcastController != null && podcastFolder != null) {
             { podcastTransfers(podcastState, downloadProgress, podcastFolder, podcastController::retry, podcastController::cancel) }

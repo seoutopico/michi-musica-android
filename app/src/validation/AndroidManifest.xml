@@ -1,0 +1,6 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
+    <application android:label="Michi · validación" tools:replace="android:label">
+        <activity android:name=".validation.PodcastRegressionActivity" android:exported="true" />
+        <provider android:name=".validation.RegressionDocuments" android:authorities="${applicationId}.documents" android:exported="false" android:grantUriPermissions="true" />
+    </application>
+</manifest>

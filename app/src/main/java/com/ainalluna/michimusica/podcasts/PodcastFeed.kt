@@ -23,6 +23,14 @@ data class PodcastShow(
     val seen: Set<String> = emptySet(), val excluded: Int = 0,
 )
 
+internal const val PODCAST_NEWS_WINDOW_MS = 3 * 24 * 60 * 60 * 1000L
+
+/** News is based on publication age, never the date Michi discovered an entry. */
+internal fun PodcastEpisode.isRecent(now: Long): Boolean =
+    published > 0 && published <= now && now - published <= PODCAST_NEWS_WINDOW_MS
+
+internal fun PodcastEpisode.isUnseenRecent(now: Long): Boolean = isNew && isRecent(now)
+
 internal class PodcastPreviewException : IllegalStateException("El RSS solo ofrece un adelanto. El audio completo no está disponible para descargar desde este enlace público.")
 
 internal fun requireCompletePodcast(expectedDuration: Long, actualDuration: Long) {
@@ -180,7 +188,7 @@ internal fun mergePodcast(previous: PodcastShow?, fetched: PodcastShow, now: Lon
     val known = previous?.seen.orEmpty() + previous?.episodes.orEmpty().map { it.id }
     val old = previous?.episodes.orEmpty().associateBy { it.id }
     return fetched.copy(checked = now, seen = (known + fetched.episodes.map { it.id }).takeLastSet(20000), episodes = fetched.episodes.map {
-        it.copy(isNew = old[it.id]?.isNew ?: (previous != null && it.id !in known))
+        it.copy(isNew = it.isRecent(now) && (old[it.id]?.isNew ?: (previous != null && it.id !in known)))
     })
 }
 

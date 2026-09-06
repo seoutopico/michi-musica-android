@@ -8,14 +8,14 @@ Petición aprobada por Aina el 6 de septiembre de 2026: seguir programas, conoce
 - Dentro de Podcasts: **Siguiendo · Novedades · Descargados**. Selector horizontal desplazable para texto grande; acciones Añadir podcast, Actualizar y opciones propias del pódcast. El engranaje superior sigue siendo el de la biblioteca.
 - **Añadir podcast** admite la dirección RSS pública HTTPS. No es el enlace de cualquier página web: si se pega una página, se indica copiar Fuente RSS. Se valida antes de seguir, se impiden duplicados y no se descarga el archivo histórico. No se añade ningún programa sin una acción del usuario.
 - **Siguiendo** muestra portada publicada por el programa (gato si falta/falla), nombre, número de episodios del feed, novedades y fecha del último. Tocar abre sus episodios. Dejar de seguir requiere confirmar y conserva los audios descargados y las posiciones.
-- **Novedades** muestra los episodios de los programas seguidos por fecha descendente. La primera importación muestra el catálogo disponible, sin marcarlo entero como nuevo. Solo los identificadores incorporados después llevan Nuevo. Marcar novedades como vistas es independiente de Escuchado y de la posición de reproducción.
+- **Novedades** muestra únicamente episodios publicados en las últimas **72 horas (3 días)**, por fecha descendente. Las fechas futuras o ausentes no se tratan como novedades; los episodios anteriores permanecen en el catálogo de cada programa. La lista y las marcas caducan también con la pantalla abierta y se recalculan al volver a la app. La primera importación muestra el catálogo disponible, sin marcarlo entero como nuevo. Solo los identificadores incorporados después y publicados dentro de esas 72 horas llevan Nuevo; descubrir un episodio antiguo no lo convierte en novedad. Marcar novedades como vistas es independiente de Escuchado y de la posición de reproducción.
 - **Descargados** conserva las filas de audio y el reproductor de producción. Añade estado de las descargas en curso/fallidas, progreso, Cancelar y Reintentar. Los audios descargados desde RSS quedan clasificados como Podcasts. El título y nombre del programa se guardan en el catálogo de Michi, sin editar etiquetas del archivo.
 - Filas abiertas, márgenes de 24 dp, acento del tema, buscadores con superficie y forma iguales a Biblioteca, controles con objetivos de 48 dp. Descripciones en un diálogo desplazable, mensajes de error junto a su acción y contenidos bajo la navegación persistente.
 
 ## Actualización y descargas
 
 - Actualización manual y tarea periódica de Android cada seis horas aproximadamente; requiere red, admite Wi-Fi o datos y está sujeta a batería/cuotas del sistema. Se puede desactivar. La tarea persiste al reiniciar el móvil. Forzar la detención de Michi puede detener los trabajos hasta volver a abrirla.
-- Avisos de novedades desactivados inicialmente. Activarlos pide el permiso de notificaciones de Android cuando corresponde. Tocar el aviso abre Podcasts/Novedades. No se anuncian fechas futuras que el autor no haya publicado.
+- Avisos de novedades desactivados inicialmente. Activarlos pide el permiso de notificaciones de Android cuando corresponde. Tocar el aviso abre Podcasts/Novedades. Solo se avisan incorporaciones publicadas dentro de las últimas 72 horas; el aviso tiene caducidad. No se anuncian fechas futuras que el autor no haya publicado.
 - Descargas siempre manuales. Un servicio propio en primer plano mantiene la cola durante navegación, segundo plano y recreación de la actividad, con notificación de progreso. Cancelar descarta el temporal. Un fallo permite reintentar; una terminación del proceso conserva un registro de interrupción y requiere reintento al abrir. No se promete continuación por bytes tras reiniciar.
 - Antes de descargar se vuelve a leer el RSS público y se comprueba que el episodio siga admitido. Se guarda primero un temporal privado, se comprueba que tenga audio reproducible y se compara su duración con la anunciada, si existe. Se admite una diferencia de hasta el mayor de 30 segundos o un 10 %, para pequeñas diferencias de codificación/anuncios; un recorte mayor se rechaza.
 - Copia a la carpeta autorizada mediante un documento `.part`, que no lee la biblioteca. Solo se cambia a extensión de audio al terminar. Nombre disponible, sin sobrescribir. Registro persistente de la URI creada; la limpieza se limita a archivos creados por esa descarga. Límite de 1 GB por episodio.
@@ -40,11 +40,15 @@ HTTPS, validación de redirecciones, rechazo de hosts locales y direcciones priv
 
 ## Código y verificación
 
+Capturas nativas publicadas: [Siguiendo en Medianoche](screenshots/podcasts-following.png), [Siguiendo en Rosa al 130 %](screenshots/podcasts-following-rose.png) y [episodios y estados de descarga en Rosa](screenshots/podcasts-episodes-rose.png). Procedencia y contexto en [la guía de capturas](screenshots/README.md).
+
 `podcasts/PodcastFeed.kt`: parser y reglas de disponibilidad/identidad. `PodcastNetwork.kt`: red. `PodcastStore.kt` / `PodcastRepository.kt`: persistencia. `PodcastDownloadService.kt`: cola y guardado. `PodcastRefreshService.kt`: actualización y avisos. `PodcastHome.kt` / `PodcastController.kt`: interfaz y acciones. `LibraryHome.kt` incorpora las vistas sin sustituir cabecera, filas locales ni navegación.
 
 Previews de producción en `PodcastPreviews.kt`: Siguiendo, Novedades, Rosa con texto al 130 %/360 dp y vacío. Rutas debug de Showcase: `podcasts`, `podcast-news`, `podcast-empty`, `podcast-rose`. Datos ficticios sin red; no forman parte de la release.
 
 Verificación automatizada: parser, filtros de pago/adelantos, entidades externas/UTF-16, URLs privadas/inseguras, límites, identidad sin GUID, duplicados, novedades vistas, episodio que cambia a pago, duración recortada, nombres sin colisión y snapshot Unicode/truncado/versionado. Resultados de compilación definitivos en HISTORIAL_CAMBIOS.md.
+
+Ampliación posterior: límite de 72 horas y corrección de cancelación después/durante la finalización. 82 pruebas por variante y APK oficial firmada preparadas. El [arnés nativo aislado](VALIDACION_PODCASTS.md) está compilado; su ejecución y la instalación de estos últimos cambios esperan a reconectar el Pixel. La validación siguiente corresponde a la compilación anterior a estas dos correcciones.
 
 Validación nativa del 6 de septiembre, Pixel 7, 1.12.0 (22):
 

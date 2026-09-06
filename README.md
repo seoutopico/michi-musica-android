@@ -12,7 +12,7 @@ Tu música local, con una interfaz sencilla y cuidada. Biblioteca, vídeos de Yo
 
 <p>
   <img src="docs/screenshots/library.png" width="230" alt="Biblioteca Medianoche">
-  <img src="docs/screenshots/podcasts.png" width="230" alt="Podcasts separados con posición guardada">
+  <img src="docs/screenshots/podcasts-following.png" width="230" alt="Podcasts: Días Extraños en Siguiendo, tema Medianoche">
   <img src="docs/screenshots/search.png" width="230" alt="Buscar vídeos en YouTube">
   <img src="docs/screenshots/lists.png" width="230" alt="Colección de listas">
 </p>
@@ -40,7 +40,19 @@ Capturas de Android con la biblioteca y carátulas reales de Aina-Lluna, publica
 
 Los audios locales permanecen en el dispositivo. Buscar vídeos, verlos, descargar o consultar letras necesita conexión con servicios externos. Consulta los detalles en [Privacidad](PRIVACY.md).
 
-**Ampliación 1.12.0 instalada y probada en Pixel 7:** seguir RSS públicos desde Podcasts, consultar novedades, avisos opcionales y descargas manuales con exclusión de episodios de pago y recortes detectados. Conserva Siguiendo · Novedades · Descargados dentro de la biblioteca. Algunos RSS de iVoox solo entregan adelantos fuera de su app; no garantizamos el audio completo de cada programa. [Funcionamiento, verificación y límites](docs/PODCASTS_RSS_1_12.md), incluidos los casos adicionales pendientes. Esta ampliación aún no figura en la release pública enlazada arriba.
+**Ampliación 1.12.0 instalada y probada en Pixel 7:** seguir RSS públicos desde Podcasts, consultar novedades de los últimos 3 días, avisos opcionales y descargas manuales con exclusión de episodios de pago y recortes detectados. Conserva Siguiendo · Novedades · Descargados dentro de la biblioteca. Algunos RSS de iVoox solo entregan adelantos fuera de su app; no garantizamos el audio completo de cada programa. [Funcionamiento, verificación y límites](docs/PODCASTS_RSS_1_12.md), incluidos los casos adicionales pendientes. Esta ampliación aún no figura en la release pública enlazada arriba.
+
+### Podcasts RSS en el móvil
+
+Capturas reales de la versión 1.12.0 en Pixel 7: **Siguiendo en Medianoche**, **Siguiendo en Rosa** y **episodios de Novedades en Rosa**. Las dos capturas Rosa usan texto al 130 %. En los episodios se ven una descarga completa de NASA y el rechazo de un adelanto de iVoox; la lista está desplazada para mostrar esos estados.
+
+<p>
+  <img src="docs/screenshots/podcasts-following.png" width="230" alt="Siguiendo: Días Extraños y fecha de su última publicación">
+  <img src="docs/screenshots/podcasts-following-rose.png" width="230" alt="Programas seguidos en Rosa con texto al 130 por ciento">
+  <img src="docs/screenshots/podcasts-episodes-rose.png" width="230" alt="Episodios: audio completo no disponible en iVoox y episodio de NASA descargado">
+</p>
+
+[Procedencia y contexto de las capturas](docs/screenshots/README.md). El programa y audio de NASA se utilizaron para validar la descarga y se retiraron al terminar.
 
 ## Instalar
 

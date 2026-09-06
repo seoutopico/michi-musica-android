@@ -38,6 +38,9 @@ class PodcastRefreshService : JobService() {
         val open = PendingIntent.getActivity(this, 13, Intent(this, MainActivity::class.java).putExtra("podcast_news", true), PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
         val notification = Notification.Builder(this, "podcast_news").setSmallIcon(R.drawable.ic_home_library_music)
             .setContentTitle("Novedades en tus podcasts").setContentText("$count ${if (count == 1) "episodio nuevo" else "episodios nuevos"}")
+            .setTimeoutAfter(PodcastRepository.get(this).state.value.shows.flatMap { it.episodes }
+                .filter { it.isUnseenRecent(System.currentTimeMillis()) }
+                .minOfOrNull { (it.published + PODCAST_NEWS_WINDOW_MS - System.currentTimeMillis()).coerceAtLeast(1L) } ?: 1L)
             .setAutoCancel(true).setContentIntent(open).build()
         try { manager.notify(1202, notification) } catch (_: SecurityException) { /* Permission can change between check and notification. */ }
     }

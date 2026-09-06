@@ -1,5 +1,19 @@
 # Historial de cambios
 
+## 2026-09-06 — Límite de novedades y preparación del cierre de 1.12.0
+
+- Aina define novedad como un episodio con un máximo de 3 días desde su publicación. Novedades filtra una ventana móvil de 72 horas; fechas futuras/ausentes y entradas anteriores quedan fuera. Siguiendo conserva el catálogo completo. Contadores, marcas y avisos respetan la misma regla. La interfaz recalcula al volver a primer plano y al caducar un episodio; el aviso tiene caducidad.
+- Corregida la cancelación tardía: no cambia un registro ya completado ni elimina un documento cuya finalización atómica ha terminado. La cancelación de un elemento pendiente comprueba de nuevo si la cola ha avanzado durante la escritura del registro.
+- `test lint assembleDebug :app:assembleValidation assembleRelease --offline`: **BUILD SUCCESSFUL en 2m 41s**. **82 pruebas por variante** (debug, release y validation), sin fallos ni errores; lint app conserva 0 errores/16 advertencias. Tras ampliar la prueba de identidad y el arnés, repetidos `test :app:assembleValidation` (21 s) y compilación de validación (4 s), correctos.
+- APK oficial preparada en `dist/1.12.0/Michi-Musica-1.12.0-arm64.apk`: SHA-256 `4970776e55aad37306fc12376ffbc0e0041b2710e1ad3af5808eb8e049e87c5e`. Firma verificada, misma huella oficial que 1.11.1. Debug actualizada: `dist/Michi-Musica-1.12.0-debug-arm64.apk`, SHA-256 `d838f36bebc819a958a759ecad4bfafc3a892cb24be6da1ad5f234d1445c1443`.
+- Batería nativa aislada en `app/src/validation/` y `scripts/validate_podcasts.ps1`; [alcance y ejecución](VALIDACION_PODCASTS.md). Simula respuestas de red y proveedor SAF para probar servicios reales sin tocar biblioteca personal. Verificado que el arnés no aparece en los DEX de release. **Compilada, aún no ejecutada**: el Pixel pasó de bloqueado a desconectado durante la preparación. Las pruebas nativas anteriores siguen siendo las registradas en la entrada inicial, no se atribuyen a estos últimos cambios.
+- **Cierre pendiente de reconectar el Pixel:** ejecutar el arnés, corregir cualquier fallo que revele, instalar la debug final conservando datos y comprobar Novedades con la regla de 72 horas. La APK oficial todavía no se ha publicado y `main` conserva la versión anterior.
+
+## 2026-09-06 — Capturas públicas de Podcasts RSS
+
+- A petición de Aina, añadidas tres capturas reales de la validación de 1.12.0 en Pixel: Siguiendo en Medianoche, Siguiendo en Rosa al 130 % y episodios con estados de descarga en Rosa. La galería principal del README muestra ahora la sección RSS; se conserva la captura antigua como referencia histórica.
+- Galería ampliada y procedencia enlazadas desde README y la ficha de Podcasts. Imágenes inspeccionadas antes de publicar; sin modificar píxeles ni incluir los demás registros privados de validación. Verificados archivos, referencias y correspondencia con los originales. Cambio documental, sin cambios de app ni nueva APK.
+
 ## 2026-09-06 — 1.12.0: programas RSS y descargas públicas
 
 - Aina autoriza seguir podcasts, consultar publicaciones y descargar episodios sin contenido de pago, conservando el diseño de Michi. Biblioteca/Podcasts incorpora Siguiendo · Novedades · Descargados, con componentes del tema, cabecera y navegación existentes. No se cambia el reproductor ni las colas de música/podcasts.

@@ -51,17 +51,20 @@ class PodcastFeedTest {
         assertFalse(merged.episodes.any { it.isNew }); assertEquals(2, merged.seen.size)
     }
     @Test fun refreshIdentifiesNewEpisodesAndPreservesReadState() {
-        val first = mergePodcast(null, parse(rss(item("a"))), 1)
-        val second = mergePodcast(first, parse(rss(item("a") + item("b"))), 2)
+        val now = podcastDate("Sun, 06 Sep 2026 10:00:00 +0200")
+        val first = mergePodcast(null, parse(rss(item("a"))), now)
+        val second = mergePodcast(first, parse(rss(item("a") + item("b"))), now + 1)
         assertEquals(listOf("Episodio b"), second.episodes.filter { it.isNew }.map { it.title })
         val seen = second.copy(episodes = second.episodes.map { it.copy(isNew = false) })
-        val third = mergePodcast(seen, parse(rss(item("a") + item("b"))), 3)
+        val third = mergePodcast(seen, parse(rss(item("a") + item("b"))), now + 2)
         assertFalse(third.episodes.any { it.isNew })
     }
     @Test fun anOlderEpisodeReturningToFeedIsNotNewAgain() {
-        val first = mergePodcast(null, parse(rss(item("a"))), 1)
-        val gone = mergePodcast(first, parse(rss(item("b"))), 2)
-        assertFalse(mergePodcast(gone, parse(rss(item("a"))), 3).episodes.single().isNew)
+        val now = podcastDate("Sun, 06 Sep 2026 10:00:00 +0200")
+        val first = mergePodcast(null, parse(rss(item("a"))), now)
+        val gone = mergePodcast(first, parse(rss(item("b"))), now + 1)
+        assertTrue(gone.episodes.single().isNew)
+        assertFalse(mergePodcast(gone, parse(rss(item("a"))), now + 2).episodes.single().isNew)
     }
     @Test fun previouslyFreeEpisodeBecomingPaidDisappears() {
         val first = mergePodcast(null, parse(rss(item("a"))), 1)
@@ -99,5 +102,28 @@ class PodcastFeedTest {
         requireCompletePodcast(540000L, 530000L)
         requireCompletePodcast(0L, 126354L)
         requireCompletePodcast(540000L, 580000L)
+    }
+
+    @Test fun newsIncludesExactly72HoursButNotOlderFutureOrUndatedEpisodes() {
+        val now = 2_000_000_000_000L
+        val e = parse(rss(item("a"))).episodes.single()
+        assertTrue(e.copy(published = now).isRecent(now))
+        assertTrue(e.copy(published = now - PODCAST_NEWS_WINDOW_MS).isRecent(now))
+        assertFalse(e.copy(published = now - PODCAST_NEWS_WINDOW_MS - 1).isRecent(now))
+        assertFalse(e.copy(published = now + 1).isRecent(now))
+        assertFalse(e.copy(published = 0).isRecent(now))
+    }
+
+    @Test fun discoveringOldArchiveDoesNotCreateNewsAndExistingBadgesExpire() {
+        val fetched = parse(rss(item("a")))
+        val published = fetched.episodes.single().published
+        val previous = fetched.copy(episodes = emptyList())
+        val fresh = mergePodcast(previous, fetched, published + 1)
+        assertTrue(fresh.episodes.single().isNew)
+        assertFalse(fresh.episodes.single().isUnseenRecent(published + PODCAST_NEWS_WINDOW_MS + 1))
+        val aged = mergePodcast(fresh, fetched, published + PODCAST_NEWS_WINDOW_MS + 1)
+        assertFalse(aged.episodes.single().isNew)
+        assertEquals(1, aged.episodes.size) // Full program catalog is retained.
+        assertFalse(mergePodcast(previous, fetched, published + PODCAST_NEWS_WINDOW_MS + 1).episodes.single().isNew)
     }
 }
