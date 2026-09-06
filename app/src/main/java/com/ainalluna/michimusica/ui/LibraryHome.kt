@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
@@ -52,6 +53,9 @@ fun LibraryHome(
     onDelete: ((Song) -> Unit)? = null,
     section: AudioSection = AudioSection.MUSIC, onSection: (AudioSection) -> Unit = {},
     onClassify: ((Song) -> Unit)? = null, episodePosition: (Song) -> Long = { 0L },
+    podcastHeader: (@Composable () -> Unit)? = null,
+    podcastContent: (LazyListScope.() -> Unit)? = null,
+    podcastDownloads: (LazyListScope.() -> Unit)? = null,
 ) {
     var query by rememberSaveable(section) { mutableStateOf("") }
     val positions by produceState(emptyMap<String, Long>(), songs.toList(), section) {
@@ -90,6 +94,9 @@ fun LibraryHome(
             }
             Spacer(Modifier.height(20.dp))
         }
+        if (section == AudioSection.PODCASTS && podcastHeader != null) item(key = "podcast-controls") { podcastHeader() }
+        if (section == AudioSection.PODCASTS && podcastContent != null) podcastContent(this) else {
+        if (section == AudioSection.PODCASTS) podcastDownloads?.invoke(this)
         item(key = "filter") {
             TextField(query, { query = it }, Modifier.fillMaxWidth().padding(horizontal = 8.dp),
                 placeholder = { Text(if (section == AudioSection.PODCASTS) "Buscar en tus podcasts" else "Buscar en tu música", maxLines = 1, overflow = TextOverflow.Ellipsis) },
@@ -105,7 +112,7 @@ fun LibraryHome(
         item(key = "heading") {
             Row(Modifier.fillMaxWidth().padding(start = 8.dp, top = 18.dp, bottom = 12.dp), verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
-                    Text(if (section == AudioSection.PODCASTS) "Episodios" else "Canciones", Modifier.semantics { heading() }, fontSize = 20.sp, fontWeight = FontWeight.Medium)
+                    Text(if (section == AudioSection.PODCASTS) "Descargados" else "Canciones", Modifier.semantics { heading() }, fontSize = 20.sp, fontWeight = FontWeight.Medium)
                     Text(if (wanted.isBlank()) "${songs.size} ${if (section == AudioSection.PODCASTS) { if (songs.size == 1) "episodio" else "episodios" } else if (songs.size == 1) "canción" else "canciones"}" else "${filtered.size} de ${songs.size}",
                         Modifier.padding(top = 3.dp), color = colors.onSurfaceVariant, fontSize = 14.sp)
                 }
@@ -135,7 +142,7 @@ fun LibraryHome(
         if (!loading && filtered.isEmpty() && notice?.needsFolder != true) item(key = "empty") {
             Column(Modifier.padding(horizontal = 8.dp, vertical = 24.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Text(if (songs.isEmpty()) { if (section == AudioSection.PODCASTS) "Tus podcasts, aquí" else "Tu biblioteca está vacía" } else "No hay coincidencias", style = MaterialTheme.typography.titleLarge)
-                Text(if (songs.isEmpty()) { if (section == AudioSection.PODCASTS) "Guarda un audio desde Buscar eligiendo Podcasts, o usa Marcar como podcast en las opciones de una canción." else "Elige una carpeta que contenga música." } else "Prueba con otro título, artista o álbum.", color = colors.onSurfaceVariant)
+                Text(if (songs.isEmpty()) { if (section == AudioSection.PODCASTS) "Descarga un episodio desde Siguiendo o Novedades. También puedes guardar un audio desde Buscar eligiendo Podcasts." else "Elige una carpeta que contenga música." } else "Prueba con otro título, artista o álbum.", color = colors.onSurfaceVariant)
                 if (section == AudioSection.MUSIC || songs.isNotEmpty()) TextButton(if (songs.isEmpty()) onChooseFolder else { { query = "" } }) { Text(if (songs.isEmpty()) "Elegir carpeta" else "Borrar búsqueda") }
             }
         }
@@ -143,6 +150,7 @@ fun LibraryHome(
             HomeSongRow(song, song.id == selectedSongId, playing && song.id == selectedSongId, ready && !loading,
                 artworkRevision, podcast = section == AudioSection.PODCASTS, position = positions[song.id] ?: 0L,
                 onClassify = onClassify?.let { action -> { action(song) } }, onDelete = onDelete?.let { action -> { focus.clearFocus(); action(song) } }) { focus.clearFocus(); onSelect(song) }
+        }
         }
     }
 }

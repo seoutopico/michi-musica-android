@@ -1,6 +1,20 @@
 # Continuidad de Michi Música Android
 
-Actualizado: 2026-09-05. Punto de entrada para continuar sin depender del historial del chat.
+Actualizado: 2026-09-06. Punto de entrada para continuar sin depender del historial del chat.
+
+## Ampliación vigente: podcasts RSS 1.12.0
+
+Aina autoriza seguir programas, novedades y descargas manuales **sin contenido de pago**, y exige conservar el diseño. Implementación en `podcasts/`, integrada en Biblioteca/Podcasts con Siguiendo · Novedades · Descargados. Leer [Podcasts RSS 1.12](PODCASTS_RSS_1_12.md) antes de continuar. No hay cuentas, pagos ni soporte de feeds privados. Actualización periódica configurable y avisos opcionales. Aina precisa después que una novedad tiene un máximo de 3 días desde su publicación: ventana móvil de 72 horas para Novedades, contadores y avisos; el catálogo completo permanece en Siguiendo.
+
+El RSS real de Días Extraños contiene episodios exclusivos y otros audios recortados aunque anuncie duración completa: 209 entradas admitidas y 41 excluidas por el parser; una muestra pública de 9 minutos devuelve 126,354 segundos. No prometer descarga completa universal de iVoox. El guardado verifica duración y rechaza esos recortes. Sergio Parra: RSS devolvió 403, sin audio validado.
+
+**1.12.0 instalada en Pixel 7 conservando datos.** Verificados seguimiento real de Días Extraños, descarga pública completa de NASA a través de SAF, rechazo nativo del recorte de iVoox, reproducción en segundo plano, posición tras reiniciar en pausa y vistas Medianoche/Rosa con texto al 130 %. Se corrigió la autocorrección del campo RSS. Días Extraños queda seguido; el programa y audio de NASA usados para validar se retiraron. Restauradas última escucha, apariencia, escala de texto y tiempo de apagado; los 112 archivos originales inventariados conservan ruta, tamaño y fecha. No hay publicación estable de 1.12. Los casos adicionales sin verificar se detallan en MMA-039 y en la ficha; no confundirlos con los recorridos ya probados.
+
+**Cierre nativo completado y debug final instalada conservando datos.** Regla de 72 horas, cancelación tardía y avisos comprobados. `scripts/validate_podcasts.ps1` completó toda la batería en Pixel desbloqueado: cancelación activa/en cola/durante commit, reintento, corte HTTP simulado, fallos SAF simulados, cierre del proceso y recuperación, notificación de una nueva entrada, apertura de Novedades y ausencia de duplicados. La variante aislada se retiró al terminar. En la app personal, Novedades muestra únicamente tres episodios del 4, 5 y 6 de septiembre; última escucha conservada. Preferencias, catálogo y podcasts seguidos idénticos inmediatamente después de instalar.
+
+`test lint assembleDebug :app:assembleValidation assembleRelease --offline` correcto: 82 pruebas por variante, lint app sin errores/16 advertencias. APK oficial verificada con la firma de 1.11.1 en `dist/1.12.0/`; debug final en `dist/Michi-Musica-1.12.0-debug-arm64.apk`. Hashes y evidencia en el historial. Los fallos de red/proveedor de la batería son controlados; la frecuencia del trabajo sigue sujeta a Android/Doze. [Método y límites](VALIDACION_PODCASTS.md). Siguiente paso de entrega: integrar el PR y publicar la APK oficial 1.12.0.
+
+Capturas públicas de 1.12.0 añadidas al README a petición de Aina: `docs/screenshots/podcasts-following.png`, `podcasts-following-rose.png` y `podcasts-episodes-rose.png`. Son imágenes nativas seleccionadas de la validación; la guía de capturas explica cada estado. `podcasts.png` conserva la pantalla anterior y ya no representa la sección RSS en la galería principal.
 
 ## Qué leer y qué prevalece
 

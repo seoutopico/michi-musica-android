@@ -1,6 +1,6 @@
 # Backlog
 
-Última revisión: **2026-09-05**.
+Última revisión: **2026-09-06**.
 
 ## Pendiente
 
@@ -32,6 +32,9 @@
 
 | ID | Fecha | Trabajo | Verificación |
 | --- | --- | --- | --- |
+| MMA-039 | 2026-09-06 | Cerrar la validación de Podcasts RSS 1.12 | Batería nativa aislada completa: cancelación, reintento, interrupción del proceso, cortes HTTP/fallos SAF controlados y aviso que abre Novedades sin duplicados. Debug final instalada conservando preferencias y catálogo; ventana de 72 horas revisada con tres episodios reales. 82 pruebas por variante, lint sin errores y APK oficial firmada verificada. Método y límites en VALIDACION_PODCASTS.md. |
+| MMA-040 | 2026-09-06 | Añadir capturas de Podcasts RSS a GitHub | Tres PNG reales de Pixel 1.12.0 revisados y enlazados en README y ficha: Siguiendo Medianoche, Siguiendo Rosa y episodios/descargas Rosa al 130 %. Copias idénticas a los originales seleccionados, referencias comprobadas; sin cambios de app. |
+| MMA-038 | 2026-09-06 | Implementar seguimiento RSS público y descargas manuales | Código 1.12.0: programas, novedades, actualización/avisos y descarga con filtros de pago/recortes. 80 pruebas por variante y lint sin errores. Datos reales de iVoox: 209 entradas admitidas, 41 excluidas y recorte detectado. APK debug instalada en Pixel; recorridos principales y diseño verificados con datos reales. Pruebas adicionales en MMA-039. |
 | MMA-036 | 2026-09-05 | Separar Música y Podcasts | Aprobado por Aina e implementado en 1.11.0: secciones, destino MP3, reclasificación, colas independientes de la navegación y posición por episodio. 51 pruebas por variante y validación nativa de clasificación, colas, progreso, borrado y descargas en el historial. |
 | MMA-034 | 2026-09-05 | Publicar comunidad y revisar seguridad | Repositorio público y release v1.10.0 con APK firmadas, capturas reales autorizadas, IA explícita, GPL, privacidad, contribución y fuentes. 40 pruebas por variante, lint sin errores; límites de revisión documentados y CI pendiente en MMA-033. |
 | MMA-032 | 2026-09-05 | Icono adaptativo y paquete Niagara | Ambas APK compiladas y firmadas; paquete sin permisos instalado, tres variantes reconocidas por Niagara y Medianoche aplicada a Michi. |

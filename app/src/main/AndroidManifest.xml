@@ -4,6 +4,10 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
 
     <!-- Media3 verifies the identity of notification listeners controlling the session.
          Without visibility, Android hides Niagara and its transport commands are denied. -->
@@ -31,6 +35,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service android:name=".podcasts.PodcastDownloadService" android:exported="false" android:foregroundServiceType="dataSync" />
+        <service android:name=".podcasts.PodcastRefreshService" android:exported="false" android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <service
             android:name=".playback.PlaybackService"
