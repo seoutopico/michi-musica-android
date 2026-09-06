@@ -30,3 +30,7 @@ El script instala la variante aislada y borra únicamente los datos previos de *
 Resultados y árbol de la pantalla en `tmp/podcast-regression/`. Un archivo fuente de pruebas o una APK compilada no demuestran que esta batería haya pasado: registrar la ejecución y sus resultados en HISTORIAL_CAMBIOS. La simulación del proveedor no equivale a llenar el almacenamiento del móvil ni revocar la carpeta del usuario. La ejecución forzada del trabajo no certifica que Android lo ejecute puntualmente bajo Doze; la app indica que la frecuencia es aproximada.
 
 El límite de 72 horas se prueba además con reloj fijo en `PodcastFeedTest`: exactamente 72 horas, un milisegundo después, fechas futuras/ausentes, descubrimiento tardío de archivo y caducidad de marcas. La interfaz recalcula el tiempo al volver a primer plano y al caducar un episodio.
+
+## Ejecución completada
+
+6 de septiembre de 2026, Pixel 7 desbloqueado: script completo con salida 0 y marcadores SUITE COMPLETE, RECOVERY COMPLETE y NEWS COMPLETE. Aviso de exactamente un episodio, pantalla Novedades con Últimos 3 días y desactivación de JobScheduler comprobados. Se corrigieron la espera inicial del informe en PowerShell, la declaración requerida por DocumentsProvider y la recreación de la actividad entre fases. La app de validación fue retirada después. Esta evidencia corresponde a la batería completa, no a los intentos iniciales interrumpidos por el bloqueo del móvil.

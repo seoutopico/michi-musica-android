@@ -40,7 +40,7 @@ Capturas de Android con la biblioteca y carátulas reales de Aina-Lluna, publica
 
 Los audios locales permanecen en el dispositivo. Buscar vídeos, verlos, descargar o consultar letras necesita conexión con servicios externos. Consulta los detalles en [Privacidad](PRIVACY.md).
 
-**Ampliación 1.12.0 instalada y probada en Pixel 7:** seguir RSS públicos desde Podcasts, consultar novedades de los últimos 3 días, avisos opcionales y descargas manuales con exclusión de episodios de pago y recortes detectados. Conserva Siguiendo · Novedades · Descargados dentro de la biblioteca. Algunos RSS de iVoox solo entregan adelantos fuera de su app; no garantizamos el audio completo de cada programa. [Funcionamiento, verificación y límites](docs/PODCASTS_RSS_1_12.md), incluidos los casos adicionales pendientes. Esta ampliación aún no figura en la release pública enlazada arriba.
+**Podcasts RSS en 1.12.0:** seguir RSS públicos desde Podcasts, consultar novedades de los últimos 3 días, avisos opcionales y descargas manuales con exclusión de episodios de pago y recortes detectados. Conserva Siguiendo · Novedades · Descargados dentro de la biblioteca. Algunos RSS de iVoox solo entregan adelantos fuera de su app; no garantizamos el audio completo de cada programa. [Funcionamiento, verificación y límites](docs/PODCASTS_RSS_1_12.md). La batería final de descargas, recuperación y avisos ha pasado en Pixel 7.
 
 ### Podcasts RSS en el móvil
 
@@ -58,7 +58,7 @@ Capturas reales de la versión 1.12.0 en Pixel 7: **Siguiendo en Medianoche**, *
 
 **Requisitos:** Android 8.0 o posterior y dispositivo **ARM64**. La APK actual no cubre móviles de 32 bits ni emuladores x86. Las comprobaciones nativas se realizan en Pixel 7.
 
-1. Abre [Releases](https://github.com/seoutopico/michi-musica-android/releases/latest) y descarga `Michi-Musica-1.11.1-arm64.apk`.
+1. Abre [Releases](https://github.com/seoutopico/michi-musica-android/releases/latest) y descarga `Michi-Musica-1.12.0-arm64.apk`.
 2. Abre la APK en Android. Si lo solicita, permite a ese navegador o gestor de archivos instalar aplicaciones desde esa fuente. Puedes retirar ese permiso después.
 3. Abre Michi Música y elige tu carpeta de música mediante el selector de Android.
 4. Opcional: instala `Michi-Iconos-1.0.0.apk` y sigue la [guía de Niagara](docs/NIAGARA.md).

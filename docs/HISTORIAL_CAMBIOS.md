@@ -1,5 +1,12 @@
 # Historial de cambios
 
+## 2026-09-06 — Cierre nativo de 1.12.0 completado
+
+- Batería aislada completa en Pixel desbloqueado, script con salida 0: seguimiento, cancelación activa/en cola/tardía/durante commit, reintento, corte HTTP y fallos SAF controlados, interrupción del proceso y recuperación. Aviso de exactamente una entrada nueva, apertura de Novedades, actualización sin duplicados, marcas vistas y desactivación del trabajo comprobados. Informe local `tmp/podcast-regression/report.txt`.
+- Corregida la transición entre fases del arnés al reutilizar Android la actividad y la comprobación de texto acentuado en PowerShell. Sin cambios adicionales de producción: las APK firmada/debug conservan los hashes registrados abajo.
+- Debug final instalada con `adb install -r`. Preferencias, catálogo de audio y podcasts seguidos idénticos byte por byte antes y después de instalar. Captura real inspeccionada de Novedades: tres episodios publicados los días 4, 5 y 6, sin entradas anteriores; última escucha en pausa conservada. La actualización automática había detectado una nueva entrada real de Días Extraños.
+- Variante de validación y audios sintéticos retirados. Tiempo de apagado original de 60 segundos verificado. MMA-039 completado; quedan los límites generales documentados de Doze, bloqueo/Bluetooth y otros dispositivos, sin presentarlos como probados. APK oficial preparada y firma verificada, lista para el paso de publicación.
+
 ## 2026-09-06 — Primera ejecución de la regresión aislada
 
 - Pixel reconectado. Corregidos dos detalles del arnés: Android exige DocumentsProvider exportado y protegido con MANAGE_DOCUMENTS; el script debe esperar la creación asíncrona del informe sin abortar en PowerShell. La actividad de validación mantiene la pantalla activa mientras está visible. Sin cambios de código de producción ni de la APK oficial preparada.

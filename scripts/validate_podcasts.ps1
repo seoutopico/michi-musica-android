@@ -34,7 +34,7 @@ function Wait-Report([string]$marker) {
     }
     throw "Timed out waiting for $marker. $(Read-Report)"
 }
-function Start-Phase([string]$phase) { & $adbPath shell am start -n $entry --es phase $phase | Out-Null }
+function Start-Phase([string]$phase) { & $adbPath shell am start --activity-clear-top -n $entry --es phase $phase | Out-Null }
 Start-Phase 'suite'
 Wait-Report 'SUITE COMPLETE'
 Start-Phase 'interrupt'
@@ -50,7 +50,7 @@ Wait-Report 'NEWS INTENT SENT'
 & $adbPath shell uiautomator dump /sdcard/michi-validation-ui.xml | Out-Null
 $ui = (& $adbPath shell cat /sdcard/michi-validation-ui.xml) -join "`n"
 $ui | Set-Content (Join-Path $reportFolder 'news-ui.xml') -Encoding UTF8
-if (-not $ui.Contains('Novedades') -or -not $ui.Contains('Últimos 3 días')) { throw 'Notification did not open the expected news screen.' }
+if (-not $ui.Contains('Novedades') -or $ui -notmatch '3 d.as') { throw 'Notification did not open the expected news screen.' }
 Start-Phase 'news-repeat'
 Wait-Report 'NEWS COMPLETE'
 Read-Report

@@ -25,10 +25,18 @@ class PodcastRegressionActivity : Activity() {
         label = TextView(this).apply { textSize = 20f; text = "Validación aislada de Podcasts"; setPadding(32, 80, 32, 32) }
         setContentView(label)
         RegressionNetwork.install()
+        runPhase(intent.getStringExtra("phase") ?: "suite")
+    }
+    override fun onNewIntent(intent: android.content.Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        runPhase(intent.getStringExtra("phase") ?: "suite")
+    }
+    private fun runPhase(phase: String) {
         scope.launch {
             try {
                 withContext(Dispatchers.IO) { repo.load() }
-                when (intent.getStringExtra("phase") ?: "suite") {
+                when (phase) {
                     "suite" -> suite()
                     "interrupt" -> interrupt()
                     "recover" -> recover()
