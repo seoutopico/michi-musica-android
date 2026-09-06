@@ -1,5 +1,11 @@
 # Historial de cambios
 
+## 2026-09-06 — 1.12.0 publicada
+
+- [Release estable 1.12.0](https://github.com/seoutopico/michi-musica-android/releases/tag/v1.12.0) publicada tras completar la batería nativa y actualizar el Pixel conservando datos. PR #1 integrado en `main`, commit de integración `668568d6b5c4311b885c2ad5b1aefac08a45f5f2`.
+- Seis adjuntos comprobados por nombre, tamaño y SHA-256 de GitHub: APK oficial de música, iconos sin cambios, SHA256SUMS, certificado público y fuentes/manifest de youtubedl-android. APK oficial 56.870.366 bytes, SHA-256 `4970776e55aad37306fc12376ffbc0e0041b2710e1ad3af5808eb8e049e87c5e`; misma firma oficial que 1.11.1. GitHub confirma `isDraft=false`, `isPrerelease=false` y versión latest 1.12.0.
+- Capturas de Podcasts visibles en la galería del README de `main` y en el PR. No se publicaron los registros personales de validación. La firma debug del Pixel se conserva para mantener preferencias, permisos y catálogo.
+
 ## 2026-09-06 — Cierre nativo de 1.12.0 completado
 
 - Batería aislada completa en Pixel desbloqueado, script con salida 0: seguimiento, cancelación activa/en cola/tardía/durante commit, reintento, corte HTTP y fallos SAF controlados, interrupción del proceso y recuperación. Aviso de exactamente una entrada nueva, apertura de Novedades, actualización sin duplicados, marcas vistas y desactivación del trabajo comprobados. Informe local `tmp/podcast-regression/report.txt`.
