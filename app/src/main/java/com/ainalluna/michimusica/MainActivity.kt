@@ -1,6 +1,7 @@
 package com.ainalluna.michimusica
 
 import com.ainalluna.michimusica.security.readBoundedText
+import com.ainalluna.michimusica.podcasts.*
 
 import android.content.ComponentName
 import android.content.Context
@@ -128,10 +129,11 @@ class MainActivity : ComponentActivity() {
         })
         lifecycleScope.launch {
             val initial = withContext(Dispatchers.IO) {
+                runCatching { PodcastRepository.get(applicationContext).load() }
                 val folder = getSharedPreferences(PREFS, MODE_PRIVATE).getString(PREF_FOLDER, null)?.toUri()
                 val cached = if (folder != null && contentResolver.persistedUriPermissions.any { it.uri == folder && it.isReadPermission })
                     MusicFolderReader.cached(applicationContext, folder) else null
-                InitialLibrary(folder, cached)
+                InitialLibrary(folder, cached?.let { PodcastRepository.get(applicationContext).decorate(it) })
             }
             setContent { MichiApp(initial) }
             initialContentReady = true
@@ -154,7 +156,8 @@ private fun MichiApp(initial: InitialLibrary) {
     }
     val catalog = remember { AudioCatalog(context) }
     var podcastIds by remember { mutableStateOf(catalog.podcastIds()) }
-    var section by rememberSaveable { mutableStateOf(AudioSection.MUSIC) }
+    val currentActivity = androidx.activity.compose.LocalActivity.current
+    var section by rememberSaveable { mutableStateOf(if (currentActivity?.intent?.getBooleanExtra("podcast_news", false) == true) AudioSection.PODCASTS else AudioSection.MUSIC) }
     DisposableEffect(catalog) {
         val listener = android.content.SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
             if (key == "podcasts") podcastIds = catalog.podcastIds()
@@ -221,11 +224,11 @@ private fun MichiApp(initial: InitialLibrary) {
             if (context.contentResolver.persistedUriPermissions.any { it.uri == uri && it.isReadPermission })
                 MusicFolderReader.cached(context, uri) else null
         }
-        if (cached != null) { library.clear(); library.addAll(cached) }
+            if (cached != null) { library.clear(); library.addAll(PodcastRepository.get(context).decorate(cached)) }
         loading = library.isEmpty()
         val force = forceFolderRead
         forceFolderRead = false
-        runCatching { withContext(Dispatchers.IO) { MusicFolderReader.read(context, uri, force) } }.onSuccess { found ->
+        runCatching { withContext(Dispatchers.IO) { PodcastRepository.get(context).decorate(MusicFolderReader.read(context, uri, force)) } }.onSuccess { found ->
             library.clear(); library.addAll(found)
             if (found.isEmpty()) {
                 playlistUri = null; playlistName = null; pendingResume = null
@@ -347,6 +350,7 @@ private fun MichiApp(initial: InitialLibrary) {
         MichiRoot(
             songs, library, savedPlaylists, controller, folderUri, playlistUri, skin, playlistName, resume,
             loading = loading, listsLoading = listsLoading, notice = notice, artworkRevision = folderRevision, restoreRevision = restoreRevision,
+            libraryLoaded = libraryLoaded,
             onDismissNotice = { notice = null },
             section = section, onSection = { section = it }, podcastIds = podcastIds,
             onClassify = { target ->
@@ -445,12 +449,21 @@ private fun MichiRoot(
     loading: Boolean, listsLoading: Boolean, notice: LibraryNotice?, artworkRevision: Int, restoreRevision: Int, onDismissNotice: () -> Unit,
     onDeleteSong: (Song) -> Unit,
     section: AudioSection, onSection: (AudioSection) -> Unit, podcastIds: Set<String>, onClassify: (Song) -> Unit,
+    libraryLoaded: Boolean,
 ) {
     var destination by rememberSaveable { mutableStateOf(Destination.MUSIC) }
     var nowPlaying by rememberSaveable { mutableStateOf(false) }
     var lyricsOpen by rememberSaveable { mutableStateOf(false) }
     var state by remember { mutableStateOf(PlayerState()) }
     val searchController = rememberYouTubeSearchController(folderUri, { player?.pause() }, onDownloaded)
+    val podcastController = rememberPodcastController()
+    val podcastState by podcastController.repository.state.collectAsState()
+    val onPodcastDownloaded by rememberUpdatedState(onDownloaded)
+    val completedPodcasts = podcastState.downloads.filter { it.status == "done" }.map { it.uri }
+    LaunchedEffect(completedPodcasts) { if (completedPodcasts.isNotEmpty()) onPodcastDownloaded("") }
+    LaunchedEffect(library.toList(), loading, libraryLoaded, folderUri, podcastController.ready, podcastIds) {
+        if (libraryLoaded && !loading && folderUri != null && podcastController.ready) podcastController.reconcile(library.toList(), folderUri)
+    }
     LaunchedEffect(destination, nowPlaying, state.playing) {
         if (destination != Destination.SEARCH || nowPlaying || state.playing) searchController.pausePreview()
     }
@@ -508,7 +521,8 @@ private fun MichiRoot(
                 nowPlaying && visibleSong != null -> NowPlayingScreen(visibleSong, if (song != null) state else state.copy(position = visiblePosition, duration = visibleSong.durationMs), if (song != null) player else null, { nowPlaying = false }, { lyricsOpen = true }, sourceName = if (visibleSong.id in podcastIds) "Podcasts" else player?.currentMediaItem?.mediaMetadata?.extras?.getString("source_name") ?: "Música", artworkRevision = artworkRevision)
                 else -> when (destination) {
                     Destination.MUSIC -> LibraryScreen(songs, state, player, skin, if (section == AudioSection.PODCASTS) null else playlistName, resume, { state = state.copy(engaged = true) }, onChooseFolder, onRefresh, onSkinChange,
-                        loading, notice, artworkRevision, onAllMusic, onDismissNotice, onDeleteSong, section, onSection, onClassify, playlistUri)
+                        loading, notice, artworkRevision, onAllMusic, onDismissNotice, onDeleteSong, section, onSection, onClassify, playlistUri,
+                        podcastController, folderUri)
                     Destination.SEARCH -> YouTubeScreen(searchController, onChooseFolder)
                     Destination.PLAYLISTS -> PlaylistsScreen(
                         library.count { it.id !in podcastIds }, savedPlaylists, playlistUri,
@@ -561,10 +575,17 @@ private fun LibraryScreen(
     onDeleteSong: ((Song) -> Unit)? = null,
     section: AudioSection = AudioSection.MUSIC, onSection: (AudioSection) -> Unit = {},
     onClassify: (Song) -> Unit = {}, playlistUri: Uri? = null,
+    podcastController: PodcastController? = null, podcastFolder: Uri? = null,
 ) {
     val context = androidx.compose.ui.platform.LocalContext.current
     val catalog = remember { AudioCatalog(context) }
     var settings by remember { mutableStateOf(false) }
+    val podcastNav = rememberPodcastNavigation()
+    val podcastState = podcastController?.repository?.state?.collectAsState()?.value ?: PodcastState()
+    val refreshing = podcastController?.repository?.refreshing?.collectAsState()?.value ?: false
+    val downloadProgress = podcastController?.repository?.progress?.collectAsState()?.value.orEmpty()
+    if (section == AudioSection.PODCASTS && podcastController != null && podcastFolder != null)
+        PodcastDialogs(podcastNav, podcastController, podcastState, podcastFolder)
     LibraryHome(
         songs = songs,
         selectedSongId = if (state.engaged) player?.currentMediaItem?.mediaId else resume?.song?.id,
@@ -594,6 +615,14 @@ private fun LibraryScreen(
         onAllMusic = onAllMusic, onDismissNotice = onDismissNotice,
         onDelete = onDeleteSong, section = section, onSection = onSection, onClassify = onClassify,
         episodePosition = { catalog.position(it.id) },
+        podcastHeader = podcastController?.let { pc -> { PodcastHeader(podcastNav, podcastState, refreshing, pc.ready, pc.error, pc::refresh, pc::dismissError) } },
+        podcastContent = if (podcastController != null && podcastFolder != null && podcastNav.tab != PodcastTab.DOWNLOADED) {
+            { podcastItems(podcastNav, podcastState, downloadProgress, podcastFolder,
+                { show, episode -> podcastController.download(show, episode, podcastFolder) }, podcastController::cancel, podcastController::seen) }
+        } else null,
+        podcastDownloads = if (podcastController != null && podcastFolder != null) {
+            { podcastTransfers(podcastState, downloadProgress, podcastFolder, podcastController::retry, podcastController::cancel) }
+        } else null,
     )
     if (settings) AlertDialog({ settings = false }, title = { Text("Michi Música") }, text = { Column {
         Text("Apariencia", style = MaterialTheme.typography.titleMedium)

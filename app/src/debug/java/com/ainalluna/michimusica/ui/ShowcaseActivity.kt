@@ -12,7 +12,7 @@ class ShowcaseActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val page = intent.getStringExtra("screen")
-        val bars = if (page == "rose") SystemBarStyle.light(android.graphics.Color.TRANSPARENT, android.graphics.Color.TRANSPARENT)
+        val bars = if (page == "rose" || page == "podcast-rose") SystemBarStyle.light(android.graphics.Color.TRANSPARENT, android.graphics.Color.TRANSPARENT)
             else SystemBarStyle.dark(android.graphics.Color.TRANSPARENT)
         enableEdgeToEdge(statusBarStyle = bars, navigationBarStyle = bars)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -22,6 +22,10 @@ class ShowcaseActivity : ComponentActivity() {
                 "lists" -> ListsPreviewContent()
                 "player" -> PlayerPreviewContent()
                 "lyrics" -> LyricsPreviewContent()
+                "podcasts" -> PodcastPreviewContent()
+                "podcast-news" -> PodcastPreviewContent(news = true)
+                "podcast-empty" -> PodcastPreviewContent(empty = true)
+                "podcast-rose" -> PodcastPreviewContent(MichiSkin.ROSE, news = true)
                 "rose" -> LibraryHomePreviewContent(skin = MichiSkin.ROSE)
                 else -> LibraryHomePreviewContent()
             }

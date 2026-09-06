@@ -56,7 +56,10 @@ private object EmbeddedArtwork {
                 var sample = 1
                 while (maxOf(bounds.outWidth, bounds.outHeight) / sample > dimension) sample *= 2
                 BitmapFactory.decodeByteArray(bytes, 0, bytes.size, BitmapFactory.Options().apply { inSampleSize = sample })
-            }.getOrNull()
+            }.getOrNull() ?: com.ainalluna.michimusica.podcasts.PodcastRepository.get(context).state.value.downloads
+                .firstOrNull { it.status == "done" && it.uri == uri.toString() }?.let {
+                    com.ainalluna.michimusica.podcasts.PodcastArtworkCache.cached(context, it.image)
+                }
             cache.put(key, Cover(bitmap))
             bitmap
         }

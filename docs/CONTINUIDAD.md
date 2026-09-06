@@ -1,6 +1,16 @@
 # Continuidad de Michi Música Android
 
-Actualizado: 2026-09-05. Punto de entrada para continuar sin depender del historial del chat.
+Actualizado: 2026-09-06. Punto de entrada para continuar sin depender del historial del chat.
+
+## Ampliación vigente: podcasts RSS 1.12.0
+
+Aina autoriza seguir programas, novedades y descargas manuales **sin contenido de pago**, y exige conservar el diseño. Implementación en `podcasts/`, integrada en Biblioteca/Podcasts con Siguiendo · Novedades · Descargados. Leer [Podcasts RSS 1.12](PODCASTS_RSS_1_12.md) antes de continuar. No hay cuentas, pagos ni soporte de feeds privados. Actualización periódica configurable y avisos opcionales.
+
+El RSS real de Días Extraños contiene episodios exclusivos y otros audios recortados aunque anuncie duración completa: 209 entradas admitidas y 41 excluidas por el parser; una muestra pública de 9 minutos devuelve 126,354 segundos. No prometer descarga completa universal de iVoox. El guardado verifica duración y rechaza esos recortes. Sergio Parra: RSS devolvió 403, sin audio validado.
+
+La compilación y pruebas se registran en el historial. **1.12.0 todavía no está instalada ni publicada y su revisión nativa sigue pendiente:** ADB no detecta dispositivo. Continuar conectando el Pixel, instalar debug conservando datos y recorrer la ficha; no marcar esa batería como probada por compilar o por las previews. La referencia `docs/screenshots/podcasts.png` es de la versión anterior. Se conservan sus componentes y el resto de pantallas; no hay rediseño global.
+
+APK preparada: `dist/Michi-Musica-1.12.0-debug-arm64.apk` (22), firma debug verificada. `test lint assembleDebug --offline`: 80 pruebas por variante y lint app sin errores/16 advertencias. Hash y alcance exacto en la primera entrada del historial. No confundir esta APK con la release oficial 1.11.1.
 
 ## Qué leer y qué prevalece
 

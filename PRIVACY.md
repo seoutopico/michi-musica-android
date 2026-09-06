@@ -18,6 +18,9 @@ Michi Música no tiene servidor propio, cuentas, analítica ni publicidad propia
 | Buscar letras | LRCLIB recibe el título y artista escritos para la consulta y la IP. |
 | Guardar MP3 | YouTube y sus servidores de medios reciben la petición del vídeo seleccionado. |
 | Actualizar el motor de descarga | GitHub y sus servidores de descarga reciben la consulta de versión y la petición de yt-dlp NIGHTLY. |
+| Seguir/actualizar un podcast RSS | El proveedor del RSS público recibe la petición del programa y la IP. La comprobación automática puede conectarse aproximadamente cada seis horas y se desactiva en Opciones de podcasts. |
+| Ver portadas de podcasts | El servidor de imágenes indicado por el RSS recibe la petición de la portada y la IP; se conserva una caché local limitada. |
+| Descargar un episodio RSS | El servidor de audio indicado por el RSS y sus redirecciones reciben la solicitud del episodio elegido y la IP. No se envían credenciales ni se accede a contenido de pago. |
 
 El vídeo utiliza el reproductor oficial de YouTube. WebView puede mantener caché y almacenamiento web, sujetos a las políticas de Google. Ver un vídeo no añade un MP3 a tu carpeta. No se solicitan credenciales de Google en Michi.
 
@@ -26,3 +29,5 @@ Michi Iconos es una APK independiente sin permisos de red ni acceso a tus archiv
 ## Clasificación y progreso de podcasts
 
 Música/Podcasts, la última categoría elegida al guardar y la posición de cada episodio se conservan únicamente en las preferencias privadas de la app. No se suben ni se escriben en las etiquetas del audio. Una actualización conserva estos datos; desinstalar o borrar datos de Michi los elimina. Mover o renombrar archivos puede requerir reclasificarlos porque Android puede cambiar su URI.
+
+Desde el código 1.12 se guardan también, en un archivo privado de la app, los programas seguidos, episodios del RSS, novedades vistas, preferencias y registros de descarga. Las descargas RSS son manuales y usan un servicio en primer plano para continuar al navegar o salir de la actividad; los avisos de episodios nuevos son opcionales y requieren el permiso de Android. Eliminar un programa de Siguiendo no borra sus audios ni las posiciones. No se solicitan cuentas, pagos ni RSS privados. Un proveedor puede incluir publicidad en su propio audio; Michi no la añade ni la elimina.
