@@ -1,5 +1,11 @@
 # Historial de cambios
 
+## 2026-09-06 — Primera ejecución de la regresión aislada
+
+- Pixel reconectado. Corregidos dos detalles del arnés: Android exige DocumentsProvider exportado y protegido con MANAGE_DOCUMENTS; el script debe esperar la creación asíncrona del informe sin abortar en PowerShell. La actividad de validación mantiene la pantalla activa mientras está visible. Sin cambios de código de producción ni de la APK oficial preparada.
+- Comprobados en Android: seguimiento inicial, cancelación durante transferencia, reintento con WAV idéntico y clasificación SAF, cancelación después de terminar, cancelación durante commit y cancelación de un elemento en cola conservando el activo.
+- Batería incompleta: el Pixel seguía bloqueado y Android rechazó un nuevo inicio del servicio. El registro mostró el mensaje de recuperación de inicio de descarga; no se atribuye a un corte HTTP probado. Solicitado desbloqueo, sin modificar ni eludir el bloqueo. Continuar ejecutando el script completo con el Pixel desbloqueado. Las APK de producción no se han reinstalado ni publicado en este paso.
+
 ## 2026-09-06 — Límite de novedades y preparación del cierre de 1.12.0
 
 - Aina define novedad como un episodio con un máximo de 3 días desde su publicación. Novedades filtra una ventana móvil de 72 horas; fechas futuras/ausentes y entradas anteriores quedan fuera. Siguiendo conserva el catálogo completo. Contadores, marcas y avisos respetan la misma regla. La interfaz recalcula al volver a primer plano y al caducar un episodio; el aviso tiene caducidad.

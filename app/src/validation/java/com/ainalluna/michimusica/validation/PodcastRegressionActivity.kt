@@ -21,6 +21,7 @@ class PodcastRegressionActivity : Activity() {
     private lateinit var label: TextView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         label = TextView(this).apply { textSize = 20f; text = "Validación aislada de Podcasts"; setPadding(32, 80, 32, 32) }
         setContentView(label)
         RegressionNetwork.install()
@@ -98,7 +99,7 @@ class PodcastRegressionActivity : Activity() {
 
         RegressionNetwork.broken = true
         start(4); status(4, "error"); delay(150); noPartial()
-        check(receipt(4)!!.error.contains("conexión"))
+        check(receipt(4)!!.error.contains("conexión")) { "Network failure message: ${receipt(4)!!.error}" }
         RegressionNetwork.broken = false
         start(4); status(4, "done"); verified(4)
         pass("connection interrupted mid-body reports error and retry succeeds")

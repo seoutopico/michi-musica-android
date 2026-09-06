@@ -2,7 +2,7 @@
 
 La variante `validation` instala **com.ainalluna.michimusica.validation**, con datos, carpeta privada y permisos separados de Michi. No sustituye la aplicación personal. Sus componentes solo existen en `app/src/validation/` y no se empaquetan en debug normal ni release.
 
-La actividad ejecuta el repositorio, parser, servicios, MediaMetadataRetriever, DocumentFile y JobScheduler de producción. Un manejador HTTPS del proceso sirve respuestas controladas y audio WAV sintetizado. Un DocumentsProvider privado de validación permite provocar fallos de acceso y creación. No se añaden puntos de inyección ni excepciones a las reglas de red de producción. El host `example.com` se resuelve para pasar la comprobación DNS real, pero los cuerpos HTTP de esta batería son simulados; las descargas HTTPS reales se validaron separadamente con NASA e iVoox.
+La actividad ejecuta el repositorio, parser, servicios, MediaMetadataRetriever, DocumentFile y JobScheduler de producción. Un manejador HTTPS del proceso sirve respuestas controladas y audio WAV sintetizado. Un DocumentsProvider de validación, protegido por el permiso de sistema MANAGE_DOCUMENTS y limitado a sus archivos privados, permite provocar fallos de acceso y creación. Android exige declararlo exportado; no anuncia una raíz en el selector ni concede acceso a otras aplicaciones. No se añaden puntos de inyección ni excepciones a las reglas de red de producción. El host `example.com` se resuelve para pasar la comprobación DNS real, pero los cuerpos HTTP de esta batería son simulados; las descargas HTTPS reales se validaron separadamente con NASA e iVoox.
 
 ## Ejecución
 

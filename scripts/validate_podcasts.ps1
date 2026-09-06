@@ -16,7 +16,11 @@ if ($validationPackage -ne 'com.ainalluna.michimusica.validation') { throw 'Unex
 & $adbPath shell pm grant $validationPackage android.permission.POST_NOTIFICATIONS
 
 function Read-Report {
+    # The activity creates this file asynchronously after the first launch.
+    $readPreference = $ErrorActionPreference
+    $ErrorActionPreference = 'SilentlyContinue'
     $content = (& $adbPath shell run-as $validationPackage cat files/regression-report.txt 2>$null) -join "`n"
+    $ErrorActionPreference = $readPreference
     $content | Set-Content (Join-Path $reportFolder 'report.txt') -Encoding UTF8
     return $content
 }
