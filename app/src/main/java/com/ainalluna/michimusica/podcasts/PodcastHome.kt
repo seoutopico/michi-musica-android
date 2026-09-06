@@ -246,7 +246,7 @@ fun PodcastDialogs(nav: PodcastNavigation, controller: PodcastController, state:
             Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Text("Pega el enlace RSS público del programa. Solo se incluyen episodios gratuitos; seguirlo no descarga sus audios.")
                 OutlinedTextField(url, { url = it; controller.clearAddError() }, label = { Text("Enlace RSS") },
-                    modifier = Modifier.fillMaxWidth(), keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
+                    modifier = Modifier.fillMaxWidth(), keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri, autoCorrectEnabled = false),
                     enabled = !controller.adding, maxLines = 4, isError = controller.addError.isNotBlank())
                 if (controller.adding) LinearProgressIndicator(Modifier.fillMaxWidth())
                 if (controller.addError.isNotBlank()) Text(controller.addError, color = MaterialTheme.colorScheme.error,

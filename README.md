@@ -40,7 +40,7 @@ Capturas de Android con la biblioteca y carátulas reales de Aina-Lluna, publica
 
 Los audios locales permanecen en el dispositivo. Buscar vídeos, verlos, descargar o consultar letras necesita conexión con servicios externos. Consulta los detalles en [Privacidad](PRIVACY.md).
 
-**Ampliación en código 1.12.0, pendiente de validación en móvil:** seguir RSS públicos desde Podcasts, consultar novedades, avisos opcionales y descargas manuales con exclusión de episodios de pago y recortes detectados. Conserva Siguiendo · Novedades · Descargados dentro de la biblioteca. Algunos RSS de iVoox solo entregan adelantos fuera de su app; no garantizamos el audio completo de cada programa. [Funcionamiento, verificación y límites](docs/PODCASTS_RSS_1_12.md). Esta ampliación aún no figura en la release pública enlazada arriba.
+**Ampliación 1.12.0 instalada y probada en Pixel 7:** seguir RSS públicos desde Podcasts, consultar novedades, avisos opcionales y descargas manuales con exclusión de episodios de pago y recortes detectados. Conserva Siguiendo · Novedades · Descargados dentro de la biblioteca. Algunos RSS de iVoox solo entregan adelantos fuera de su app; no garantizamos el audio completo de cada programa. [Funcionamiento, verificación y límites](docs/PODCASTS_RSS_1_12.md), incluidos los casos adicionales pendientes. Esta ampliación aún no figura en la release pública enlazada arriba.
 
 ## Instalar
 

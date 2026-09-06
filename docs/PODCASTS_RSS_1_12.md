@@ -1,6 +1,6 @@
 # Podcasts RSS — 1.12.0
 
-Petición aprobada por Aina el 6 de septiembre de 2026: seguir programas, conocer sus publicaciones y descargar episodios, **sin contenido de pago**, conservando el diseño completo de Michi. Implementación en código; la validación nativa depende de volver a conectar el Pixel. No confundir compilación o previews con instalación o prueba de audio.
+Petición aprobada por Aina el 6 de septiembre de 2026: seguir programas, conocer sus publicaciones y descargar episodios, **sin contenido de pago**, conservando el diseño completo de Michi. Instalada en Pixel 7 y probados los recorridos principales con datos reales. La verificación y los casos adicionales pendientes se distinguen al final de esta ficha.
 
 ## Recorrido y diseño
 
@@ -46,6 +46,16 @@ Previews de producción en `PodcastPreviews.kt`: Siguiendo, Novedades, Rosa con 
 
 Verificación automatizada: parser, filtros de pago/adelantos, entidades externas/UTF-16, URLs privadas/inseguras, límites, identidad sin GUID, duplicados, novedades vistas, episodio que cambia a pago, duración recortada, nombres sin colisión y snapshot Unicode/truncado/versionado. Resultados de compilación definitivos en HISTORIAL_CAMBIOS.md.
 
-Referencia visual anterior inspeccionada: `docs/screenshots/podcasts.png`. Se ha contrastado la integración en el código con PORTADA_1_4 y BORRADO_Y_PODCASTS. **Todavía no hay captura nativa de 1.12 ni comprobación táctil/visual de estas previews.** ADB no detecta un dispositivo y no hay emulador configurado. Pendientes: instalar conservando datos; revisar ambas apariencias y texto grande; añadir/quitar un programa; descargar un audio público completo; cancelar/reintentar; rechazo nativo del recorte de iVoox; permisos/espacio; avisos; cola y reproducción con pantalla bloqueada. No borrar ni reclasificar audios personales durante esas pruebas.
+Validación nativa del 6 de septiembre, Pixel 7, 1.12.0 (22):
+
+- Actualización mediante `adb install -r`, conservando preferencias y catálogo. Corregido el campo RSS para desactivar autocorrección: Gboard introducía espacios tras los puntos del dominio.
+- Días Extraños añadido con el RSS de Aina: portada, 209 episodios, fecha del último, búsqueda por título y navegación entre Siguiendo/Novedades/Descargados. El histórico inicial no aparece marcado entero como nuevo.
+- «Sectas 3.0» rechazado en el dispositivo con el mensaje de adelanto; no se guarda un audio parcial en la carpeta.
+- RSS público de NASA's Curious Universe: 104 episodios admitidos. «Roman Series: Liftoff!» descargado a través de SAF, clasificado como Podcast y visible con título/programa y duración real 21:49 (RSS 21:37). Reproducción confirmada por la sesión Media3 en segundo plano; pausa mediante control multimedia del sistema; reinicio del proceso recupera 0:18 en pausa, sin autoplay. No se afirma escucha humana completa del episodio.
+- Retirada mediante la interfaz del audio de validación y del programa NASA. Días Extraños permanece seguido. Los 112 archivos del inventario inicial de la raíz conservan ruta, tamaño y fecha; no queda audio de prueba ni `.part` en ella. Catálogo personal idéntico al inicial; restauradas las dos preferencias de última escucha que cambió la prueba.
+- Capturas reales inspeccionadas: Siguiendo en Medianoche; Siguiendo y filas de Novedades en Rosa al 130 %, incluidos error de adelanto y estado Descargado. Contraste con PORTADA_1_4 y BORRADO_Y_PODCASTS: cabecera, márgenes, filas abiertas y navegación conservados; textos legibles y controles sin solapamiento observado. Apariencia, tamaño de texto y tiempo de apagado restaurados al terminar.
+- JobScheduler registra el trabajo periódico 1200; ejecución manual forzada aceptada por Android. Avisos opcionales permanecen desactivados. Esto no demuestra la entrega de un aviso ante una publicación futura.
+
+Evidencias locales de validación en `tmp/rss-device-review/` (ignoradas por Git por contener estado personal). Pendientes adicionales MMA-039: cancelación/reintento e interrupción durante transferencia, pérdida de permiso SAF o espacio agotado, notificación ante un episodio publicado después del seguimiento y reproducción con pantalla bloqueada. La descarga NASA terminó antes de poder pulsar Cancelar; no se registra como prueba de cancelación. El funcionamiento periódico tras horas/Doze/reinicio del teléfono no se da por comprobado por forzar el trabajo. No se revocaron permisos ni se llenó el almacenamiento del móvil personal.
 
 Referencias técnicas: [RSS 2.0](https://www.rssboard.org/rss-specification), [JobScheduler](https://developer.android.com/reference/android/app/job/JobScheduler), [servicio dataSync](https://developer.android.com/develop/background-work/services/fgs/service-types#data-sync) y [permiso de notificaciones](https://developer.android.com/develop/ui/compose/notifications/notification-permission).
