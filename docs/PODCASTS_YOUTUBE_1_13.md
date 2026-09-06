@@ -1,5 +1,7 @@
 # Podcasts de YouTube y orden por publicación — 1.13
 
+[1.13.0 estable publicada](https://github.com/seoutopico/michi-musica-android/releases/tag/v1.13.0), PR #2 integrado en `main`. Seis adjuntos comprobados por tamaño y SHA-256 remoto. Instalación final y verificación descritas abajo.
+
 Aina señala que el seguimiento prometido también debía aceptar canales de YouTube y pide ordenar Tus programas por su episodio más reciente. Se amplía la sección existente conservando tema, filas, navegación, colas independientes y ventana de novedades de 72 horas.
 
 ## Uso

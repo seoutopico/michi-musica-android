@@ -1,5 +1,11 @@
 # Historial de cambios
 
+## 2026-09-06 — 1.13.0 publicada
+
+- [Release estable 1.13.0](https://github.com/seoutopico/michi-musica-android/releases/tag/v1.13.0) publicada y marcada latest; GitHub confirma `isDraft=false`, `isPrerelease=false`. PR #2 integrado en `main`, commit `14cf9d743581f0d717b3bdf705690654550cc56e`.
+- Los seis adjuntos (APK oficial, iconos sin cambios, sumas, certificado público y fuentes/manifest) coinciden en tamaño y SHA-256 remoto con los archivos locales. Se publicó la APK final corregida, hash `f5c970efe295e1360be731bcab5bba43650b2e04144d9ef8c32843af8c7c7151`; no la compilación preliminar de la primera prueba.
+- Pixel con debug final 1.13.0, datos conservados, canal solicitado seguido y orden por publicación comprobado. Ningún archivo ni registro personal de las nuevas comprobaciones se publicó.
+
 ## 2026-09-06 — Cierre nativo de YouTube y orden de programas 1.13.0
 
 - Canal real de Aina: 15 entradas públicas con fecha, duplicado canónico rechazado y actualización sin novedades falsas. Cancelación real limpia temporales; reintento guarda MP3 decodificable de 60:45 por SAF y lo clasifica como Podcast. Reproducción comprobada desde Descargados.
