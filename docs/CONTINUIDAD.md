@@ -2,9 +2,9 @@
 
 Actualizado: 2026-09-06. Punto de entrada para continuar sin depender del historial del chat.
 
-## Ampliación en curso: YouTube y orden de programas 1.13
+## YouTube y orden de programas 1.13: cierre nativo completado
 
-Aina pide que Podcasts también siga canales de YouTube, incluido `@COASTTOCOASTAMOFFICIAL/videos`, y que Tus programas se ordene por el episodio más reciente. Implementación en [Podcasts YouTube 1.13](PODCASTS_YOUTUBE_1_13.md): resolución del canal, feed Atom público y descarga de audio mediante el motor existente, sin cuentas/pagos. Se conserva el diseño y la ventana de 72 horas. `test lint assembleDebug :app:assembleValidation assembleRelease --offline` correcto: 89 pruebas por variante, lint sin errores/16 advertencias previas. Comprobación nativa pendiente de desbloquear el Pixel: ejecutar regresión RSS y `scripts/validate_youtube_podcasts.ps1`, comprobar vistas/orden y luego instalar conservando datos y publicar. No presentar 1.13 como instalada o publicada hasta terminarla. La entrega 1.12 descrita debajo sí está cerrada.
+Aina pide que Podcasts también siga canales de YouTube, incluido `@COASTTOCOASTAMOFFICIAL/videos`, y que Tus programas se ordene por el episodio más reciente. [Podcasts YouTube 1.13](PODCASTS_YOUTUBE_1_13.md) implementa resolución del canal, Atom público y descarga con el motor existente, sin cuentas/pagos. Diseño y ventana de 72 horas conservados. `test lint assembleDebug :app:assembleValidation assembleRelease --offline` correcto: 89 pruebas por variante, lint sin errores/16 advertencias previas. Prueba real de YouTube completada: seguimiento, duplicados, actualización, cancelación, reintento y MP3 reproducible de 60:45. Corregido el exceso de metadatos encontrado en la primera ejecución; la repetición y toda la regresión RSS pasaron. Vistas Medianoche/Rosa al 130 % revisadas. **1.13.0 debug instalada conservando datos**, siete archivos privados idénticos tras instalar. Canal solicitado añadido desde la app personal; ocho programas ordenados por publicación y Novedades limitada a 72 horas observados. Variante aislada retirada, escala/tiempo de apagado restaurados y última escucha conservada en pausa. APK oficial firmada preparada; completar publicación en GitHub como último paso.
 
 ## Ampliación vigente: podcasts RSS 1.12.0
 

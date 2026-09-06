@@ -1,5 +1,13 @@
 # Historial de cambios
 
+## 2026-09-06 — Cierre nativo de YouTube y orden de programas 1.13.0
+
+- Canal real de Aina: 15 entradas públicas con fecha, duplicado canónico rechazado y actualización sin novedades falsas. Cancelación real limpia temporales; reintento guarda MP3 decodificable de 60:45 por SAF y lo clasifica como Podcast. Reproducción comprobada desde Descargados.
+- La primera descarga reveló un JSON de yt-dlp de más de 9 MB, rechazado por el límite del comprobador. Corregido para pedir únicamente los metadatos necesarios tanto antes como después de extraer el audio; repetición completa correcta. Sin eliminar la verificación de identidad, disponibilidad pública o duración.
+- Toda la regresión RSS pasó en la variante aislada: cancelaciones, reintentos, fallos controlados de HTTP/SAF, cierre real del proceso, recuperación y aviso que abre Novedades sin duplicados. Validación visual Medianoche y Rosa con texto al 130 %, conservando componentes de producción.
+- Debug 1.13.0 (23) instalada con siete archivos privados idénticos byte a byte inmediatamente tras instalar. Canal solicitado añadido desde la app personal; ocho programas observados en orden descendente por publicación, Novedades con ocho entradas dentro de 72 horas y última escucha anterior en pausa conservada. No se añadieron audios de prueba a la carpeta personal. Variante aislada retirada, escala 1.0 y apagado de 60 segundos restaurados.
+- `test lint assembleDebug :app:assembleValidation assembleRelease --offline` final correcto: 89 pruebas por variante y lint sin errores/16 advertencias previas. APK oficial 56.877.486 bytes, SHA-256 `f5c970efe295e1360be731bcab5bba43650b2e04144d9ef8c32843af8c7c7151`, firma oficial conservada. Debug instalada: `5576cbfed233db8244d872d5929a64a62790dec97e50497ac5520c91090258ee`. Publicación preparada para el último paso.
+
 ## 2026-09-06 — Ampliación de Podcasts a canales de YouTube
 
 - Corrección del alcance señalado por Aina: Añadir podcast acepta también canales de YouTube, incluido el enlace con `/videos`, resueltos a una identidad estable sin duplicados. Consulta de publicaciones recientes mediante Atom público; las novedades mantienen 72 horas desde publicación.

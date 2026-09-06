@@ -6,7 +6,6 @@
 
 | ID | Prioridad | Trabajo | Resultado esperado |
 | --- | --- | --- | --- |
-| MMA-040 | P1 | Completar canales de YouTube y orden por última publicación | Implementados resolución del canal público, feed Atom, descarga de MP3, cancelación y orden común con RSS. Pruebas unitarias correctas. Pendiente validación real en Pixel desbloqueado, instalación conservando datos y publicación. Ficha PODCASTS_YOUTUBE_1_13.md. |
 | MMA-002 | P1 | Probar en un Pixel 7 real | Confirmar selector de carpeta, formatos, segundo plano, bloqueo y Bluetooth. |
 | MMA-005 | P2 | Verificar las carátulas existentes en el Pixel | Lectura asíncrona, muestreo, caché y marcador felino implementados; comprobar archivos con y sin imagen incrustada. No incluye edición de metadatos. |
 | MMA-006 | P3 | Valorar publicación en Play Store | La publicación solicitada es GitHub con APK directa. Play Console, sus requisitos y pruebas quedan fuera de esta entrega. |
@@ -33,6 +32,7 @@
 
 | ID | Fecha | Trabajo | Verificación |
 | --- | --- | --- | --- |
+| MMA-040 | 2026-09-06 | Canales de YouTube y orden por última publicación | Canal real resuelto, cancelación/reintento y MP3 de 60:45 reproducido en Pixel; regresión RSS completa. 89 pruebas por variante, lint sin errores. Debug 1.13 instalada preservando datos; ocho programas ordenados y Novedades de 72 horas observados. Ficha PODCASTS_YOUTUBE_1_13.md. |
 | MMA-039 | 2026-09-06 | Cerrar la validación de Podcasts RSS 1.12 | Batería nativa aislada completa: cancelación, reintento, interrupción del proceso, cortes HTTP/fallos SAF controlados y aviso que abre Novedades sin duplicados. Debug final instalada conservando preferencias y catálogo; ventana de 72 horas revisada con tres episodios reales. 82 pruebas por variante, lint sin errores y APK oficial firmada publicada como v1.12.0 tras integrar el PR #1. Método y límites en VALIDACION_PODCASTS.md. |
 | MMA-040 | 2026-09-06 | Añadir capturas de Podcasts RSS a GitHub | Tres PNG reales de Pixel 1.12.0 revisados y enlazados en README y ficha: Siguiendo Medianoche, Siguiendo Rosa y episodios/descargas Rosa al 130 %. Copias idénticas a los originales seleccionados, referencias comprobadas; sin cambios de app. |
 | MMA-038 | 2026-09-06 | Implementar seguimiento RSS público y descargas manuales | Código 1.12.0: programas, novedades, actualización/avisos y descarga con filtros de pago/recortes. 80 pruebas por variante y lint sin errores. Datos reales de iVoox: 209 entradas admitidas, 41 excluidas y recorte detectado. APK debug instalada en Pixel; recorridos principales y diseño verificados con datos reales. Pruebas adicionales en MMA-039. |

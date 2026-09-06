@@ -14,6 +14,8 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 /** Prepare private audio only. The podcast service owns the cancellable SAF commit and receipt. */
 internal object YouTubePodcastAudio {
+    // Full yt-dlp info can include megabytes of streaming fragments. Keep only fields we verify.
+    private const val METADATA = "%(.{id,channel_id,availability,title,description,live_status,duration})j"
     suspend fun prepare(context: Context, entry: PodcastDownload, target: File, progress: (Int) -> Unit): PodcastEpisode = withTimeout(30 * 60 * 1000L) {
         val source = URI(publicHttps(entry.audio))
         val id = source.query.orEmpty().removePrefix("v=")
@@ -29,7 +31,11 @@ internal object YouTubePodcastAudio {
                 addOption("--ignore-config"); addOption("--no-playlist"); addOption("--no-warnings")
                 addOption("--socket-timeout", "20"); addOption("--retries", "2")
             }
-            val metadata = JSONObject(execute(request().apply { addOption("--dump-single-json") }, progress = {}).out)
+            val metadataText = execute(request().apply {
+                addOption("--skip-download"); addOption("--print", METADATA)
+            }, progress = {}).out
+            require(metadataText.length <= PodcastFeed.MAX_BYTES) { "YouTube ha devuelto demasiados metadatos." }
+            val metadata = JSONObject(metadataText)
             fun verify(info: JSONObject) {
                 require(info.optString("id") == id && info.optString("channel_id") == channel) { "El vídeo no corresponde a este canal." }
                 require(info.optString("availability") == "public" && !restrictedPodcast(info.optString("title"), info.optString("description"))) {
@@ -45,7 +51,8 @@ internal object YouTubePodcastAudio {
                 addOption("--match-filter", "availability = public & !is_live")
                 addOption("--format", "bestaudio/best"); addOption("--max-filesize", "1G")
                 addOption("--extract-audio"); addOption("--audio-format", "mp3"); addOption("--audio-quality", "0")
-                addOption("--embed-metadata"); addOption("--write-info-json")
+                addOption("--embed-metadata"); addOption("--no-simulate"); addOption("--progress")
+                addCommands(listOf("--print-to-file", "after_move:$METADATA", File(work, "episode.info.json").absolutePath))
                 addOption("--output", File(work, "episode.%(ext)s").absolutePath)
             }, progress)
             currentCoroutineContext().ensureActive()
