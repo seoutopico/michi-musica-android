@@ -1,5 +1,13 @@
 # Historial de cambios
 
+## 2026-09-07 — Cierre nativo e instalación de 1.14.0
+
+- Batería del temporizador completada y repetida tras ajustes: 15/30/45 minutos con reloj inyectado sobre ExoPlayer real; pausa y guardado exactamente al vencer, sustitución/desactivación, seek/velocidad/pausa sin reiniciar plazos. Servicio real: fin de episodio antes de siguiente y repetición, cambio a música y pausa en segundo plano.
+- Revisión real Medianoche/Rosa con texto al 130 %. Hoja abierta completa para mostrar 45 minutos sin rozar la navegación. Corregidos controles deshabilitados tras recrear un podcast pausado en 0:00 con temporizador activo; contador conservado al cambiar de tema/escala. Selección de plazo, Fin del episodio y Desactivado comprobadas por UI.
+- Debug final 1.14.0 (24) instalada sin desinstalar, siete archivos privados idénticos antes/después y última escucha original conservada en pausa. Retirada únicamente la variante de validación y sus audios sintéticos; escala 1.0 y apagado de 60 segundos restaurados.
+- `test lint assembleDebug :app:assembleValidation assembleRelease --offline`: 94 pruebas por variante, lint sin errores/16 advertencias previas. APK oficial 56.910.615 bytes, SHA-256 `12a9b2e4b5770dd0c0cfcead732aec5fbef0060aa3231032bfa53291f950a950`; firma oficial conservada. Debug instalada: `cea1dd2e824893618459979a2eb43a1dba9d4529fe5520e0b1580ccdd9478ca4`.
+- Los plazos de minutos se aceleraron en la batería; fin de episodio y segundo plano se probaron con tiempo real. No se afirma verificación de 45 minutos bajo Doze o pantalla bloqueada. Publicación preparada como último paso.
+
 ## 2026-09-07 — Temporizador de podcasts 1.14 en desarrollo
 
 - Opciones Desactivado, Fin del episodio, 15, 30 y 45 minutos desde Ahora suena, en una hoja inferior con el tema existente. Botón discreto con reloj y contador en el color de acento; controles musicales conservados.

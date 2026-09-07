@@ -32,7 +32,8 @@ fun PodcastTimerControl(state: SleepTimerDisplay, enabled: Boolean, onChoose: (S
         Text(if (state.active) "Temporizador · ${state.label}" else "Temporizador",
             Modifier.padding(start = 8.dp), fontSize = 14.sp)
     }
-    if (open) ModalBottomSheet(onDismissRequest = { open = false }, containerColor = colors.surface) {
+    if (open) ModalBottomSheet(onDismissRequest = { open = false }, containerColor = colors.surface,
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
         Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = 24.dp).padding(bottom = 24.dp)) {
             Text("Temporizador", fontFamily = FontFamily.Serif, fontSize = 28.sp)
             Text("Pausar el podcast. Los minutos cuentan desde ahora, también si haces una pausa.",

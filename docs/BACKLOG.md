@@ -6,7 +6,6 @@
 
 | ID | Prioridad | Trabajo | Resultado esperado |
 | --- | --- | --- | --- |
-| MMA-041 | P1 | Cerrar temporizador de podcasts 1.14 | Implementados fin de episodio y 15/30/45 minutos con hoja del tema y reloj en el servicio. Pendiente batería nativa, revisión visual con texto grande/temas, segundo plano e instalación conservando datos. Ver TEMPORIZADOR_PODCASTS_1_14.md. |
 | MMA-002 | P1 | Probar en un Pixel 7 real | Confirmar selector de carpeta, formatos, segundo plano, bloqueo y Bluetooth. |
 | MMA-005 | P2 | Verificar las carátulas existentes en el Pixel | Lectura asíncrona, muestreo, caché y marcador felino implementados; comprobar archivos con y sin imagen incrustada. No incluye edición de metadatos. |
 | MMA-006 | P3 | Valorar publicación en Play Store | La publicación solicitada es GitHub con APK directa. Play Console, sus requisitos y pruebas quedan fuera de esta entrega. |
@@ -33,6 +32,7 @@
 
 | ID | Fecha | Trabajo | Verificación |
 | --- | --- | --- | --- |
+| MMA-041 | 2026-09-07 | Temporizador de podcasts 1.14 | Batería nativa completa con reloj inyectado para minutos y servicio real al final del episodio/repetición/segundo plano. UI Medianoche/Rosa al 130 % revisada, 94 pruebas por variante. Debug instalada conservando datos; límites de la comprobación en TEMPORIZADOR_PODCASTS_1_14.md. |
 | MMA-040 | 2026-09-06 | Canales de YouTube y orden por última publicación | Canal real resuelto, cancelación/reintento y MP3 de 60:45 reproducido en Pixel; regresión RSS completa. 89 pruebas por variante, lint sin errores. Debug 1.13 instalada preservando datos; ocho programas ordenados y Novedades de 72 horas observados. Ficha PODCASTS_YOUTUBE_1_13.md. |
 | MMA-039 | 2026-09-06 | Cerrar la validación de Podcasts RSS 1.12 | Batería nativa aislada completa: cancelación, reintento, interrupción del proceso, cortes HTTP/fallos SAF controlados y aviso que abre Novedades sin duplicados. Debug final instalada conservando preferencias y catálogo; ventana de 72 horas revisada con tres episodios reales. 82 pruebas por variante, lint sin errores y APK oficial firmada publicada como v1.12.0 tras integrar el PR #1. Método y límites en VALIDACION_PODCASTS.md. |
 | MMA-040 | 2026-09-06 | Añadir capturas de Podcasts RSS a GitHub | Tres PNG reales de Pixel 1.12.0 revisados y enlazados en README y ficha: Siguiendo Medianoche, Siguiendo Rosa y episodios/descargas Rosa al 130 %. Copias idénticas a los originales seleccionados, referencias comprobadas; sin cambios de app. |

@@ -472,7 +472,8 @@ private fun MichiRoot(
 
     DisposableEffect(player, restoreRevision) {
         if (player == null) return@DisposableEffect onDispose { }
-        fun refresh() { state = state.copy(index = player.currentMediaItemIndex.coerceAtLeast(0), position = player.currentPosition.coerceAtLeast(0), playing = player.isPlaying, buffering = player.playbackState == Player.STATE_BUFFERING, failed = player.playerError != null, shuffle = player.shuffleModeEnabled, repeatOne = player.repeatMode == Player.REPEAT_MODE_ONE, duration = player.duration.takeIf { it > 0 } ?: 0, engaged = restoreRevision > 0 || hasActiveListeningSession(state.engaged, player.isPlaying, player.currentPosition)) }
+        // An armed timer also identifies an explicitly selected podcast, including paused at 0:00 after recreation.
+        fun refresh() { state = state.copy(index = player.currentMediaItemIndex.coerceAtLeast(0), position = player.currentPosition.coerceAtLeast(0), playing = player.isPlaying, buffering = player.playbackState == Player.STATE_BUFFERING, failed = player.playerError != null, shuffle = player.shuffleModeEnabled, repeatOne = player.repeatMode == Player.REPEAT_MODE_ONE, duration = player.duration.takeIf { it > 0 } ?: 0, engaged = restoreRevision > 0 || com.ainalluna.michimusica.playback.PodcastSleepTimer.state.value.active || hasActiveListeningSession(state.engaged, player.isPlaying, player.currentPosition)) }
         val listener = object : Player.Listener { override fun onEvents(player: Player, events: Player.Events) = refresh() }
         player.addListener(listener); refresh(); onDispose { player.removeListener(listener) }
     }

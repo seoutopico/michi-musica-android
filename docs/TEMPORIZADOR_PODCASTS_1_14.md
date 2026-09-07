@@ -25,6 +25,14 @@ Pruebas de lógica: plazos de los tres presets, límite exacto, sustitución/can
 
 Compilación final `test lint assembleDebug :app:assembleValidation assembleRelease --offline` correcta: 94 pruebas por variante (debug/release/validation), lint sin errores y 16 advertencias previas. APK debug y oficial compiladas.
 
-Estado: pendiente ejecutar el arnés nativo, revisar las vistas y comprobar la pausa en segundo plano. El Pixel está conectado pero requiere desbloqueo. No presentar como instalada ni publicada hasta cerrar esas comprobaciones.
+Validación nativa completada en Pixel 7, repetida tras los ajustes finales: los tres plazos pausan y guardan posición en el límite exacto del reloj inyectado, permiten sustitución/desactivación y conservan el plazo al buscar, cambiar velocidad o pausar. El servicio real se detiene antes del siguiente episodio y antes de repetir el actual, cancela al cambiar de episodio/música y pausa con la actividad en segundo plano. Informe local en `tmp/sleep-timer/report.txt`.
+
+Revisión visual en Medianoche y Rosa al 130 %, con todas las opciones visibles y seleccionables. Se corrigió la apertura parcial de la hoja, que acercaba 45 minutos al borde inferior. También se corrigió el reconocimiento de un podcast con temporizador activo y pausado en 0:00 tras recrear la actividad: mantiene controles operativos y el plazo anterior. Comprobados 45 minutos, Fin del episodio y Desactivado desde la UI; el contador no se reinicia al cambiar de tema o escala. Capturas reales revisadas localmente en `tmp/rss-device-review/timer-*.png`; no son mockups.
+
+**1.14.0 debug instalada, código 24, conservando datos:** siete archivos privados idénticos byte a byte inmediatamente tras `adb install -r`; última escucha original en pausa y posición conservadas. Variante aislada y audios sintéticos retirados; escala 1.0 y apagado de 60 segundos restaurados. No se añadieron ni modificaron audios personales.
+
+APK oficial firmada: 56.910.615 bytes, SHA-256 `12a9b2e4b5770dd0c0cfcead732aec5fbef0060aa3231032bfa53291f950a950`; misma firma oficial de las entregas anteriores. Debug instalada: `cea1dd2e824893618459979a2eb43a1dba9d4529fe5520e0b1580ccdd9478ca4`.
+
+Límites de la comprobación: los plazos de minutos se aceleraron con un reloj inyectado sobre ExoPlayer real; no se esperaron 45 minutos ni se certificó Doze/pantalla bloqueada. El fin de episodio sí se recorrió en tiempo real con el servicio en segundo plano. No confundir esta verificación con pruebas en otros móviles.
 
 Referencia de implementación: [pausa al final del elemento en ExoPlayer](https://developer.android.com/reference/androidx/media3/exoplayer/ExoPlayer#setPauseAtEndOfMediaItems(boolean)).
