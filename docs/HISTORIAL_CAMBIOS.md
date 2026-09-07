@@ -1,5 +1,10 @@
 # Historial de cambios
 
+## 2026-09-07 — 1.14 integrada; publicación pendiente de autorización explícita
+
+- PR #3 integrado en `main` (`ba3ff3a5646aceb332e5ad1ed6d7ae91e10e66a6`). Debug final ya instalada y comprobada; APK oficial y cinco adjuntos preparados.
+- La revisión automática rechazó crear la release con archivos: consideró que actualizar Git no autorizaba publicar este payload. Se solicitó autorización explícita a Aina. No se subió ni publicó la 1.14; la estable pública sigue siendo 1.13.0. La instalación y las pruebas completadas no quedan pendientes por ese bloqueo.
+
 ## 2026-09-07 — Cierre nativo e instalación de 1.14.0
 
 - Batería del temporizador completada y repetida tras ajustes: 15/30/45 minutos con reloj inyectado sobre ExoPlayer real; pausa y guardado exactamente al vencer, sustitución/desactivación, seek/velocidad/pausa sin reiniciar plazos. Servicio real: fin de episodio antes de siguiente y repetición, cambio a música y pausa en segundo plano.
