@@ -654,6 +654,7 @@ private fun PlaylistsScreen(
 private fun NowPlayingScreen(song: Song, state: PlayerState, player: Player?, onBack: () -> Unit, onLyrics: () -> Unit,
                              modifier: Modifier = Modifier, sourceName: String? = null, artworkRevision: Int = 0) {
     val ready = player != null && player.mediaItemCount > 0
+    val sleepTimer by com.ainalluna.michimusica.playback.PodcastSleepTimer.state.collectAsState()
     PlayerHome(song, state.playing, state.position, state.duration, state.shuffle, state.repeatOne,
         ready = ready, canPrevious = player?.isCommandAvailable(Player.COMMAND_SEEK_TO_PREVIOUS) == true,
         canNext = player?.canAdvanceTrack() == true, buffering = state.buffering, failed = state.failed,
@@ -662,7 +663,9 @@ private fun NowPlayingScreen(song: Song, state: PlayerState, player: Player?, on
         onPrevious = { player?.seekToPreviousMediaItem() }, onNext = { player?.advanceTrack() },
         onSeek = { player?.seekTo(it) }, onShuffle = { player?.shuffleModeEnabled = !state.shuffle },
         onRepeat = { player?.repeatMode = if (state.repeatOne) Player.REPEAT_MODE_OFF else Player.REPEAT_MODE_ONE },
-        onLyrics = onLyrics, onRetry = { player?.prepare(); player?.play() }, modifier = modifier)
+        onLyrics = onLyrics, onRetry = { player?.prepare(); player?.play() }, modifier = modifier,
+        podcast = sourceName == "Podcasts", sleepTimer = sleepTimer,
+        onSleepTimer = { com.ainalluna.michimusica.playback.PodcastSleepTimer.choose(it) })
 }
 
 @Composable private fun CatMark(modifier: Modifier) {

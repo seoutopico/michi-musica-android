@@ -7,6 +7,7 @@ Michi Música no tiene servidor propio, cuentas, analítica ni publicidad propia
 - Android permite elegir una carpeta mediante su selector de documentos. Michi conserva acceso a esa carpeta: lee audio y carátulas y, cuando lo pides, guarda MP3 o letras. El proveedor de documentos que elijas tiene sus propias condiciones.
 - Carpeta, listas y última escucha se guardan en preferencias privadas. La copia automática de datos de la app está desactivada.
 - Reproducción en segundo plano utiliza un servicio multimedia. El sistema, Bluetooth y los controladores que Android considera de confianza pueden acceder a la sesión multimedia.
+- El temporizador de podcasts funciona localmente. Durante la reproducción se mantiene la CPU activa mediante WAKE_LOCK para poder pausar con la pantalla apagada; no necesita cuentas, red ni permiso de alarmas exactas.
 - Quitar una letra afecta a su archivo asociado. Desinstalar la app no borra los audios ni las letras guardadas en la carpeta elegida.
 
 ## Conexiones externas bajo petición

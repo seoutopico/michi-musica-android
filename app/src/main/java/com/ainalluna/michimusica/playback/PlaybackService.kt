@@ -16,6 +16,10 @@ import androidx.media3.session.MediaSessionService
 class PlaybackService : MediaSessionService() {
     private var mediaSession: MediaSession? = null
     private lateinit var catalog: AudioCatalog
+    private var sleepTimer: PlaybackSleepTimer? = null
+    private val classificationChanged = android.content.SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+        if (key == "podcasts") sleepTimer?.catalogChanged()
+    }
     private val handler = Handler(Looper.getMainLooper())
     private val checkpoint = object : Runnable {
         override fun run() { saveListening(); handler.postDelayed(this, 5_000) }
@@ -34,6 +38,7 @@ class PlaybackService : MediaSessionService() {
         }
     }
 
+    @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
     override fun onCreate() {
         super.onCreate()
         catalog = AudioCatalog(this)
@@ -44,6 +49,7 @@ class PlaybackService : MediaSessionService() {
         val player = ExoPlayer.Builder(this)
             .setAudioAttributes(audioAttributes, true)
             .setHandleAudioBecomingNoisy(true)
+            .setWakeMode(C.WAKE_MODE_LOCAL)
             .build()
         mediaSession = MediaSession.Builder(this, player).build()
         player.addListener(object : Player.Listener {
@@ -71,6 +77,8 @@ class PlaybackService : MediaSessionService() {
                 if (playbackState == Player.STATE_ENDED) saveListening()
             }
         })
+        sleepTimer = PlaybackSleepTimer(player, catalog::isPodcast, ::saveListening)
+        catalog.preferences.registerOnSharedPreferenceChangeListener(classificationChanged)
         handler.post(checkpoint)
     }
 
@@ -85,6 +93,8 @@ class PlaybackService : MediaSessionService() {
 
     override fun onDestroy() {
         saveListening()
+        sleepTimer?.release(); sleepTimer = null
+        catalog.preferences.unregisterOnSharedPreferenceChangeListener(classificationChanged)
         handler.removeCallbacksAndMessages(null)
         mediaSession?.run {
             player.release()

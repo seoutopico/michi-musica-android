@@ -1,5 +1,11 @@
 # Historial de cambios
 
+## 2026-09-07 — Temporizador de podcasts 1.14 en desarrollo
+
+- Opciones Desactivado, Fin del episodio, 15, 30 y 45 minutos desde Ahora suena, en una hoja inferior con el tema existente. Botón discreto con reloj y contador en el color de acento; controles musicales conservados.
+- Reloj monotónico en el servicio de reproducción, independiente de la actividad. Al vencer pausa y guarda posición; fin de episodio usa la pausa nativa de ExoPlayer. Cambio a música, fin de cola o destrucción del servicio cancelan el temporizador. CPU mantenida durante la reproducción para su funcionamiento con pantalla apagada.
+- Versión 1.14.0, código 24. `test lint assembleDebug :app:assembleValidation assembleRelease --offline` correcto, 94 pruebas por variante y lint sin errores/16 advertencias previas. Arnés nativo con audios sintéticos preparado; pendiente ejecutar y revisar las vistas con el Pixel desbloqueado antes de instalar o publicar.
+
 ## 2026-09-06 — 1.13.0 publicada
 
 - [Release estable 1.13.0](https://github.com/seoutopico/michi-musica-android/releases/tag/v1.13.0) publicada y marcada latest; GitHub confirma `isDraft=false`, `isPrerelease=false`. PR #2 integrado en `main`, commit `14cf9d743581f0d717b3bdf705690654550cc56e`.

@@ -1,6 +1,10 @@
 # Continuidad de Michi Música Android
 
-Actualizado: 2026-09-06. Punto de entrada para continuar sin depender del historial del chat.
+Actualizado: 2026-09-07. Punto de entrada para continuar sin depender del historial del chat.
+
+## En curso: temporizador de podcasts 1.14
+
+Aina pide el 7 de septiembre Fin del episodio, 15, 30 o 45 minutos, conservando la estética. Implementación en [Temporizador de podcasts](TEMPORIZADOR_PODCASTS_1_14.md): botón de reloj en Ahora suena y hoja inferior con las opciones, contador activo en el acento del tema. Servicio propietario del reloj y pausa nativa al final del elemento; no reiniciar desde la actividad. Compilación `test lint assembleDebug :app:assembleValidation assembleRelease --offline` correcta: 94 pruebas por variante, lint sin errores/16 advertencias previas. Completar `scripts/validate_sleep_timer.ps1`, revisión Medianoche/Rosa/texto grande y segundo plano. El Pixel está conectado pero bloqueado; solicitado desbloqueo. 1.14 todavía no está instalada ni publicada. No sobrescribir la app personal antes de completar esta validación; conservar sus datos y firma debug al instalar.
 
 ## YouTube y orden de programas 1.13: instalada y publicada
 

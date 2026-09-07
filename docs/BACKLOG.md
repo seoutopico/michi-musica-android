@@ -6,6 +6,7 @@
 
 | ID | Prioridad | Trabajo | Resultado esperado |
 | --- | --- | --- | --- |
+| MMA-041 | P1 | Cerrar temporizador de podcasts 1.14 | Implementados fin de episodio y 15/30/45 minutos con hoja del tema y reloj en el servicio. Pendiente batería nativa, revisión visual con texto grande/temas, segundo plano e instalación conservando datos. Ver TEMPORIZADOR_PODCASTS_1_14.md. |
 | MMA-002 | P1 | Probar en un Pixel 7 real | Confirmar selector de carpeta, formatos, segundo plano, bloqueo y Bluetooth. |
 | MMA-005 | P2 | Verificar las carátulas existentes en el Pixel | Lectura asíncrona, muestreo, caché y marcador felino implementados; comprobar archivos con y sin imagen incrustada. No incluye edición de metadatos. |
 | MMA-006 | P3 | Valorar publicación en Play Store | La publicación solicitada es GitHub con APK directa. Play Console, sus requisitos y pruebas quedan fuera de esta entrega. |
