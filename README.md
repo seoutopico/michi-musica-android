@@ -28,6 +28,7 @@ Capturas de Android con la biblioteca y carátulas reales de Aina-Lluna, publica
 
 - **Biblioteca local:** elegir una carpeta de Android y reproducir MP3, WAV, OGG, M4A, AAC, FLAC y OPUS; buscar por título, artista, álbum o archivo.
 - **Podcasts separados:** selector Música / Podcasts en Biblioteca, clasificación desde las opciones de cada audio y posición guardada por episodio. Los podcasts no entran en las listas ni en Azar de Música.
+- **Temporizador de podcasts:** en Ahora suena, elige Fin del episodio, 15, 30 o 45 minutos. Contador visible, cambio o desactivación desde una hoja con el tema de la app; pausa y posición guardada desde el servicio. [Funcionamiento y verificación](docs/TEMPORIZADOR_PODCASTS_1_14.md).
 - **Borrar canciones:** menú de tres puntos de cada pista → Borrar canción, con confirmación antes de eliminar el archivo de la carpeta.
 - **Escucha continua:** reproducción en segundo plano, controles del sistema, pausa, anterior, siguiente, progreso, Azar sin repeticiones dentro de una ronda y repetir una canción.
 - **Retomar:** última canción y posición guardadas; abrir la app no inicia música automáticamente. El mini reproductor mantiene su lugar sobre la navegación.
@@ -58,7 +59,7 @@ Capturas reales de la versión 1.12.0 en Pixel 7: **Siguiendo en Medianoche**, *
 
 **Requisitos:** Android 8.0 o posterior y dispositivo **ARM64**. La APK actual no cubre móviles de 32 bits ni emuladores x86. Las comprobaciones nativas se realizan en Pixel 7.
 
-1. Abre [Releases](https://github.com/seoutopico/michi-musica-android/releases/latest) y descarga `Michi-Musica-1.13.0-arm64.apk`.
+1. Abre [Releases](https://github.com/seoutopico/michi-musica-android/releases/latest) y descarga `Michi-Musica-1.14.0-arm64.apk`.
 2. Abre la APK en Android. Si lo solicita, permite a ese navegador o gestor de archivos instalar aplicaciones desde esa fuente. Puedes retirar ese permiso después.
 3. Abre Michi Música y elige tu carpeta de música mediante el selector de Android.
 4. Opcional: instala `Michi-Iconos-1.0.0.apk` y sigue la [guía de Niagara](docs/NIAGARA.md).

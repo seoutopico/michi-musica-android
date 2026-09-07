@@ -9,7 +9,7 @@ import androidx.core.net.toUri
 import com.ainalluna.michimusica.library.Song
 
 @Composable
-internal fun PlayerPreviewContent(skin: MichiSkin = MichiSkin.MIDNIGHT, longTitle: Boolean = false, failed: Boolean = false) {
+internal fun PlayerPreviewContent(skin: MichiSkin = MichiSkin.MIDNIGHT, longTitle: Boolean = false, failed: Boolean = false, podcast: Boolean = false) {
     val song = Song("preview", "Luz.mp3", if (longTitle) "Luz de septiembre — una noche junto al mar" else "Luz de septiembre",
         "Brisa", durationMs = 248_000, uri = "content://preview/luz".toUri())
     var playing by remember { mutableStateOf(false) }
@@ -20,7 +20,8 @@ internal fun PlayerPreviewContent(skin: MichiSkin = MichiSkin.MIDNIGHT, longTitl
         Scaffold(bottomBar = { HomeNavigation(0) {} }) { padding ->
             PlayerHome(song, playing, position, 248_000, shuffle, repeat, true, true, true, false, failed,
                 "Noches tranquilas", 0, {}, { playing = !playing }, { position = 0 }, { position = 0 },
-                { position = it }, { shuffle = !shuffle }, { repeat = !repeat }, {}, {}, Modifier.padding(padding))
+                { position = it }, { shuffle = !shuffle }, { repeat = !repeat }, {}, {}, Modifier.padding(padding),
+                podcast = podcast, sleepTimer = com.ainalluna.michimusica.playback.SleepTimerDisplay(com.ainalluna.michimusica.playback.SleepChoice.FIFTEEN, 842000))
         }
     }
 }
@@ -35,3 +36,8 @@ internal fun PlayerPreviewContent(skin: MichiSkin = MichiSkin.MIDNIGHT, longTitl
 @Composable private fun PlayerErrorPreview() = PlayerPreviewContent(failed = true)
 @Preview(name = "05 · Horizontal", group = "Player real", widthDp = 800, heightDp = 400, showSystemUi = true)
 @Composable private fun PlayerLandscapePreview() = PlayerPreviewContent(longTitle = true)
+
+@Preview(name = "06 · Podcast temporizador", group = "Player real", widthDp = 412, heightDp = 860, showSystemUi = true)
+@Composable private fun PodcastTimerPreview() = PlayerPreviewContent(podcast = true, longTitle = true)
+@Preview(name = "07 · Podcast Rosa grande", group = "Player real", widthDp = 360, heightDp = 740, fontScale = 1.3f, showSystemUi = true)
+@Composable private fun PodcastTimerRosePreview() = PlayerPreviewContent(MichiSkin.ROSE, podcast = true, longTitle = true)

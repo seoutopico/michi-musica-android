@@ -30,13 +30,16 @@ fun PlayerHome(song: Song, playing: Boolean, position: Long, duration: Long,
                buffering: Boolean, failed: Boolean, sourceName: String?, artworkRevision: Int,
                onClose: () -> Unit, onToggle: () -> Unit, onPrevious: () -> Unit, onNext: () -> Unit,
                onSeek: (Long) -> Unit, onShuffle: () -> Unit, onRepeat: () -> Unit,
-               onLyrics: () -> Unit, onRetry: () -> Unit, modifier: Modifier = Modifier) {
+               onLyrics: () -> Unit, onRetry: () -> Unit, modifier: Modifier = Modifier,
+               podcast: Boolean = false,
+               sleepTimer: com.ainalluna.michimusica.playback.SleepTimerDisplay = com.ainalluna.michimusica.playback.SleepTimerDisplay(),
+               onSleepTimer: (com.ainalluna.michimusica.playback.SleepChoice) -> Unit = {}) {
     val colors = MaterialTheme.colorScheme
     var scrubFraction by remember(song.id) { mutableStateOf<Float?>(null) }
     val shownPosition = scrubFraction?.let { playerSeekPosition(it, duration) }
         ?: if (duration > 0) position.coerceIn(0, duration) else position.coerceAtLeast(0)
     BoxWithConstraints(modifier.fillMaxSize()) {
-        val artworkSize = minOf(maxWidth - 48.dp, (maxHeight - 440.dp).coerceIn(160.dp, 340.dp))
+        val artworkSize = minOf(maxWidth - 48.dp, (maxHeight - if (podcast) 488.dp else 440.dp).coerceIn(160.dp, 340.dp))
         Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 24.dp, vertical = 8.dp),
             horizontalAlignment = Alignment.CenterHorizontally) {
             Row(Modifier.fillMaxWidth().heightIn(min = 48.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -105,6 +108,7 @@ fun PlayerHome(song: Song, playing: Boolean, position: Long, duration: Long,
                     Text("Letra", Modifier.padding(top = 5.dp), fontSize = 12.sp, color = colors.onSurfaceVariant)
                 }
             }
+            if (podcast) PodcastTimerControl(sleepTimer, ready, onSleepTimer)
         }
     }
 }

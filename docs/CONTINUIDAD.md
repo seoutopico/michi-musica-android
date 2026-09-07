@@ -1,6 +1,10 @@
 # Continuidad de Michi Música Android
 
-Actualizado: 2026-09-06. Punto de entrada para continuar sin depender del historial del chat.
+Actualizado: 2026-09-07. Punto de entrada para continuar sin depender del historial del chat.
+
+## Temporizador de podcasts 1.14: cierre nativo completado
+
+Aina pide el 7 de septiembre Fin del episodio, 15, 30 o 45 minutos, conservando la estética. [Temporizador de podcasts](TEMPORIZADOR_PODCASTS_1_14.md): botón de reloj en Ahora suena, hoja inferior completa, contador activo en el acento del tema. Servicio propietario del reloj y pausa nativa al final del elemento; no reiniciar desde la actividad. Compilación final correcta: 94 pruebas por variante, lint sin errores/16 advertencias previas. Batería nativa completa: límites de plazos con reloj inyectado, cancelación/cambio de plazo, seek/velocidad/pausa y servicio real antes de siguiente/repetición, también en segundo plano. Revisados Medianoche/Rosa al 130 %. Corregidos apertura parcial de la hoja y controles de podcast pausado en 0:00 al recrear con temporizador activo. **Debug final 1.14.0 instalada conservando siete archivos privados byte a byte**, última escucha en pausa intacta; variante aislada retirada y ajustes de pantalla restaurados. APK oficial firmada lista para el último paso de publicación. Límites de reloj acelerado/Doze en la ficha.
 
 ## YouTube y orden de programas 1.13: instalada y publicada
 

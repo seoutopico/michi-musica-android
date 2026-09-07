@@ -472,7 +472,8 @@ private fun MichiRoot(
 
     DisposableEffect(player, restoreRevision) {
         if (player == null) return@DisposableEffect onDispose { }
-        fun refresh() { state = state.copy(index = player.currentMediaItemIndex.coerceAtLeast(0), position = player.currentPosition.coerceAtLeast(0), playing = player.isPlaying, buffering = player.playbackState == Player.STATE_BUFFERING, failed = player.playerError != null, shuffle = player.shuffleModeEnabled, repeatOne = player.repeatMode == Player.REPEAT_MODE_ONE, duration = player.duration.takeIf { it > 0 } ?: 0, engaged = restoreRevision > 0 || hasActiveListeningSession(state.engaged, player.isPlaying, player.currentPosition)) }
+        // An armed timer also identifies an explicitly selected podcast, including paused at 0:00 after recreation.
+        fun refresh() { state = state.copy(index = player.currentMediaItemIndex.coerceAtLeast(0), position = player.currentPosition.coerceAtLeast(0), playing = player.isPlaying, buffering = player.playbackState == Player.STATE_BUFFERING, failed = player.playerError != null, shuffle = player.shuffleModeEnabled, repeatOne = player.repeatMode == Player.REPEAT_MODE_ONE, duration = player.duration.takeIf { it > 0 } ?: 0, engaged = restoreRevision > 0 || com.ainalluna.michimusica.playback.PodcastSleepTimer.state.value.active || hasActiveListeningSession(state.engaged, player.isPlaying, player.currentPosition)) }
         val listener = object : Player.Listener { override fun onEvents(player: Player, events: Player.Events) = refresh() }
         player.addListener(listener); refresh(); onDispose { player.removeListener(listener) }
     }
@@ -654,6 +655,7 @@ private fun PlaylistsScreen(
 private fun NowPlayingScreen(song: Song, state: PlayerState, player: Player?, onBack: () -> Unit, onLyrics: () -> Unit,
                              modifier: Modifier = Modifier, sourceName: String? = null, artworkRevision: Int = 0) {
     val ready = player != null && player.mediaItemCount > 0
+    val sleepTimer by com.ainalluna.michimusica.playback.PodcastSleepTimer.state.collectAsState()
     PlayerHome(song, state.playing, state.position, state.duration, state.shuffle, state.repeatOne,
         ready = ready, canPrevious = player?.isCommandAvailable(Player.COMMAND_SEEK_TO_PREVIOUS) == true,
         canNext = player?.canAdvanceTrack() == true, buffering = state.buffering, failed = state.failed,
@@ -662,7 +664,9 @@ private fun NowPlayingScreen(song: Song, state: PlayerState, player: Player?, on
         onPrevious = { player?.seekToPreviousMediaItem() }, onNext = { player?.advanceTrack() },
         onSeek = { player?.seekTo(it) }, onShuffle = { player?.shuffleModeEnabled = !state.shuffle },
         onRepeat = { player?.repeatMode = if (state.repeatOne) Player.REPEAT_MODE_OFF else Player.REPEAT_MODE_ONE },
-        onLyrics = onLyrics, onRetry = { player?.prepare(); player?.play() }, modifier = modifier)
+        onLyrics = onLyrics, onRetry = { player?.prepare(); player?.play() }, modifier = modifier,
+        podcast = sourceName == "Podcasts", sleepTimer = sleepTimer,
+        onSleepTimer = { com.ainalluna.michimusica.playback.PodcastSleepTimer.choose(it) })
 }
 
 @Composable private fun CatMark(modifier: Modifier) {
