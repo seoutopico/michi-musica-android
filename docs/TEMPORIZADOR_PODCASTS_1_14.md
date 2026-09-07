@@ -2,6 +2,8 @@
 
 Petición de Aina del 7 de septiembre de 2026: temporizador de fin de episodio, 15, 30 o 45 minutos, cuidando la estética vigente.
 
+**Entrega completada:** [1.14.0 estable](https://github.com/seoutopico/michi-musica-android/releases/tag/v1.14.0) publicada como latest con autorización explícita de Aina. [PR #3](https://github.com/seoutopico/michi-musica-android/pull/3) integrado en `main`; los seis adjuntos remotos coinciden en nombre, tamaño y SHA-256 con los locales. Edición debug final instalada en el Pixel conservando sus datos.
+
 ## Recorrido y diseño
 
 En Ahora suena, cuando el audio actual pertenece a Podcasts, aparece un botón de texto con un reloj dibujado como vector: **Temporizador**. Mantiene los controles de reproducción, Azar, Repetir y Letra. La carátula reserva el espacio adicional del botón sin cambiar el tamaño del reproductor de música. La pantalla sigue siendo desplazable para texto ampliado o poca altura.

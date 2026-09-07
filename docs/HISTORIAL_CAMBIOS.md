@@ -1,5 +1,12 @@
 # Historial de cambios
 
+## 2026-09-07 — 1.14.0 publicada
+
+- Aina autorizó explícitamente publicar la APK 1.14.0 y sus cinco adjuntos; resuelto el bloqueo de autorización registrado abajo.
+- [1.14.0](https://github.com/seoutopico/michi-musica-android/releases/tag/v1.14.0) publicada como estable y latest, sin borrador ni prerelease. Tag sobre `ba3ff3a5646aceb332e5ad1ed6d7ae91e10e66a6`, integración de PR #3.
+- Los seis adjuntos remotos coinciden por nombre, tamaño y SHA-256 con los archivos locales: APK oficial, APK de iconos, sumas, certificado público y dos archivos de fuentes. No se publicaron copias privadas ni la APK debug.
+- El Pixel ya conserva la 1.14.0 debug final instalada y verificada sin pérdida de datos. Documentación de continuidad y ficha actualizadas; cierre completado.
+
 ## 2026-09-07 — 1.14 integrada; publicación pendiente de autorización explícita
 
 - PR #3 integrado en `main` (`ba3ff3a5646aceb332e5ad1ed6d7ae91e10e66a6`). Debug final ya instalada y comprobada; APK oficial y cinco adjuntos preparados.
